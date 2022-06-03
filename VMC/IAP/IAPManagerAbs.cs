@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
+using UnityEngine.UI.Extensions;
 using VMC.Ultilities;
 
 namespace VMC.IAP
@@ -32,7 +33,7 @@ namespace VMC.IAP
         public bool IsInitialized => m_StoreController != null && m_StoreExtensionProvider != null;
 
 
-        public bool IsProcessing = false;
+        [ReadOnly] public bool IsProcessing = false;
 
         private const float TimeToDelayHandledPending = 15f;
         private float countTimePend = -1;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 using VMC.Ultilities;
 
 namespace VMC.Sound
@@ -13,8 +14,8 @@ namespace VMC.Sound
         private AudioSource mySound;
         private List<AudioSource> mySounds = new List<AudioSource>();
 
-        [SerializeField] private bool isEnableSound;
-        [SerializeField] private bool isEnableMusic;
+        [SerializeField, ReadOnly] private bool isEnableSound = true;
+        [SerializeField, ReadOnly] private bool isEnableMusic = true;
 
         public const string KEY_SETTING_MUSIC = "VMC_Setting_Music";
         public const string KEY_SETTING_SOUND = "VMC_Setting_Sound";
@@ -107,7 +108,7 @@ namespace VMC.Sound
 
         internal void UpdateSetting()
         {
-            Set_EnableSound(PlayerPrefsHelper.Get(KEY_SETTING_SOUND,true));
+            Set_EnableSound(PlayerPrefsHelper.Get(KEY_SETTING_SOUND, true));
             Set_EnableMusic(PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true));
         }
 
