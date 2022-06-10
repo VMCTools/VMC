@@ -21,7 +21,7 @@ namespace VMC.UI
             switch (orientation)
             {
                 case ScreenOrientation.AutoRotation:
-                case ScreenOrientation.Landscape:
+                case ScreenOrientation.LandscapeLeft:
                 case ScreenOrientation.Portrait:
                     needUpdateFreequently = true;
                     break;

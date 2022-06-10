@@ -1,6 +1,6 @@
+#if VMC_IAP
 using System;
 using UnityEngine.Purchasing;
-
 namespace VMC.IAP
 {
     [Serializable]
@@ -12,3 +12,4 @@ namespace VMC.IAP
         public float value;
     }
 }
+#endif

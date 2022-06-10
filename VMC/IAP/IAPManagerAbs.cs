@@ -1,3 +1,4 @@
+#if VMC_IAP
 using System;
 using UnityEngine;
 using UnityEngine.Purchasing;
@@ -183,3 +184,4 @@ namespace VMC.IAP
         }
     }
 }
+#endif

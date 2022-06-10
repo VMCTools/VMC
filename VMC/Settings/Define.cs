@@ -13,6 +13,7 @@
         VMC_ANALYZE_APPFLYER,
         VMC_ANALYZE_FIREBASE,
         VMC_ANALYZE_FACEBOOK,
-        VMC_ANALYZE_UNITY
+        VMC_ANALYZE_UNITY,
+        VMC_IAP
     }
 }
