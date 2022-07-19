@@ -6,7 +6,6 @@ namespace VMC.Ultilities
 {
     public static class Vector3Extensions
     {
-
         public static float DistancePath(this Vector3[] path)
         {
             float pathDistance = 0;
@@ -15,6 +14,12 @@ namespace VMC.Ultilities
                 pathDistance += Vector3.Distance(path[i], path[i + 1]);
             }
             return pathDistance;
+        }
+
+        public static Vector3 SetZ(this Vector3 vector3, float newZ)
+        {
+            vector3.z = newZ;
+            return vector3;
         }
     }
 }
