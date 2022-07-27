@@ -21,6 +21,7 @@ namespace VMC.Ingame.Move
 
         public override void Move()
         {
+            if (!CanMove()) return;
             if (transform.position != path[curIndex])
             {
                 Vector3 pos = Vector3.MoveTowards(transform.position, path[curIndex], speed * Time.deltaTime);
@@ -34,8 +35,6 @@ namespace VMC.Ingame.Move
                     isCompleted = true;
                 }
             }
-
-
         }
     }
 }

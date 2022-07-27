@@ -13,18 +13,19 @@ namespace VMC.Ingame.Move
 
         public virtual void Move()
         {
+            if (!CanMove()) return;
             transform.position += (Vector3)(speed * Time.deltaTime * direction);
+        }
+        public bool CanMove()
+        {
+            if (!isMoving) return false;
+            if (isPausing) return false;
+            if (isCompleted) return false;
+            return true;
         }
         public virtual void InitData()
         {
 
-        }
-        protected virtual void Update()
-        {
-            if (!isMoving) return;
-            if (isPausing) return;
-            if (isCompleted) return;
-            Move();
         }
         public virtual void Pause()
         {
