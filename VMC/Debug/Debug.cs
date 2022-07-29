@@ -8,7 +8,7 @@ namespace VMC.Debugger
 {
     public class Debug
     {
-        private const string KEY_LOG = "LOG_ENABLE";
+        private const string KEY_LOG = "VMC_ENABLE_LOG";
         private const string KEY_ASSERTTIONS = "UNITY_ASSERTIONS";
 
         [Conditional(KEY_LOG)]
