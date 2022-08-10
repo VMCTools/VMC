@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using UnityEngine;
 
+using Debug = VMC.Debugger.Debug;
 namespace VMC.Ultilities
 {
     public class PlayerPrefsHelper

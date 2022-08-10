@@ -6,6 +6,7 @@ using UnityEngine.Purchasing.Extension;
 using UnityEngine.UI.Extensions;
 using VMC.Ultilities;
 
+using Debug = VMC.Debugger.Debug;
 namespace VMC.IAP
 {
     public abstract class IAPManagerAbs : Singleton<IAPManagerAbs>, IStoreListener
@@ -90,7 +91,7 @@ namespace VMC.IAP
             {
                 countTimePend = TimeToDelayHandledPending;
                 pendingProduct = purchaseEvent.purchasedProduct;
-                UnityEngine.Debug.Log("BuyProductID: SUCCESSED. but something wrong when pay the bonus to player!!!");
+                Debug.Log("BuyProductID: SUCCESSED. but something wrong when pay the bonus to player!!!");
                 return PurchaseProcessingResult.Pending;
             }
 

@@ -4,11 +4,17 @@ namespace VMC.Ads
 {
     public interface IAds
     {
-        void ShowBanner();
+        void SetConsentAds(bool value);
+        void SetVolume(float value);
+        void RequestBanner();
+        void ShowBanner(BannerAdsPosition posi = BannerAdsPosition.BOTTOM);
         void HideBanner();
 
-        void ShowInterstitial(Action closeCallback);
+        void RequestInterstitial();
+        bool IsInterstitialAvailable();
+        void ShowInterstitial(Action callback);
 
-        void ShowRewardedVideo(Action<bool> rewaredCallback);
+        bool IsRewardVideoAvailable();
+        void ShowRewardedVideo(Action<bool> OnSuccessed);
     }
 }

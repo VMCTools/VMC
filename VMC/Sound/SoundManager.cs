@@ -14,14 +14,15 @@ namespace VMC.Sound
         private AudioSource mySound;
         private List<AudioSource> mySounds = new List<AudioSource>();
 
-        [SerializeField, ReadOnly] private bool isEnableSound = true;
-        [SerializeField, ReadOnly] private bool isEnableMusic = true;
+        public bool isEnableSound { private set; get; } = true;
+        public bool isEnableMusic { private set; get; } = true;
 
-        public const string KEY_SETTING_MUSIC = "VMC_Setting_Music";
-        public const string KEY_SETTING_SOUND = "VMC_Setting_Sound";
+        private const string KEY_SETTING_MUSIC = "VMC_Setting_Music";
+        private const string KEY_SETTING_SOUND = "VMC_Setting_Sound";
 
-        private void OnEnable()
+        protected override void Awake()
         {
+            base.Awake();
             UpdateSetting();
         }
         private void Start()
@@ -36,6 +37,7 @@ namespace VMC.Sound
         public void Set_EnableSound(bool isEnable)
         {
             isEnableSound = isEnable;
+            PlayerPrefsHelper.Set(KEY_SETTING_SOUND, isEnableSound);
             foreach (var sound in mySounds)
             {
                 sound.mute = !isEnableSound;
@@ -44,6 +46,7 @@ namespace VMC.Sound
         public void Set_EnableMusic(bool isEnable)
         {
             isEnableMusic = isEnable;
+            PlayerPrefsHelper.Set(KEY_SETTING_MUSIC, isEnableMusic);
             if (myMusic != null)
             {
                 myMusic.mute = !isEnable;
