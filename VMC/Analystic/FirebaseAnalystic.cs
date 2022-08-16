@@ -6,6 +6,7 @@ namespace VMC.Analystic
         private bool isReady = false;
         protected override void I_Initialize()
         {
+#if VMC_FIREBASE
             Debug.Log("Firebase", "Init!");
             Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
@@ -25,6 +26,7 @@ namespace VMC.Analystic
                     // Firebase Unity SDK is not safe to use here.
                 }
             });
+#endif
         }
         protected override void I_LogEvent(string nameEvent)
         {
@@ -35,7 +37,9 @@ namespace VMC.Analystic
             }
             // Log an event with no parameters.
             Debug.Log("Firebase", "Log message: " + nameEvent);
+#if VMC_FIREBASE
             Firebase.Analytics.FirebaseAnalytics.LogEvent(nameEvent);
+#endif
         }
     }
 

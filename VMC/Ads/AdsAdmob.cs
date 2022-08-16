@@ -101,12 +101,16 @@ namespace VMC.Ads
 
         protected override void I_ShowBanner(BannerAdsPosition posi = BannerAdsPosition.BOTTOM)
         {
+#if VMC_ADMOB
             this.bannerPosition = posi;
+#endif
             I_RequestBanner();
         }
         protected override void I_HideBanner()
         {
+#if VMC_ADMOB
             bannerView.Hide();
+#endif
         }
         #endregion
         #region INTERSTITIAL
