@@ -19,5 +19,15 @@ namespace VMC.Ultilities
             builder.Append("]");
             return builder.ToString();
         }
+        public static float TotalLength(this Vector3[] path)
+        {
+            float pathDistance = 0;
+            for (int i = 0; i < path.Length - 1; i++)
+            {
+                pathDistance += Vector3.Distance(path[i], path[i + 1]);
+            }
+            return pathDistance;
+        }
+
     }
 }
