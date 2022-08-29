@@ -13,7 +13,7 @@ namespace VMC.UI
         [SerializeField] private GameObject boundPopup;
         [SerializeField] private float timeShow = 0.3f;
         [SerializeField] private float fadeColor = 0.8f;
-        [SerializeField] private Button btnClose;
+        [SerializeField] protected Button btnClose;
 
         private void Start()
         {
