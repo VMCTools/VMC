@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VMC.Ultilities;
 
 namespace VMC.Ingame.Move
 {
@@ -9,7 +11,7 @@ namespace VMC.Ingame.Move
         public CharacterController character;
         public float speed;
 
-        private bool isMoving;
+        public bool isMoving;
         private Vector3 direction;
 
         private void Awake()
@@ -18,6 +20,12 @@ namespace VMC.Ingame.Move
             Joystick.OnDragAction += Joystick_OnDragAction;
             Joystick.OnEndedDragAction += Joystick_OnEndedDragAction;
         }
+
+        public void SetSpeed(float moveSpeed)
+        {
+            this.speed = moveSpeed;
+        }
+
         private void Joystick_OnStartedDragAction()
         {
             isMoving = true;
@@ -35,7 +43,10 @@ namespace VMC.Ingame.Move
         private void Update()
         {
             if (isMoving)
+            {
                 character.Move(speed * Time.deltaTime * direction);
+                transform.LookAt(transform.position + character.velocity.SetY(0));
+            }
         }
     }
 }

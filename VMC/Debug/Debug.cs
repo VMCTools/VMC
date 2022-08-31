@@ -54,6 +54,13 @@ namespace VMC.Debugger
         {
             UnityEngine.Debug.LogError(message);
         }
+
+        [Conditional(KEY_LOG)]
+        public static void LogError(string key, string mess)
+        {
+            UnityEngine.Debug.LogError($"<color=green>{key}</color> {mess}");
+        }
+
         [Conditional(KEY_LOG)]
         public static void LogError(object message, UnityEngine.Object context)
         {
