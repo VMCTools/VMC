@@ -44,8 +44,9 @@ namespace VMC.Ingame.Move
         {
             if (isMoving)
             {
+                direction.y = character.isGrounded ? 0f : -0.5f;
                 character.Move(speed * Time.deltaTime * direction);
-                transform.LookAt(transform.position + character.velocity.SetY(0));
+                transform.LookAt(transform.position + direction.SetY(0));
             }
         }
     }

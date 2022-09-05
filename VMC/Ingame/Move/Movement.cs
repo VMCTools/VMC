@@ -27,6 +27,10 @@ namespace VMC.Ingame.Move
         {
 
         }
+        public virtual void SetSpeed(float speed)
+        {
+            this.speed = speed;
+        }    
         public virtual void Pause()
         {
             isPausing = true;
