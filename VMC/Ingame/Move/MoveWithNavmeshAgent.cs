@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,14 +7,9 @@ namespace VMC.Ingame.Move
     public class MoveWithNavmeshAgent : Movement
     {
         [SerializeField] private NavMeshAgent navmeshAgent;
-
         public override bool IsComplete()
         {
-            throw new System.NotImplementedException();
-        }
-        private void Start()
-        {
-            navmeshAgent.speed = this.speed;
+            return true;
         }
         public override void SetSpeed(float speed)
         {
@@ -24,12 +18,9 @@ namespace VMC.Ingame.Move
         }
         public void MoveTo(Vector3 targetPosition, float stopDistance)
         {
-            //this.targetPosition = targetPosition;
-            //direction = (targetPosition - transform.position).normalized;
-            //isCompleted = false;
             navmeshAgent.stoppingDistance = stopDistance;
-            //navmeshAgent.SetDestination(targetPosition);
-            navmeshAgent.Move(targetPosition);
+            navmeshAgent.destination = targetPosition;
+            navmeshAgent.isStopped = false;
         }
         public override void Pause()
         {
@@ -46,6 +37,12 @@ namespace VMC.Ingame.Move
             navmeshAgent.isStopped = true;
             base.Stop();
         }
-
+        
+        public void MoveTo(Vector3 targetPosition, Action complete)
+        {
+            navmeshAgent.stoppingDistance = 0.1f;
+            navmeshAgent.SetDestination(targetPosition);
+            navmeshAgent.isStopped = false;
+        }
     }
 }

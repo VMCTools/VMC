@@ -13,6 +13,7 @@ namespace VMC.Ingame.Move
 
         public bool isMoving;
         private Vector3 direction;
+        public float CurrentSpeed => direction.SetY(0).magnitude * speed;
 
         private void Awake()
         {
@@ -38,6 +39,7 @@ namespace VMC.Ingame.Move
         private void Joystick_OnEndedDragAction()
         {
             isMoving = false;
+            direction = Vector3.zero;
         }
 
         private void Update()
