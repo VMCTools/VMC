@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,25 +6,20 @@ using VMC.Ultilities;
 
 namespace VMC.Ingame.Move
 {
-    public class MoveWithJoyStick : MonoBehaviour
+    public class MoveWithJoyStick : Movement
     {
         public CharacterController character;
-        public float speed;
-
-        public bool isMoving;
-        private Vector3 direction;
-        public float CurrentSpeed => direction.SetY(0).magnitude * speed;
+        public override float Speed => direction.SetY(0).magnitude * speed;
+        public override bool IsComplete()
+        {
+            return true;
+        }
 
         private void Awake()
         {
             Joystick.OnStartedDragAction += Joystick_OnStartedDragAction;
             Joystick.OnDragAction += Joystick_OnDragAction;
             Joystick.OnEndedDragAction += Joystick_OnEndedDragAction;
-        }
-
-        public void SetSpeed(float moveSpeed)
-        {
-            this.speed = moveSpeed;
         }
 
         private void Joystick_OnStartedDragAction()
@@ -50,6 +45,11 @@ namespace VMC.Ingame.Move
                 character.Move(speed * Time.deltaTime * direction);
                 transform.LookAt(transform.position + direction.SetY(0));
             }
+        }
+        public override void Move()
+        {
+            //base.Move();
+            // chỉ di chuyển theo joystick
         }
     }
 }

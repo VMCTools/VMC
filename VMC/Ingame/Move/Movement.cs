@@ -7,6 +7,8 @@ namespace VMC.Ingame.Move
         protected Vector3 direction;
         protected float speed;
 
+        public virtual float Speed => speed;
+
         protected bool isMoving;
         protected bool isPausing;
         protected bool isCompleted;
@@ -31,6 +33,12 @@ namespace VMC.Ingame.Move
         {
             this.speed = speed;
         }    
+
+        public virtual void MoveTo(Vector3 destination)
+        {
+
+        }    
+
         public virtual void Pause()
         {
             isPausing = true;

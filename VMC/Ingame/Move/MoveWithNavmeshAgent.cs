@@ -4,9 +4,19 @@ using UnityEngine.AI;
 
 namespace VMC.Ingame.Move
 {
+    [RequireComponent(typeof(NavMeshAgent))]
     public class MoveWithNavmeshAgent : Movement
     {
-        [SerializeField] private NavMeshAgent navmeshAgent;
+        private NavMeshAgent _agent;
+        private NavMeshAgent navmeshAgent
+        {
+            get
+            {
+                if (!_agent) _agent = GetComponent<NavMeshAgent>();
+                return _agent;
+            }
+        }
+        public override float Speed => navmeshAgent.velocity.magnitude;
         public override bool IsComplete()
         {
             return true;
@@ -14,11 +24,11 @@ namespace VMC.Ingame.Move
         public override void SetSpeed(float speed)
         {
             base.SetSpeed(speed);
+
             navmeshAgent.speed = this.speed;
         }
-        public void MoveTo(Vector3 targetPosition, float stopDistance)
+        public override void MoveTo(Vector3 targetPosition)
         {
-            navmeshAgent.stoppingDistance = stopDistance;
             navmeshAgent.destination = targetPosition;
             navmeshAgent.isStopped = false;
         }
@@ -36,13 +46,6 @@ namespace VMC.Ingame.Move
         {
             navmeshAgent.isStopped = true;
             base.Stop();
-        }
-        
-        public void MoveTo(Vector3 targetPosition, Action complete)
-        {
-            navmeshAgent.stoppingDistance = 0.1f;
-            navmeshAgent.SetDestination(targetPosition);
-            navmeshAgent.isStopped = false;
         }
     }
 }
