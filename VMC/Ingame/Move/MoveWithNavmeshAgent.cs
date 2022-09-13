@@ -16,6 +16,8 @@ namespace VMC.Ingame.Move
                 return _agent;
             }
         }
+
+
         public override float Speed => navmeshAgent.velocity.magnitude;
         public override bool IsComplete()
         {
@@ -24,14 +26,24 @@ namespace VMC.Ingame.Move
         public override void SetSpeed(float speed)
         {
             base.SetSpeed(speed);
-
             navmeshAgent.speed = this.speed;
         }
         public override void MoveTo(Vector3 targetPosition)
         {
             navmeshAgent.destination = targetPosition;
             navmeshAgent.isStopped = false;
+            isMoving = true;
+
+            var navmeshPath = new NavMeshPath();
+            //navmeshPath.
         }
+        //private void Update()
+        //{
+        //    if (isMoving)
+        //    {
+        //        transform.position += navmeshAgent.desiredVelocity.normalized * navmeshAgent.speed * Time.deltaTime;
+        //    }
+        //}
         public override void Pause()
         {
             navmeshAgent.isStopped = true;
