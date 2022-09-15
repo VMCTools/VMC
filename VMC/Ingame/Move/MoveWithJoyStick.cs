@@ -22,6 +22,7 @@ namespace VMC.Ingame.Move
             Joystick.OnDragAction += Joystick_OnDragAction;
             Joystick.OnEndedDragAction += Joystick_OnEndedDragAction;
 #endif
+
         }
 
         private void Joystick_OnStartedDragAction()

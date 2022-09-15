@@ -12,9 +12,9 @@ namespace VMC.Ads
 
         void RequestInterstitial();
         bool IsInterstitialAvailable();
-        void ShowInterstitial(Action callback);
+        void ShowInterstitial(string placement, Action callback);
 
         bool IsRewardVideoAvailable();
-        void ShowRewardedVideo(Action<bool> OnSuccessed);
+        void ShowRewardedVideo(string placement, Action<bool> OnSuccessed);
     }
 }

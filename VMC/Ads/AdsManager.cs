@@ -22,20 +22,20 @@ namespace VMC.Ads
             ads.HideBanner();
         }
 
-        public void ShowInterstitial(Action closeCallback)
+        public void ShowInterstitial(string placement, Action closeCallback)
         {
             VMC.Debugger.Debug.Log("[ADS]", "Show interstitial");
-            ads.ShowInterstitial(closeCallback);
+            ads.ShowInterstitial(placement, closeCallback);
         }
 
-        public void ShowRewardedVideo(Action<bool> rewardedCallback)
+        public void ShowRewardedVideo(string placement, Action<bool> rewardedCallback)
         {
             VMC.Debugger.Debug.Log("[ADS]", "Show rewarded video");
 #if UNITY_EDITOR
             rewardedCallback?.Invoke(true);
             return;
 #endif
-            ads.ShowRewardedVideo(rewardedCallback);
+            ads.ShowRewardedVideo(placement, rewardedCallback);
         }
     }
 }

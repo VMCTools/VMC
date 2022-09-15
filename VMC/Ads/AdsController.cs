@@ -15,6 +15,9 @@ namespace VMC.Ads
     {
 
         public bool TestMode;
+
+        public AdsType adsType;
+
         private const string KEY_ENABLE_ADS = "User_Setting_Enable_Ads";
         private const string KEY_CONSENT_ADS = "User_Setting_Consent_Ads";
 
@@ -50,11 +53,9 @@ namespace VMC.Ads
             set
             {
                 isConsentAds = value;
-                PlayerPrefs.SetString(KEY_CONSENT_ADS, isEnableAds.ToString());                
+                PlayerPrefs.SetString(KEY_CONSENT_ADS, isEnableAds.ToString());
             }
         }
-
-
 
         private float MIN_TIME_SHOWITERSTIRIAL = 90;
         private float countDownTimeInter = 0;
@@ -64,9 +65,12 @@ namespace VMC.Ads
         protected bool IsLoadedInterstitial;
         protected bool IsLoadedRewardedVideo;
 
+        public static bool ResumeFromAds;
+
         protected override void Awake()
         {
             base.Awake();
+            I_Init();
             SetIntervalTimeForInterstitial();
             SetConsentAds(IsConsentAds);
         }
@@ -95,13 +99,17 @@ namespace VMC.Ads
         {
         }
 
+        protected virtual void I_Init()
+        {
+
+        }
 
         public void RequestBanner()
         {
             if (IsEnableAds)
-                I_RequestBanner();
+                I_ShowBanner();
         }
-        protected virtual void I_RequestBanner()
+        protected virtual void I_ShowBanner()
         {
 
         }
@@ -144,11 +152,11 @@ namespace VMC.Ads
                 return IsLoadedInterstitial;
             else return false;
         }
-        public void ShowInterstitial(Action callback)
+        public void ShowInterstitial(string placement, Action callback)
         {
             if (IsEnableAds && isCanShowInterstitial && IsLoadedInterstitial)
             {
-                I_ShowInterstitial(callback);
+                I_ShowInterstitial(placement, callback);
                 SetIntervalTimeForInterstitial();
             }
             else
@@ -156,7 +164,7 @@ namespace VMC.Ads
                 callback?.Invoke();
             }
         }
-        protected virtual void I_ShowInterstitial(Action callback)
+        protected virtual void I_ShowInterstitial(string placement, Action callback)
         {
 
         }
@@ -169,7 +177,7 @@ namespace VMC.Ads
                 isCanShowInterstitial = true;
             });
 #else
-                countDownTimeInter = MIN_TIME_SHOWITERSTIRIAL;
+            countDownTimeInter = MIN_TIME_SHOWITERSTIRIAL;
 #endif
         }
 
@@ -178,18 +186,18 @@ namespace VMC.Ads
         {
             return IsLoadedRewardedVideo;
         }
-        public void ShowRewardedVideo(Action<bool> OnSuccessed)
+        public void ShowRewardedVideo(string placement, Action<bool> OnSuccessed)
         {
             Debug.Log("VMC Show Rewarded");
             if (IsLoadedRewardedVideo)
-                I_ShowRewardedVideo(OnSuccessed);
+                I_ShowRewardedVideo(placement, OnSuccessed);
             else
             {
                 I_RequestRewardedVideo();
                 OnSuccessed?.Invoke(false);
             }
         }
-        protected virtual void I_ShowRewardedVideo(Action<bool> OnSuccessed)
+        protected virtual void I_ShowRewardedVideo(string placement, Action<bool> OnSuccessed)
         {
 
         }

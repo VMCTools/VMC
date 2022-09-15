@@ -75,7 +75,7 @@ namespace VMC.Ads
             }
         }
 #endif
-        protected override void I_RequestBanner()
+        protected override void I_ShowBanner()
         {
 #if VMC_ADMOB
             // Create a smart banner at the top of the screen.
@@ -104,7 +104,7 @@ namespace VMC.Ads
 #if VMC_ADMOB
             this.bannerPosition = posi;
 #endif
-            I_RequestBanner();
+            I_ShowBanner();
         }
         protected override void I_HideBanner()
         {
@@ -153,7 +153,7 @@ namespace VMC.Ads
         }
 #endif
 
-        protected override void I_ShowInterstitial(Action callback)
+        protected override void I_ShowInterstitial(string placement, Action callback)
         {
 #if VMC_ADMOB
             if (this.interstitial.IsLoaded())
@@ -192,7 +192,7 @@ namespace VMC.Ads
             this.rewardedAd.LoadAd(request);
 #endif
         }
-        protected override void I_ShowRewardedVideo(Action<bool> OnSuccessed)
+        protected override void I_ShowRewardedVideo(string placement, Action<bool> OnSuccessed)
         {
 #if VMC_ADMOB
             if (this.rewardedAd.IsLoaded())
