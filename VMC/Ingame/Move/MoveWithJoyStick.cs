@@ -17,9 +17,11 @@ namespace VMC.Ingame.Move
 
         private void Awake()
         {
+#if VMC_JOYSTICK
             Joystick.OnStartedDragAction += Joystick_OnStartedDragAction;
             Joystick.OnDragAction += Joystick_OnDragAction;
             Joystick.OnEndedDragAction += Joystick_OnEndedDragAction;
+#endif
         }
 
         private void Joystick_OnStartedDragAction()
