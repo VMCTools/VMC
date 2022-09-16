@@ -22,12 +22,14 @@ namespace VMC.Analystic
 
         public void Initialize()
         {
+#if VMC_ANALYZE_APPFLYER
             VMC.Settings.VMCSettingConfig config = VMC.Settings.VMCSettingConfig.LoadData();
             AF_Dev_Key = config.AF_Dev_Key;
             AF_App_Id = config.AF_App_Id;
 
             AppsFlyer.initSDK(AF_Dev_Key, AF_App_Id, this);
             AppsFlyer.startSDK();
+#endif
         }
 
         public void LogEvent(string nameEvent)
