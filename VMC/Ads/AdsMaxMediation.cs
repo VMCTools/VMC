@@ -2,41 +2,49 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
 namespace VMC.Ads
 {
-    public class AdsMaxMediation : AdsController
+    public class AdsMaxMediation : AdsMediation
     {
-        [Header("Applovin Config")]
+        [Header("ID Real")]
 #if UNITY_ANDROID
-        public string Max_SDK_Id = "YOUR_SDK_KEY_HERE";
-        public string bannerAdUnitId = "YOUR_BANNER_AD_UNIT_ID";
-        public MaxSdkBase.BannerPosition bannerPosition = MaxSdkBase.BannerPosition.BottomCenter;
-        public string interstitialAdUnitId = "YOUR_INTER_AD_UNIT_ID";
-        public string rewardedAdUnitId = "YOUR_REWARDED_AD_UNIT_ID";
+        [ReadOnly] public string maxAppID = "YOUR_OPENADS_ID_ADS_HERE";
+        [ReadOnly] public string bannerId = "YOUR_BANNER_ID_ADS_HERE";
+        [ReadOnly] public BannerAdsPosition bannerPosition;
+        [ReadOnly] public string interstitialId = "YOUR_INTERS_ID_ADS_HERE";
+        [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #elif UNITY_IOS
-        public string Max_SDK_Id = "YOUR_SDK_KEY_HERE";
-        public string bannerAdUnitId = "YOUR_BANNER_AD_UNIT_ID";
-        public MaxSdkBase.BannerPosition bannerPosition = MaxSdkBase.BannerPosition.BottomCenter;
-        public string interstitialUnitId = "YOUR_INTER_AD_UNIT_ID";
-        public string rewardedAdUnitId = "YOUR_REWARDED_AD_UNIT_ID";
-#else
-        public string Max_SDK_Id = "YOUR_SDK_KEY_HERE";
-        public string bannerAdUnitId = "YOUR_BANNER_AD_UNIT_ID";
-        public MaxSdkBase.BannerPosition bannerPosition = MaxSdkBase.BannerPosition.BottomCenter;
-        public string interstitialUnitId = "YOUR_INTER_AD_UNIT_ID";
-        public string rewardedAdUnitId = "YOUR_REWARDED_AD_UNIT_ID";
+        [ReadOnly] public string maxAppID = "YOUR_OPENADS_ID_ADS_HERE";
+        [ReadOnly] public string bannerId="YOUR_BANNER_ID_ADS_HERE";
+        [ReadOnly] public BannerAdsPosition bannerPosition;
+        [ReadOnly] public string interstitialId="YOUR_INTERS_ID_ADS_HERE";
+        [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #endif
-        private int retryInterAttempt;
-        private Action interCallback;
-
-
-        private int retryRewardedAttempt;
-        private bool gotReward = false;
-        private Action<bool> rewardedCallback;
-
-        protected override void I_Init()
+        public override void Initialize()
         {
+            base.Initialize();
+#if VMC_ADS_MAX
+            Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
+
+            this.TestMode = config.isTestMode;
+            this.adsType = config.adType;
+            if (config.isTestMode)
+            {
+                //this.openAdsId = this.openAdsIdTest;
+                //this.bannerId = this.bannerIdTest;
+                //this.interstitialId = this.interstitialIdTest;
+                //this.rewardedVideoId = this.rewardedVideoIdTest;
+            }
+            else
+            {
+                this.maxAppID = config.maxAppId;
+                this.bannerId = config.bannerId;
+                this.bannerPosition = config.bannerPosition;
+                this.interstitialId = config.interstitialId;
+                this.rewardedVideoId = config.rewardedVideoId;
+            }
             MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
             {
                 // AppLovin SDK is initialized, start loading ads
@@ -45,194 +53,192 @@ namespace VMC.Ads
                 if (adsType.HasFlag(AdsType.Interstitial))
                     InitializeInterstitialAds();
                 if (adsType.HasFlag(AdsType.RewardedVideo))
-                    InitializeRewardedAds();
+                    InitializeRewardedVideoAds();
             };
 
-            MaxSdk.SetSdkKey(Max_SDK_Id);
+            MaxSdk.SetSdkKey(maxAppID);
             MaxSdk.InitializeSdk();
+#endif
         }
-        private void InitializeBannerAds()
-        {
-            // Banners are automatically sized to 320×50 on phones and 728×90 on tablets
-            // You may call the utility method MaxSdkUtils.isTablet() to help with view sizing adjustments
-            MaxSdk.CreateBanner(bannerAdUnitId, bannerPosition);
 
+        #region BANNER
+#if VMC_ADS_MAX
+        private MaxSdkBase.BannerPosition ConvertPosition(BannerAdsPosition position = BannerAdsPosition.BOTTOM)
+        {
+            switch (position)
+            {
+                case BannerAdsPosition.BOTTOM:
+                    return MaxSdkBase.BannerPosition.BottomCenter;
+                case BannerAdsPosition.TOP:
+                    return MaxSdkBase.BannerPosition.TopCenter;
+                default:
+                    return MaxSdkBase.BannerPosition.BottomCenter;
+            }
+        }
+#endif
+        public override void InitializeBannerAds()
+        {
+            base.InitializeBannerAds();
+#if VMC_ADS_MAX
+            MaxSdk.CreateBanner(this.bannerId, ConvertPosition(this.bannerPosition));
             MaxSdkCallbacks.Banner.OnAdLoadedEvent += OnBannerAdLoadedEvent;
-            MaxSdkCallbacks.Banner.OnAdLoadFailedEvent += OnBannerAdLoadFailedEvent;
-            MaxSdkCallbacks.Banner.OnAdClickedEvent += OnBannerAdClickedEvent;
-            MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += OnBannerAdRevenuePaidEvent;
-            MaxSdkCallbacks.Banner.OnAdExpandedEvent += OnBannerAdExpandedEvent;
-            MaxSdkCallbacks.Banner.OnAdCollapsedEvent += OnBannerAdCollapsedEvent;
+#endif
         }
-        private void OnBannerAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnBannerAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo) { }
-
-        private void OnBannerAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnBannerAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnBannerAdExpandedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnBannerAdCollapsedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        protected override void I_ShowBanner()
+        public override void LoadBannerAds()
         {
-            MaxSdk.ShowBanner(bannerAdUnitId);
+            base.LoadBannerAds();
+            // do nothing
         }
-        protected override void I_HideBanner()
+        public override void ShowBannerAds(BannerAdsPosition position = BannerAdsPosition.BOTTOM)
         {
-            MaxSdk.HideBanner(bannerAdUnitId);
+            base.ShowBannerAds(position);
+#if VMC_ADS_MAX 
+            MaxSdk.ShowBanner(bannerId);
+#endif
         }
-        public void InitializeInterstitialAds()
+        public override void HideBannerAds()
         {
+            base.HideBannerAds();
+#if VMC_ADS_MAX
+            MaxSdk.HideBanner(bannerId);
+#endif
+        }
+#if VMC_ADS_MAX
+        private void OnBannerAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            this.OnLoadBannerSuccessed();
+        }
+#endif
+        #endregion
+
+        #region INTERSTITIAL
+        public override void InitializeInterstitialAds()
+        {
+            base.InitializeInterstitialAds();
+
+#if VMC_ADS_MAX
             // Attach callback
             MaxSdkCallbacks.Interstitial.OnAdLoadedEvent += OnInterstitialLoadedEvent;
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += OnInterstitialLoadFailedEvent;
-            MaxSdkCallbacks.Interstitial.OnAdDisplayedEvent += OnInterstitialDisplayedEvent;
-            MaxSdkCallbacks.Interstitial.OnAdClickedEvent += OnInterstitialClickedEvent;
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += OnInterstitialHiddenEvent;
             MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += OnInterstitialAdFailedToDisplayEvent;
 
             // Load the first interstitial
-            I_RequestInterstitial();
+            LoadInterstitialAds();
+#endif
         }
-
-        protected override void I_RequestInterstitial()
+        public override void LoadInterstitialAds()
         {
-            MaxSdk.LoadInterstitial(interstitialAdUnitId);
+            base.LoadInterstitialAds();
+#if VMC_ADS_MAX
+            MaxSdk.LoadInterstitial(interstitialId);
+#endif
         }
-        private void OnInterstitialLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        public override void ShowInterstitialAds(string placement, Action callback = null)
         {
-            // Interstitial ad is ready for you to show. MaxSdk.IsInterstitialReady(adUnitId) now returns 'true'
-            // Reset retry attempt
-            retryInterAttempt = 0;
-        }
-
-        private void OnInterstitialLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
-        {
-            // Interstitial ad failed to load 
-            // AppLovin recommends that you retry with exponentially higher delays, up to a maximum delay (in this case 64 seconds)
-
-            retryInterAttempt++;
-            double retryDelay = Math.Pow(2, Math.Min(6, retryInterAttempt));
-
-            Invoke(nameof(I_RequestInterstitial), (float)retryDelay);
-        }
-
-        private void OnInterstitialDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnInterstitialAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
-        {
-            // Interstitial ad failed to display. AppLovin recommends that you load the next ad.
-            I_RequestInterstitial();
-            AdsController.ResumeFromAds = false;
-            interCallback?.Invoke();
-        }
-
-        private void OnInterstitialClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnInterstitialHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
-        {
-            // Interstitial ad is hidden. Pre-load the next ad.
-            I_RequestInterstitial();
-            AdsController.ResumeFromAds = false;
-            interCallback?.Invoke();
-        }
-        protected override void I_ShowInterstitial(string placement, System.Action callback)
-        {
-            if (MaxSdk.IsInterstitialReady(interstitialAdUnitId))
+            base.ShowInterstitialAds(placement, callback);
+#if VMC_ADS_MAX
+            if (IsLoadedInterstitial)
             {
-                this.interCallback = callback;
-                AdsController.ResumeFromAds = true;
-                MaxSdk.ShowInterstitial(interstitialAdUnitId, placement);
+                MaxSdk.ShowInterstitial(interstitialId, placement);
             }
             else
             {
                 callback?.Invoke();
             }
+#endif
         }
-        public void InitializeRewardedAds()
+
+#if VMC_ADS_MAX
+        private void OnInterstitialLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
+            this.OnInterstititalLoadSuccessed();
+        }
+        private void OnInterstitialLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
+        {
+            this.OnInterstitialLoadFailed();
+        }
+        private void OnInterstitialAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
+        {
+            this.OnInterstitialDisplayFailed();
+        }
+        private void OnInterstitialHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            this.OnInterstitialDisplaySuccessed();
+        }
+#endif
+        #endregion
+
+        #region REWARDED
+        public override void InitializeRewardedVideoAds()
+        {
+            base.InitializeRewardedVideoAds();
+#if VMC_ADS_MAX
             // Attach callback
             MaxSdkCallbacks.Rewarded.OnAdLoadedEvent += OnRewardedAdLoadedEvent;
             MaxSdkCallbacks.Rewarded.OnAdLoadFailedEvent += OnRewardedAdLoadFailedEvent;
-            MaxSdkCallbacks.Rewarded.OnAdDisplayedEvent += OnRewardedAdDisplayedEvent;
-            MaxSdkCallbacks.Rewarded.OnAdClickedEvent += OnRewardedAdClickedEvent;
-            MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += OnRewardedAdRevenuePaidEvent;
             MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += OnRewardedAdHiddenEvent;
             MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += OnRewardedAdFailedToDisplayEvent;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += OnRewardedAdReceivedRewardEvent;
 
             // Load the first rewarded ad
-            I_RequestRewardedVideo();
+            LoadRewardedVideo();
+#endif
         }
-
-        protected override void I_RequestRewardedVideo()
+        public override void LoadRewardedVideo()
         {
-            MaxSdk.LoadRewardedAd(rewardedAdUnitId);
+            base.LoadRewardedVideo();
+#if VMC_ADS_MAX
+            MaxSdk.LoadRewardedAd(rewardedVideoId);
+#endif
         }
-        private void OnRewardedAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        public override void ShowRewardedVideo(string placement, Action<bool> callback)
         {
-            // Rewarded ad is ready for you to show. MaxSdk.IsRewardedAdReady(adUnitId) now returns 'true'.
-
-            // Reset retry attempt
-            retryRewardedAttempt = 0;
-        }
-
-        private void OnRewardedAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
-        {
-            // Rewarded ad failed to load 
-            // AppLovin recommends that you retry with exponentially higher delays, up to a maximum delay (in this case 64 seconds).
-            retryRewardedAttempt++;
-            double retryDelay = Math.Pow(2, Math.Min(6, retryRewardedAttempt));
-            Invoke(nameof(I_RequestRewardedVideo), (float)retryDelay);
-        }
-
-        private void OnRewardedAdDisplayedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnRewardedAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
-        {
-            // Rewarded ad failed to display. AppLovin recommends that you load the next ad.
-            I_RequestRewardedVideo();
-            AdsController.ResumeFromAds = false;
-            rewardedCallback?.Invoke(gotReward);
-        }
-
-        private void OnRewardedAdClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo) { }
-
-        private void OnRewardedAdHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
-        {
-            // Rewarded ad is hidden. Pre-load the next ad
-            I_RequestRewardedVideo();
-            AdsController.ResumeFromAds = false;
-            rewardedCallback?.Invoke(gotReward);
-        }
-
-        private void OnRewardedAdReceivedRewardEvent(string adUnitId, MaxSdk.Reward reward, MaxSdkBase.AdInfo adInfo)
-        {
-            // The rewarded ad displayed and the user should receive the reward.
-            this.gotReward = true;
-        }
-
-        private void OnRewardedAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
-        {
-            // Ad revenue paid. Use this callback to track user revenue.
-
-        }
-        protected override void I_ShowRewardedVideo(string placement, Action<bool> callback)
-        {
-            if (MaxSdk.IsRewardedAdReady(rewardedAdUnitId))
+            base.ShowRewardedVideo(placement, callback);
+#if VMC_ADS_MAX
+            if (MaxSdk.IsRewardedAdReady(rewardedVideoId))
             {
-                this.gotReward = false;
-                this.rewardedCallback = callback;
-                AdsController.ResumeFromAds = true;
-                MaxSdk.ShowRewardedAd(rewardedAdUnitId, placement);
+                MaxSdk.ShowRewardedAd(rewardedVideoId, placement);
             }
             else
             {
                 callback?.Invoke(false);
             }
+#endif
         }
+
+#if VMC_ADS_MAX
+        private void OnRewardedAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            // Rewarded ad is ready for you to show. MaxSdk.IsRewardedAdReady(adUnitId) now returns 'true'.
+
+            // Reset retry attempt
+            this.OnRewardedLoadSuccessed();
+        }
+        private void OnRewardedAdLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
+        {
+            // Rewarded ad failed to load 
+            // AppLovin recommends that you retry with exponentially higher delays, up to a maximum delay (in this case 64 seconds).
+            this.OnRewardedLoadFailed();
+        }
+        private void OnRewardedAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
+        {
+            // Rewarded ad failed to display. AppLovin recommends that you load the next ad.
+            this.OnRewardedDisplayFailed();
+        }
+        private void OnRewardedAdHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            // Rewarded ad is hidden. Pre-load the next ad
+            this.OnRewardedDisplaySuccessed();
+        }
+
+        private void OnRewardedAdReceivedRewardEvent(string adUnitId, MaxSdk.Reward reward, MaxSdkBase.AdInfo adInfo)
+        {
+            // The rewarded ad displayed and the user should receive the reward.
+            this.OnRewardedGotReward();
+        }
+#endif
+
+        #endregion
     }
 }

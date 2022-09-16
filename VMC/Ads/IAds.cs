@@ -4,16 +4,26 @@ namespace VMC.Ads
 {
     public interface IAds
     {
+        void Initialize();
         void SetConsentAds(bool value);
         void SetVolume(float value);
-        void RequestBanner();
-        void ShowBanner(BannerAdsPosition posi = BannerAdsPosition.BOTTOM);
-        void HideBanner();
 
-        void RequestInterstitial();
+
+        void InitializeBannerAds();
+        void LoadBannerAds();
+        void ShowBannerAds(BannerAdsPosition posi = BannerAdsPosition.BOTTOM);
+        void HideBannerAds();
+
+
+
+        void InitializeInterstitialAds();
+        void LoadInterstitialAds();
         bool IsInterstitialAvailable();
-        void ShowInterstitial(string placement, Action callback);
+        void ShowInterstitialAds(string placement, Action callback);
 
+
+        void InitializeRewardedVideoAds();
+        void LoadRewardedVideo();
         bool IsRewardVideoAvailable();
         void ShowRewardedVideo(string placement, Action<bool> OnSuccessed);
     }

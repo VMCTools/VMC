@@ -1,70 +1,96 @@
 
-#if VMC_ADMOB
+#if VMC_ADS_ADMOB
 using GoogleMobileAds.Api;
 #endif
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 using Debug = VMC.Debugger.Debug;
 
 namespace VMC.Ads
 {
-    public class AdsAdmob : AdsController
+    public class AdsAdmob : AdsMediation
     {
-        [Header("ADMOB")]
-        public string bannerId;
-        public string interstitialId;
-        public string rewardedVideoId;
+        [Header("ID Real")]
+#if UNITY_ANDROID
+        [ReadOnly] public string openAdsId = "YOUR_OPENADS_ID_ADS_HERE";
+        [ReadOnly] public string bannerId = "YOUR_BANNER_ID_ADS_HERE";
+        [ReadOnly] public string interstitialId = "YOUR_INTERS_ID_ADS_HERE";
+        [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
+#elif UNITY_IOS
+        [ReadOnly] public string openAdsId = "YOUR_OPENADS_ID_ADS_HERE";
+        [ReadOnly] public string bannerId="YOUR_BANNER_ID_ADS_HERE";
+        [ReadOnly] public string interstitialId="YOUR_INTERS_ID_ADS_HERE";
+        [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
+#endif
+#if VMC_ADS_ADMOB
 
-
+        [Header("ID TEST")]
+#if UNITY_ANDROID
+        [ReadOnly] private string openAdsIdTest = "ca-app-pub-3940256099942544/3419835294";
         [ReadOnly] private string bannerIdTest = "ca-app-pub-3940256099942544/6300978111";
         [ReadOnly] private string interstitialIdTest = "ca-app-pub-3940256099942544/1033173712";
         [ReadOnly] private string rewardedVideoIdTest = "ca-app-pub-3940256099942544/5224354917";
+#elif UNITY_IOS
+        [ReadOnly] private string openAdsIdTest = "ca-app-pub-3940256099942544/5662855259";
+        [ReadOnly] private string bannerIdTest = "ca-app-pub-3940256099942544/2934735716";
+        [ReadOnly] private string interstitialIdTest = "ca-app-pub-3940256099942544/4411468910";
+        [ReadOnly] private string rewardedVideoIdTest = "ca-app-pub-3940256099942544/1712485313";
+#endif
+        private AdsType adType;
 
-#if VMC_ADMOB
-
-        private BannerAdsPosition bannerPosition;
         private BannerView bannerView;
         private InterstitialAd interstitial;
-        private Action onCloseInterstitial;
         private RewardedAd rewardedAd;
 
-        private Action<bool> onCloseRewardedVideo;
-        private bool gotReward;
-        private bool isRewardWaiting;
-
 #endif
-
-        private void Start()
+        public override void Initialize()
         {
-#if VMC_ADMOB
+#if VMC_ADS_ADMOB
+            Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
+            if (config.isTestMode)
+            {
+                this.openAdsId = this.openAdsIdTest;
+                this.bannerId = this.bannerIdTest;
+                this.interstitialId = this.interstitialIdTest;
+                this.rewardedVideoId = this.rewardedVideoIdTest;
+            }
+            else
+            {
+                this.bannerId = config.bannerId;
+                this.interstitialId = config.interstitialId;
+                this.rewardedVideoId = config.rewardedVideoId;
+            }
+            this.adType = config.adType;
+
+            var deviceTest = new List<string> { "377807EAA67F63DF0FFE8F146CF568C7" };
+            RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().SetTestDeviceIds(deviceTest).build();
+            MobileAds.SetRequestConfiguration(requestConfiguration);
+
             MobileAds.Initialize(initStatus =>
             {
-                I_RequestRewardedVideo();
+                if (adType.HasFlag(AdsType.Banner))
+                    InitializeBannerAds();
+                if (adType.HasFlag(AdsType.Interstitial))
+                    InitializeInterstitialAds();
+                if (adType.HasFlag(AdsType.RewardedVideo))
+                    InitializeRewardedVideoAds();
             });
-
-            if (TestMode)
-            {
-                this.bannerId = bannerIdTest;
-                this.interstitialId = interstitialIdTest;
-                this.rewardedVideoId = rewardedVideoIdTest;
-            }
-
 #endif
+            base.Initialize();
         }
-        protected override void I_SetConsentAds(bool value)
-        {
 
-        }
-        protected override void I_SetVolume(float value)
+        public override void SetVolume(float value)
         {
-#if VMC_ADMOB
+            base.SetVolume(value);
+#if VMC_ADS_ADMOB
             MobileAds.SetApplicationVolume(value);
 #endif
         }
 
         #region BANNER
-#if VMC_ADMOB
+#if VMC_ADS_ADMOB
         private AdPosition GetAdPosition(BannerAdsPosition posi)
         {
             switch (posi)
@@ -75,48 +101,74 @@ namespace VMC.Ads
             }
         }
 #endif
-        protected override void I_ShowBanner()
+        public override void InitializeBannerAds()
         {
-#if VMC_ADMOB
+            base.InitializeBannerAds();
+            //LoadBannerAds();
+        }
+        public override void LoadBannerAds()
+        {
+            base.LoadBannerAds();
+#if VMC_ADS_ADMOB
+
+            if (this.bannerView != null)
+                this.bannerView.Destroy();
             // Create a smart banner at the top of the screen.
             this.bannerView = new BannerView(bannerId, AdSize.SmartBanner, GetAdPosition(bannerPosition));
 
             // Called when an ad request has successfully loaded.
             this.bannerView.OnAdLoaded += this.bannerView_OnAdLoaded;
 
-
             // Create an empty ad request.
             AdRequest request = new AdRequest.Builder().Build();
             // Load the banner with the request.
             this.bannerView.LoadAd(request);
+            Debug.LogError("load");
 #endif
         }
-
-#if VMC_ADMOB
+        public override void ShowBannerAds(BannerAdsPosition posi = BannerAdsPosition.BOTTOM)
+        {
+            base.ShowBannerAds(posi);
+#if VMC_ADS_ADMOB
+            if (bannerView != null)
+            {
+                bannerView.Show();
+            }
+            else
+            {
+                Debug.LogError("reload");
+                LoadBannerAds();
+            }
+#endif
+        }
+        public override void HideBannerAds()
+        {
+            base.HideBannerAds();
+#if VMC_ADS_ADMOB
+            if (bannerView != null)
+                bannerView.Hide();
+#endif
+        }
+#if VMC_ADS_ADMOB
         private void bannerView_OnAdLoaded(object sender, EventArgs args)
         {
-            if (!isShowingBanner) bannerView.Hide();
+            this.OnLoadBannerSuccessed();
         }
 #endif
-
-        protected override void I_ShowBanner(BannerAdsPosition posi = BannerAdsPosition.BOTTOM)
-        {
-#if VMC_ADMOB
-            this.bannerPosition = posi;
-#endif
-            I_ShowBanner();
-        }
-        protected override void I_HideBanner()
-        {
-#if VMC_ADMOB
-            bannerView.Hide();
-#endif
-        }
         #endregion
+
+
+
         #region INTERSTITIAL
-        protected override void I_RequestInterstitial()
+        public override void InitializeInterstitialAds()
         {
-#if VMC_ADMOB
+            base.InitializeInterstitialAds();
+            LoadInterstitialAds();
+        }
+        public override void LoadInterstitialAds()
+        {
+            base.LoadInterstitialAds();
+#if VMC_ADS_ADMOB
             // Initialize an InterstitialAd.
             this.interstitial = new InterstitialAd(interstitialId);
 
@@ -126,6 +178,8 @@ namespace VMC.Ads
             this.interstitial.OnAdFailedToLoad += interstitial_OnAdFailedToLoad;
             // Called when the ad is closed.
             this.interstitial.OnAdClosed += interstitial_OnAdClosed;
+            // Called when the ad is failed to show.
+            this.interstitial.OnAdFailedToShow += Interstitial_OnAdFailedToShow;
 
             // Create an empty ad request.
             AdRequest request = new AdRequest.Builder().Build();
@@ -133,32 +187,17 @@ namespace VMC.Ads
             this.interstitial.LoadAd(request);
 #endif
         }
-
-#if VMC_ADMOB
-        private void intersitial_OnAdLoaded(object sender, EventArgs args)
+        public override void ShowInterstitialAds(string placement, Action callback)
         {
-            Debug.Log("[ADMOB-Intersitial]", "Loaded!");
-            IsLoadedInterstitial = true;
-        }
-        private void interstitial_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
-        {
-            Debug.Log("[ADMOB-Intersitial]", "Failed to load intersitital ads. " + args.LoadAdError.GetMessage());
-            IsLoadedInterstitial = false;
-        }
-        private void interstitial_OnAdClosed(object sender, EventArgs args)
-        {
-            Debug.Log("[ADMOB-Intersitial]", "Closed Ads!");
-            onCloseInterstitial?.Invoke();
-            I_RequestInterstitial();
-        }
-#endif
-
-        protected override void I_ShowInterstitial(string placement, Action callback)
-        {
-#if VMC_ADMOB
-            if (this.interstitial.IsLoaded())
+            base.ShowInterstitialAds(placement, callback);
+#if VMC_ADS_ADMOB
+            if (this.interstitial == null)
             {
-                onCloseInterstitial = callback;
+                LoadInterstitialAds();
+                callback?.Invoke();
+            }
+            else if (this.interstitial.IsLoaded())
+            {
                 this.interstitial.Show();
             }
             else
@@ -167,11 +206,40 @@ namespace VMC.Ads
             }
 #endif
         }
+
+#if VMC_ADS_ADMOB
+        private void intersitial_OnAdLoaded(object sender, EventArgs args)
+        {
+            Debug.Log("[ADMOB-Intersitial]", "Loaded!");
+            this.OnInterstititalLoadSuccessed();
+        }
+        private void interstitial_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+        {
+            Debug.Log("[ADMOB-Intersitial]", "Failed to load intersitital ads. " + args.LoadAdError.GetMessage());
+            this.OnInterstitialLoadFailed();
+        }
+        private void interstitial_OnAdClosed(object sender, EventArgs args)
+        {
+            Debug.Log("[ADMOB-Intersitial]", "Closed Ads!");
+            this.OnInterstitialDisplaySuccessed();
+        }
+        private void Interstitial_OnAdFailedToShow(object sender, AdErrorEventArgs e)
+        {
+            Debug.Log("[ADMOB-Intersitial]", "Failed to show Ads!");
+            this.OnInterstitialDisplayFailed();
+        }
+#endif
         #endregion
         #region REWARDED VIDEO
-        protected override void I_RequestRewardedVideo()
+        public override void InitializeRewardedVideoAds()
         {
-#if VMC_ADMOB
+            base.InitializeRewardedVideoAds();
+            LoadRewardedVideo();
+        }
+        public override void LoadRewardedVideo()
+        {
+            base.LoadRewardedVideo();
+#if VMC_ADS_ADMOB
             this.rewardedAd = new RewardedAd(rewardedVideoId);
 
             // Called when an ad request has successfully loaded.
@@ -192,65 +260,48 @@ namespace VMC.Ads
             this.rewardedAd.LoadAd(request);
 #endif
         }
-        protected override void I_ShowRewardedVideo(string placement, Action<bool> OnSuccessed)
+        public override void ShowRewardedVideo(string placement, Action<bool> callback)
         {
-#if VMC_ADMOB
+            base.ShowRewardedVideo(placement, callback);
+#if VMC_ADS_ADMOB
             if (this.rewardedAd.IsLoaded())
             {
-                this.onCloseRewardedVideo = OnSuccessed;
-                this.gotReward = false;
-                this.isRewardWaiting = true;
                 this.rewardedAd.Show();
             }
             else
             {
-                OnSuccessed?.Invoke(false);
+                callback?.Invoke(false);
             }
 #else
-                OnSuccessed?.Invoke(false);
+            callback?.Invoke(false);
 #endif
         }
 
-#if VMC_ADMOB
+#if VMC_ADS_ADMOB
         private void RewardedAd_OnAdLoaded(object sender, EventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Loaded!");
-            IsLoadedRewardedVideo = true;
+            this.OnRewardedLoadSuccessed();
         }
         private void RewardedAd_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to load RewardedVideo ads. " + e.LoadAdError.GetMessage());
-            IsLoadedInterstitial = false;
+            this.OnRewardedLoadFailed();
         }
         private void RewardedAd_OnAdFailedToShow(object sender, AdErrorEventArgs args)
         {
-
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to show RewardedVideo ads. " + args.AdError.GetMessage());
-            gotReward = false;
-            onCloseRewardedVideo?.Invoke(gotReward);
+            this.OnRewardedDisplayFailed();
         }
         private void RewardedAd_OnAdClosed(object sender, EventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Close Ads");
-            //onCloseRewardedVideo?.Invoke(gotReward);
-            I_RequestRewardedVideo();
+            this.OnRewardedDisplaySuccessed();
         }
         private void RewardedAd_OnUserEarnedReward(object sender, Reward args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
-            gotReward = true;
-            //onCloseRewardedVideo?.Invoke(gotReward);
-        }
-        private void OnApplicationPause(bool isPaused)
-        {
-            if (!isPaused)
-            {
-                if (isRewardWaiting)
-                {
-                    onCloseRewardedVideo?.Invoke(gotReward);
-                    isRewardWaiting = false;
-                }
-            }
+            this.OnRewardedGotReward();
         }
 #endif
         #endregion

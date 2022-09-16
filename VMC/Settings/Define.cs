@@ -4,16 +4,21 @@
     {
         VMC_DOTWEEN,
         VMC_NOTIFICATION,
-        VMC_ADS,
-        VMC_ADS_GLEY,
-        VMC_ADS_UNITY,
-        VMC_FACEBOOK,
-        VMC_FIREBASE,
-        VMC_ANALYZE,
-        VMC_ANALYZE_APPFLYER,
+        VMC_IAP,
+
+
+        ///ADS
+        VMC_ADS_ADMOB,
+        VMC_ADS_MAX,
+
+        /// ANALYTICS
         VMC_ANALYZE_FIREBASE,
-        VMC_ANALYZE_FACEBOOK,
-        VMC_ANALYZE_UNITY,
-        VMC_IAP
+        VMC_ANALYZE_APPFLYER,
+
+        /// DEBUG
+        VMC_DEBUG_NORMAL,
+        VMC_DEBUG_WARNING,
+        VMC_DEBUG_ERROR,
+        VMC_DEBUG_ASSERT
     }
 }

@@ -11,7 +11,9 @@ namespace VMC.UI
     {
         [SerializeField] private Image imgBlack;
         [SerializeField] private GameObject boundPopup;
+#if VMC_DOTWEEN
         [SerializeField] private float timeShow = 0.3f;
+#endif
         [SerializeField] private float fadeColor = 0.8f;
         [SerializeField] protected Button btnClose;
 
