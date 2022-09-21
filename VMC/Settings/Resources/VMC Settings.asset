@@ -25,8 +25,8 @@ MonoBehaviour:
   interstitialId: YOUR_INTERS_ID_ADS_HERE
   rewardedVideoId: YOUR_REWARDED_ID_ADS_HERE
   enableAnalyze: 1
-  analyzeLibrary: 1
-  AF_Dev_Key: 321
+  analyzeLibrary: -1
+  AF_Dev_Key: 
   AF_App_Id: 
   enableDebugLog: 1
   debugLogLevel: -1

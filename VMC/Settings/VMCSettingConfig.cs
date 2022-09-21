@@ -6,12 +6,9 @@ using UnityEngine;
 
 namespace VMC.Settings
 {
-    [SerializeField]
     [CreateAssetMenu(fileName = "VMC Settings", menuName = "VMC/Setting")]
     public class VMCSettingConfig : ScriptableObject
     {
-        private const string pathFile = "VMC_Settings.json";
-
         [Header("Ads Config")]
         public bool enableAds = false;
         public Ads.AdsType adType;
@@ -39,9 +36,6 @@ namespace VMC.Settings
         public string interstitialId="YOUR_INTERS_ID_ADS_HERE";
         public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #endif
-
-
-
         [Header("Analytics Config")]
         public bool enableAnalyze = false;
         public AnalyzeLibrary analyzeLibrary;
@@ -130,9 +124,6 @@ namespace VMC.Settings
                 defines.Remove(Define.VMC_ANALYZE_APPFLYER.ToString());
             }
             #endregion
-
-
-
             #region Debug log check
             if (enableDebugLog && debugLogLevel.HasFlag(DebugLogLevel.Debug))
             {
@@ -200,7 +191,7 @@ namespace VMC.Settings
 
             Save();
         }
-
+       
     }
 
     [Flags]
