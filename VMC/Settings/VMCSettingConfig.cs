@@ -7,7 +7,8 @@ using UnityEngine;
 namespace VMC.Settings
 {
     [SerializeField]
-    public class VMCSettingConfig
+    [CreateAssetMenu(fileName = "VMC Settings", menuName = "VMC/Setting")]
+    public class VMCSettingConfig : ScriptableObject
     {
         private const string pathFile = "VMC_Settings.json";
 
@@ -68,17 +69,32 @@ namespace VMC.Settings
 
         public static VMCSettingConfig LoadData()
         {
-            string path = Path.Combine(Application.persistentDataPath, pathFile);
-            if (File.Exists(path))
-            {
-                string json = File.ReadAllText(path);
-                return JsonUtility.FromJson<VMCSettingConfig>(json);
-            }
-            return new VMCSettingConfig();
+            //string path = Path.Combine(Application.persistentDataPath, pathFile);
+            //if (File.Exists(path))
+            //{
+            //    string json = File.ReadAllText(path);
+            //    return JsonUtility.FromJson<VMCSettingConfig>(json);
+            //}
+            //return new VMCSettingConfig();
+          return Resources.Load<VMCSettingConfig>("VMC Settings");
+        }
+        public void Save()
+        {
+            //string json = JsonUtility.ToJson(this);
+            //File.WriteAllText(Path.Combine(Application.persistentDataPath, pathFile), json); 
         }
         public void Changes(ref HashSet<string> defines)
         {
             #region Ads check
+            if (enableAds && isTestMode)
+            {
+                defines.Add(Define.VMC_ADS_TESTMODE.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_ADS_TESTMODE.ToString());
+            }
+
             if (enableAds && adsLibrary.HasFlag(AdsLibrary.Admob))
             {
                 defines.Add(Define.VMC_ADS_ADMOB.ToString());
@@ -96,9 +112,6 @@ namespace VMC.Settings
                 defines.Remove(Define.VMC_ADS_MAX.ToString());
             }
             #endregion
-
-
-
             #region Analytics check
             if (enableAnalyze && analyzeLibrary.HasFlag(AnalyzeLibrary.Firebase))
             {
@@ -188,11 +201,6 @@ namespace VMC.Settings
             Save();
         }
 
-        public void Save()
-        {
-            string json = JsonUtility.ToJson(this);
-            File.WriteAllText(Path.Combine(Application.persistentDataPath, pathFile), json);
-        }
     }
 
     [Flags]

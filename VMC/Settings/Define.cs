@@ -8,6 +8,7 @@
 
 
         ///ADS
+        VMC_ADS_TESTMODE,
         VMC_ADS_ADMOB,
         VMC_ADS_MAX,
 

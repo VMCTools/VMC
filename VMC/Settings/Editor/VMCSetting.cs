@@ -137,6 +137,7 @@ namespace VMC.Settings
 
             // Check defines
             config.Changes(ref defines);
+            AssetDatabase.ImportAsset("VMC Settings");
             // End check defines
 
 

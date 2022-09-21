@@ -12,6 +12,7 @@ namespace VMC.Ads
 {
     public class AdsAdmob : AdsMediation
     {
+#if VMC_ADS_ADMOB
         [Header("ID Real")]
 #if UNITY_ANDROID
         [ReadOnly] public string openAdsId = "YOUR_OPENADS_ID_ADS_HERE";
@@ -24,7 +25,6 @@ namespace VMC.Ads
         [ReadOnly] public string interstitialId="YOUR_INTERS_ID_ADS_HERE";
         [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #endif
-#if VMC_ADS_ADMOB
 
         [Header("ID TEST")]
 #if UNITY_ANDROID
@@ -38,8 +38,6 @@ namespace VMC.Ads
         [ReadOnly] private string interstitialIdTest = "ca-app-pub-3940256099942544/4411468910";
         [ReadOnly] private string rewardedVideoIdTest = "ca-app-pub-3940256099942544/1712485313";
 #endif
-        private AdsType adType;
-
         private BannerView bannerView;
         private InterstitialAd interstitial;
         private RewardedAd rewardedAd;
@@ -49,20 +47,17 @@ namespace VMC.Ads
         {
 #if VMC_ADS_ADMOB
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
-            if (config.isTestMode)
-            {
+#if VMC_ADS_TESTMODE
                 this.openAdsId = this.openAdsIdTest;
                 this.bannerId = this.bannerIdTest;
                 this.interstitialId = this.interstitialIdTest;
                 this.rewardedVideoId = this.rewardedVideoIdTest;
-            }
-            else
-            {
-                this.bannerId = config.bannerId;
-                this.interstitialId = config.interstitialId;
-                this.rewardedVideoId = config.rewardedVideoId;
-            }
-            this.adType = config.adType;
+#else
+            this.bannerId = config.bannerId;
+            this.interstitialId = config.interstitialId;
+            this.rewardedVideoId = config.rewardedVideoId;
+#endif
+            this.adsType = config.adType;
 
             var deviceTest = new List<string> { "377807EAA67F63DF0FFE8F146CF568C7" };
             RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().SetTestDeviceIds(deviceTest).build();
@@ -70,11 +65,11 @@ namespace VMC.Ads
 
             MobileAds.Initialize(initStatus =>
             {
-                if (adType.HasFlag(AdsType.Banner))
+                if (adsType.HasFlag(AdsType.Banner))
                     InitializeBannerAds();
-                if (adType.HasFlag(AdsType.Interstitial))
+                if (adsType.HasFlag(AdsType.Interstitial))
                     InitializeInterstitialAds();
-                if (adType.HasFlag(AdsType.RewardedVideo))
+                if (adsType.HasFlag(AdsType.RewardedVideo))
                     InitializeRewardedVideoAds();
             });
 #endif
@@ -123,7 +118,6 @@ namespace VMC.Ads
             AdRequest request = new AdRequest.Builder().Build();
             // Load the banner with the request.
             this.bannerView.LoadAd(request);
-            Debug.LogError("load");
 #endif
         }
         public override void ShowBannerAds(BannerAdsPosition posi = BannerAdsPosition.BOTTOM)
@@ -136,7 +130,6 @@ namespace VMC.Ads
             }
             else
             {
-                Debug.LogError("reload");
                 LoadBannerAds();
             }
 #endif

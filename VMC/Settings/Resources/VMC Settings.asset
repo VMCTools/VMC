@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f84f1c5675a45264f98cf58604a8dd62, type: 3}
+  m_Name: VMC Settings
+  m_EditorClassIdentifier: 
+  enableAds: 1
+  adType: 14
+  adsLibrary: 1
+  isTestMode: 1
+  maxAppId: YOUR_APP_ID_HERE
+  openAdsId_Tier1: YOUR_OPENADS_ID_ADS_HERE
+  openAdsId_Tier2: YOUR_OPENADS_ID_ADS_HERE
+  openAdsId_Tier3: YOUR_OPENADS_ID_ADS_HERE
+  bannerId: YOUR_BANNER_ID_ADS_HERE
+  bannerPosition: 0
+  interstitialId: YOUR_INTERS_ID_ADS_HERE
+  rewardedVideoId: YOUR_REWARDED_ID_ADS_HERE
+  enableAnalyze: 1
+  analyzeLibrary: 1
+  AF_Dev_Key: 321
+  AF_App_Id: 
+  enableDebugLog: 1
+  debugLogLevel: -1
+  isUsingDoTween: 1
+  isUsingIAP: 0
+  isUsingLocalNotification: 0
