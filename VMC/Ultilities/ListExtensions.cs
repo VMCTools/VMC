@@ -9,6 +9,7 @@ namespace VMC.Ultilities
     {
         public static string ToString<T>(this List<T> list)
         {
+            if (list == null) return string.Empty;
             StringBuilder builder = new StringBuilder();
             builder.Append("{");
             for (int i = 0; i < list.Count; i++)
