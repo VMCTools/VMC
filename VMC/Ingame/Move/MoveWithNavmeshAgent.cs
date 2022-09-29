@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,7 +17,7 @@ namespace VMC.Ingame.Move
                 return _agent;
             }
         }
-
+        public Vector3 targetPos;
 
         public override float Speed => navmeshAgent.velocity.magnitude;
         public override bool IsComplete()
@@ -28,22 +29,19 @@ namespace VMC.Ingame.Move
             base.SetSpeed(speed);
             navmeshAgent.speed = this.speed;
         }
+        public override void SetPosition(Vector3 position)
+        {
+            //navmeshAgent.SetDestination(position);
+            //navmeshAgent.nextPosition = position;
+            navmeshAgent.Warp(position);
+        }
         public override void MoveTo(Vector3 targetPosition)
         {
-            navmeshAgent.destination = targetPosition;
+            this.targetPos = targetPosition;
+            navmeshAgent.SetDestination(targetPosition);
             navmeshAgent.isStopped = false;
             isMoving = true;
-
-            var navmeshPath = new NavMeshPath();
-            //navmeshPath.
         }
-        //private void Update()
-        //{
-        //    if (isMoving)
-        //    {
-        //        transform.position += navmeshAgent.desiredVelocity.normalized * navmeshAgent.speed * Time.deltaTime;
-        //    }
-        //}
         public override void Pause()
         {
             navmeshAgent.isStopped = true;

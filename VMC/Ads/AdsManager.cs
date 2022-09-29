@@ -9,10 +9,9 @@ namespace VMC.Ads
     {
         [SerializeField, ReadOnly] private bool enableAds;
         [SerializeField, ReadOnly] private AdsMediation ads;
-        protected override void Awake()
-        {
-            base.Awake();
 
+        private void Start()
+        {
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
             this.enableAds = config.enableAds;
             if (config.enableAds)
@@ -37,7 +36,6 @@ namespace VMC.Ads
                 }
             }
         }
-
         private bool CheckValidate()
         {
             if (!enableAds)

@@ -32,7 +32,11 @@ namespace VMC.Ingame.Move
         public virtual void SetSpeed(float speed)
         {
             this.speed = speed;
-        }    
+        }
+        public virtual void SetPosition(Vector3 position)
+        {
+            transform.position = position;
+        }
 
         public virtual void MoveTo(Vector3 destination)
         {

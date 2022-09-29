@@ -10,7 +10,6 @@ namespace VMC.Analystic
         private List<IAnalystic> analytics = new List<IAnalystic>();
         private void Start()
         {
-
 #if VMC_ANALYZE_APPFLYER
             var appflyer = (new GameObject("AppsFlyer Analytics")).AddComponent<AppsFlyerAnalystic>();
             appflyer.transform.SetParent(this.transform);

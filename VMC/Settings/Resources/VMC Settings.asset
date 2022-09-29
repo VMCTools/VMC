@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f84f1c5675a45264f98cf58604a8dd62, type: 3}
   m_Name: VMC Settings
   m_EditorClassIdentifier: 
-  enableAds: 1
+  enableAds: 0
   adType: 14
   adsLibrary: 1
   isTestMode: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
   bannerPosition: 0
   interstitialId: YOUR_INTERS_ID_ADS_HERE
   rewardedVideoId: YOUR_REWARDED_ID_ADS_HERE
-  enableAnalyze: 1
+  enableAnalyze: 0
   analyzeLibrary: -1
   AF_Dev_Key: 
   AF_App_Id: 
