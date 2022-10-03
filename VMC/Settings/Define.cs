@@ -20,6 +20,11 @@
         VMC_DEBUG_NORMAL,
         VMC_DEBUG_WARNING,
         VMC_DEBUG_ERROR,
-        VMC_DEBUG_ASSERT
+        VMC_DEBUG_ASSERT,
+
+
+
+
+        VMC_ADDRESSABLE,
     }
 }

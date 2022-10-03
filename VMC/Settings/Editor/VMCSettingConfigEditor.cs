@@ -41,7 +41,7 @@ namespace VMC.Settings
         SerializedProperty isUsingDoTween;
         SerializedProperty isUsingIAP;
         SerializedProperty isUsingLocalNotification;
-
+        SerializedProperty isUsingAddressable;
 
         void OnEnable()
         {
@@ -72,6 +72,7 @@ namespace VMC.Settings
             isUsingDoTween = serializedObject.FindProperty("isUsingDoTween");
             isUsingIAP = serializedObject.FindProperty("isUsingIAP");
             isUsingLocalNotification = serializedObject.FindProperty("isUsingLocalNotification");
+            isUsingAddressable = serializedObject.FindProperty("isUsingAddressable");
 
         }
         public override void OnInspectorGUI()
@@ -137,6 +138,7 @@ namespace VMC.Settings
             EditorGUILayout.PropertyField(isUsingDoTween);
             EditorGUILayout.PropertyField(isUsingIAP);
             EditorGUILayout.PropertyField(isUsingLocalNotification);
+            EditorGUILayout.PropertyField(isUsingAddressable);
             GUILayout.Space(20);
 
 
@@ -284,6 +286,14 @@ namespace VMC.Settings
             else
             {
                 defines.Remove(Define.VMC_NOTIFICATION.ToString());
+            }
+            if (isUsingAddressable.boolValue)
+            {
+                defines.Add(Define.VMC_ADDRESSABLE.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_ADDRESSABLE.ToString());
             }
         }
 

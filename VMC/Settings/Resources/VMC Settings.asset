@@ -33,3 +33,4 @@ MonoBehaviour:
   isUsingDoTween: 1
   isUsingIAP: 0
   isUsingLocalNotification: 0
+  isUsingAddressable: 1

@@ -60,6 +60,7 @@ namespace VMC.Settings
         public bool isUsingDoTween = true;
         public bool isUsingIAP = false;
         public bool isUsingLocalNotification = false;
+        public bool isUsingAddressable = false;
 
         public static VMCSettingConfig LoadData()
         {
