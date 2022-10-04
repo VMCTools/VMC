@@ -10,6 +10,7 @@ namespace VMC.Examples
     public class TestSDK : MonoBehaviour
     {
         [SerializeField] private Button[] btns;
+        [SerializeField] private Text txtMess;
         private void Start()
         {
             if (btns.Length > 0)
@@ -17,6 +18,7 @@ namespace VMC.Examples
                 btns[0].GetComponentInChildren<Text>().text = "Show Banner";
                 btns[0].onClick.AddListener(() =>
                 {
+                    txtMess.text = "Show Banner";
                     AdsManager.Instance.ShowBanner();
                 });
             }
@@ -25,6 +27,7 @@ namespace VMC.Examples
                 btns[1].GetComponentInChildren<Text>().text = "Hide Banner";
                 btns[1].onClick.AddListener(() =>
                 {
+                    txtMess.text = "Hide Banner";
                     AdsManager.Instance.HideBanner();
                 });
             }
@@ -33,8 +36,10 @@ namespace VMC.Examples
                 btns[2].GetComponentInChildren<Text>().text = "Show Inters";
                 btns[2].onClick.AddListener(() =>
                 {
+                    txtMess.text = "Show Inter";
                     AdsManager.Instance.ShowInterstitial("Test", () =>
                     {
+                        txtMess.text += "\nShow Inter Complete";
                         Debug.Log("Close inters");
                     });
                 });
@@ -44,8 +49,10 @@ namespace VMC.Examples
                 btns[3].GetComponentInChildren<Text>().text = "Show Rewarded";
                 btns[3].onClick.AddListener(() =>
                 {
+                    txtMess.text = "Show Rewarded";
                     AdsManager.Instance.ShowRewardedVideo("Test", (result) =>
                     {
+                        txtMess.text += "\nShow Rewarded callback: "+ result;
                         Debug.Log("Close rewarded and got reward? " + result);
                     });
                 });

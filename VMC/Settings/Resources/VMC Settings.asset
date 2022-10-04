@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: VMC Settings
   m_EditorClassIdentifier: 
   enableAds: 0
-  adType: 14
-  adsLibrary: 1
+  adType: 0
+  adsLibrary: 0
   isTestMode: 1
   maxAppId: YOUR_APP_ID_HERE
   openAdsId_Tier1: YOUR_OPENADS_ID_ADS_HERE
@@ -28,9 +28,9 @@ MonoBehaviour:
   analyzeLibrary: -1
   AF_Dev_Key: 
   AF_App_Id: 
-  enableDebugLog: 1
+  enableDebugLog: 0
   debugLogLevel: -1
   isUsingDoTween: 1
   isUsingIAP: 0
   isUsingLocalNotification: 0
-  isUsingAddressable: 1
+  isUsingAddressable: 0

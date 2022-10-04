@@ -41,17 +41,17 @@ namespace VMC.Ads
         private BannerView bannerView;
         private InterstitialAd interstitial;
         private RewardedAd rewardedAd;
-
+        private bool isLeavingByRewarded;
 #endif
         public override void Initialize()
         {
 #if VMC_ADS_ADMOB
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
 #if VMC_ADS_TESTMODE
-                this.openAdsId = this.openAdsIdTest;
-                this.bannerId = this.bannerIdTest;
-                this.interstitialId = this.interstitialIdTest;
-                this.rewardedVideoId = this.rewardedVideoIdTest;
+            this.openAdsId = this.openAdsIdTest;
+            this.bannerId = this.bannerIdTest;
+            this.interstitialId = this.interstitialIdTest;
+            this.rewardedVideoId = this.rewardedVideoIdTest;
 #else
             this.bannerId = config.bannerId;
             this.interstitialId = config.interstitialId;
@@ -260,6 +260,7 @@ namespace VMC.Ads
             if (this.rewardedAd.IsLoaded())
             {
                 this.rewardedAd.Show();
+                isLeavingByRewarded = true;
             }
             else
             {
@@ -284,6 +285,7 @@ namespace VMC.Ads
         private void RewardedAd_OnAdFailedToShow(object sender, AdErrorEventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to show RewardedVideo ads. " + args.AdError.GetMessage());
+            isLeavingByRewarded = false;
             this.OnRewardedDisplayFailed();
         }
         private void RewardedAd_OnAdClosed(object sender, EventArgs args)
@@ -295,6 +297,21 @@ namespace VMC.Ads
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
             this.OnRewardedGotReward();
+#if UNITY_EDITOR
+            isLeavingByRewarded = false;
+            this.OnRewardedDisplaySuccessed();
+#endif
+        }
+        private void OnApplicationFocus(bool focus)
+        {
+            if (focus)
+            {
+                if (isLeavingByRewarded)
+                {
+                    isLeavingByRewarded = false;
+                    this.OnRewardedDisplaySuccessed();
+                }
+            }
         }
 #endif
         #endregion
