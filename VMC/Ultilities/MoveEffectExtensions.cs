@@ -26,7 +26,7 @@ namespace VMC.Ultilities
             if (distance < 3) distance = 3;
             Vector3 middle = (startPoint + endPoint) / 2 + Vector3.up * (distance / 2);
 
-            transform.DORotate(Vector3.one * 360, timeMove, RotateMode.FastBeyond360);
+            transform.DORotate(Vector3.one * UnityEngine.Random.Range(180, 720), timeMove, RotateMode.FastBeyond360);
             transform.DOPath(new Vector3[] { startPoint, middle, endPoint }, timeMove, PathType.CatmullRom).OnComplete(() =>
             {
                 callback?.Invoke();

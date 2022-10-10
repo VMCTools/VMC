@@ -65,14 +65,38 @@ namespace VMC.Ads
 
         public void ShowInterstitial(string placement, Action closeCallback)
         {
-            if (!CheckValidate()) return;
+            if (!CheckValidate())
+            {
+#if UNITY_EDITOR
+                VMC.Debugger.Debug.Log("[ADS]", "UnityEditor Fake Show interstitial");
+                closeCallback?.Invoke();
+                return;
+#else
+                return;
+#endif
+            }
             VMC.Debugger.Debug.Log("[ADS]", "Show interstitial");
             ads.ShowInterstitialAds(placement, closeCallback);
         }
 
         public void ShowRewardedVideo(string placement, Action<bool> rewardedCallback)
         {
-            if (!CheckValidate()) return;
+            if (!CheckValidate())
+            {
+#if UNITY_EDITOR
+                VMC.Debugger.Debug.Log("[ADS]", "UnityEditor Fake Show rewardedVideo");
+                rewardedCallback?.Invoke(true);
+                return;
+#else
+                if(Debug.isDebugBuild)
+                {
+                    VMC.Debugger.Debug.Log("[ADS]", "UnityDebugBuild Fake Show rewardedVideo");
+                    rewardedCallback?.Invoke(true);
+                    return;
+                }
+                return;
+#endif
+            }
             VMC.Debugger.Debug.Log("[ADS]", "Show rewarded video");
             ads.ShowRewardedVideo(placement, rewardedCallback);
         }

@@ -23,18 +23,27 @@ namespace VMC.Sound
         protected override void Awake()
         {
             base.Awake();
-            UpdateSetting();
-        }
-        private void Start()
-        {
-            foreach (var item in keys)
+            if (Instance == this)
             {
-                if (!listAudios.ContainsKey(item.Key))
-                    listAudios.Add(item.Key, item.Clip);
-            }
+                Set_EnableSound(PlayerPrefsHelper.Get(KEY_SETTING_SOUND, true));
+                Set_EnableMusic(PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true));
+                foreach (var item in keys)
+                {
+                    if (!listAudios.ContainsKey(item.Key))
+                        listAudios.Add(item.Key, item.Clip);
+                }
+#if !UNITY_EDITOR
             keys = null;
+#endif
+            }
         }
-        public void Set_EnableSound(bool isEnable)
+
+        public static void EnableSound(bool isEnable)
+        {
+            if (Instance == null) return;
+            Instance.Set_EnableSound(isEnable);
+        }
+        private void Set_EnableSound(bool isEnable)
         {
             isEnableSound = isEnable;
             PlayerPrefsHelper.Set(KEY_SETTING_SOUND, isEnableSound);
@@ -43,7 +52,12 @@ namespace VMC.Sound
                 sound.mute = !isEnableSound;
             }
         }
-        public void Set_EnableMusic(bool isEnable)
+        public static void EnableMusic(bool isEnable)
+        {
+            if (Instance == null) return;
+            Instance.Set_EnableMusic(isEnable);
+        }
+        private void Set_EnableMusic(bool isEnable)
         {
             isEnableMusic = isEnable;
             PlayerPrefsHelper.Set(KEY_SETTING_MUSIC, isEnableMusic);
@@ -53,7 +67,12 @@ namespace VMC.Sound
             }
         }
 
-        public void PlayMusic(string key)
+        public static void PlayMusic(string key, float volume = 0.4f)
+        {
+            if (Instance == null) return;
+            Instance._PlayMusic(key, volume);
+        }
+        private void _PlayMusic(string key, float volume = 0.4f)
         {
             if (!listAudios.ContainsKey(key))
             {
@@ -67,14 +86,20 @@ namespace VMC.Sound
                 myMusic = musicObject.AddComponent<AudioSource>();
 
                 myMusic.loop = true;
-                myMusic.volume = 0.4f;
+                myMusic.volume = volume;
                 myMusic.mute = !isEnableMusic;
             }
 
             myMusic.clip = listAudios[key];
             myMusic.Play();
         }
-        public void PlaySound(string key, bool isLoop = false)
+        public static void PlaySound(string key, float volume = 1f, bool isLoop = false)
+        {
+            if (Instance == null)
+                return;
+            Instance._PlaySound(key, volume, isLoop);
+        }
+        private void _PlaySound(string key, float volume, bool isLoop = false)
         {
             if (!isEnableSound)
                 return;
@@ -104,18 +129,19 @@ namespace VMC.Sound
 
                 mySounds.Add(mySound);
             }
+            mySound.volume = Mathf.Clamp01(volume);
             mySound.loop = isLoop;
             mySound.clip = listAudios[key];
             mySound.Play();
         }
 
-        internal void UpdateSetting()
+        public static void StopSound(string key)
         {
-            Set_EnableSound(PlayerPrefsHelper.Get(KEY_SETTING_SOUND, true));
-            Set_EnableMusic(PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true));
+            if (Instance == null)
+                return;
+            Instance._StopSound(key);
         }
-
-        public void StopSound(string key)
+        private void _StopSound(string key)
         {
             if (!listAudios.ContainsKey(key))
             {
