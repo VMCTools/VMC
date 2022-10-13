@@ -56,5 +56,13 @@ namespace VMC.Ingame.Move
             navmeshAgent.isStopped = true;
             base.Stop();
         }
+
+        public bool DestinationOnNavMesh(Vector3 checkPos)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(checkPos, out hit, 1f, NavMesh.AllAreas))
+                return true;
+            return false;
+        }
     }
 }

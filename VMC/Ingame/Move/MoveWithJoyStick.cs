@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 using VMC.Ultilities;
 
 namespace VMC.Ingame.Move
@@ -10,6 +11,9 @@ namespace VMC.Ingame.Move
     {
         public CharacterController character;
         public override float Speed => direction.SetY(0).magnitude * speed;
+        public float gravity = -1.5f;
+        [ReadOnly] public bool isDragging;
+
         public override bool IsComplete()
         {
             return true;
@@ -22,12 +26,12 @@ namespace VMC.Ingame.Move
             Joystick.OnDragAction += Joystick_OnDragAction;
             Joystick.OnEndedDragAction += Joystick_OnEndedDragAction;
 #endif
-
         }
 
         private void Joystick_OnStartedDragAction()
         {
             isMoving = true;
+            isDragging = true;
         }
         private void Joystick_OnDragAction(Vector2 delta)
         {
@@ -36,17 +40,31 @@ namespace VMC.Ingame.Move
         }
         private void Joystick_OnEndedDragAction()
         {
-            isMoving = false;
-            direction = Vector3.zero;
+            isDragging = false;
+            direction = Vector3.up * gravity;
         }
 
         private void Update()
         {
-            if (isMoving)
+            if (isDragging)
             {
                 direction.y = character.isGrounded ? 0f : -0.5f;
                 character.Move(speed * Time.deltaTime * direction);
                 transform.LookAt(transform.position + direction.SetY(0));
+            }
+            else
+            {
+                if (isMoving)
+                {
+                    if (character.isGrounded)
+                    {
+                        isMoving = false;
+                    }
+                    else
+                    {
+                        character.Move(speed * Time.deltaTime * direction);
+                    }
+                }
             }
         }
         public override void Move()
