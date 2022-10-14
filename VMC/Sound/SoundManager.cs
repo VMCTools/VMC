@@ -5,7 +5,7 @@ using VMC.Ultilities;
 
 namespace VMC.Sound
 {
-    public class SoundManager : Singleton<SoundManager>
+    public class SoundManager : VMC.Ultilities.Singleton<SoundManager>
     {
         [SerializeField] private List<SoundKey> keys;
         private Dictionary<string, AudioClip> listAudios = new Dictionary<string, AudioClip>();

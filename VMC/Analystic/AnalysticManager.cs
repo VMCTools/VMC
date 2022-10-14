@@ -5,7 +5,7 @@ using VMC.Ultilities;
 
 namespace VMC.Analystic
 {
-    public class AnalysticManager : Singleton<AnalysticManager>, IAnalystic
+    public class AnalysticManager : VMC.Ultilities.Singleton<AnalysticManager>, IAnalystic
     {
         private List<IAnalystic> analytics = new List<IAnalystic>();
         private void Start()

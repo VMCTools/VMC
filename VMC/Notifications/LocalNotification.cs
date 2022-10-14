@@ -12,7 +12,7 @@ using VMC.Ultilities;
 
 namespace VMC.Notifications
 {
-    public class LocalNotification : Singleton<LocalNotification>
+    public class LocalNotification : VMC.Ultilities.Singleton<LocalNotification>
     {
         public void RegisterNotificationChannel()
         {

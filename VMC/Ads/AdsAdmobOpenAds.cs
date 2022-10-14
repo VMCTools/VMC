@@ -10,7 +10,7 @@ using VMC.Ultilities;
 
 namespace VMC.Ads
 {
-    public class AdsAdmobOpenAds : Singleton<AdsAdmobOpenAds>
+    public class AdsAdmobOpenAds : VMC.Ultilities.Singleton<AdsAdmobOpenAds>
     {
         private string ID_TIER_1 = "TIER_1_HERE";
         private string ID_TIER_2 = "TIER_2_HERE";

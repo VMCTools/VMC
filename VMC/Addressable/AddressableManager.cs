@@ -10,7 +10,7 @@ using VMC.Ultilities;
 
 namespace VMC.Addressable
 {
-    public class AddressableManager : Singleton<AddressableManager>
+    public class AddressableManager : VMC.Ultilities.Singleton<AddressableManager>
     {
         public Dictionary<string, GameObject> dictAssets;
         private string curPath;

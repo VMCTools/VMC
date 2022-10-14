@@ -5,7 +5,7 @@ using VMC.Ultilities;
 
 namespace VMC.Ads
 {
-    public class AdsManager : Singleton<AdsManager>
+    public class AdsManager : VMC.Ultilities.Singleton<AdsManager>
     {
         [SerializeField, ReadOnly] private bool enableAds;
         [SerializeField, ReadOnly] private AdsMediation ads;
