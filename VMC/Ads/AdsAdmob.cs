@@ -41,7 +41,6 @@ namespace VMC.Ads
         private BannerView bannerView;
         private InterstitialAd interstitial;
         private RewardedAd rewardedAd;
-        private bool isLeavingByRewarded;
 #endif
         public override void Initialize()
         {
@@ -204,25 +203,27 @@ namespace VMC.Ads
         private void intersitial_OnAdLoaded(object sender, EventArgs args)
         {
             Debug.Log("[ADMOB-Intersitial]", "Loaded!");
-            this.OnInterstititalLoadSuccessed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstititalLoadSuccessed);
         }
         private void interstitial_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
             Debug.Log("[ADMOB-Intersitial]", "Failed to load intersitital ads. " + args.LoadAdError.GetMessage());
-            this.OnInterstitialLoadFailed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstitialLoadFailed);
         }
         private void interstitial_OnAdClosed(object sender, EventArgs args)
         {
             Debug.Log("[ADMOB-Intersitial]", "Closed Ads!");
-            this.OnInterstitialDisplaySuccessed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstitialDisplaySuccessed);
         }
         private void Interstitial_OnAdFailedToShow(object sender, AdErrorEventArgs e)
         {
             Debug.Log("[ADMOB-Intersitial]", "Failed to show Ads!");
-            this.OnInterstitialDisplayFailed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstitialDisplayFailed);
         }
 #endif
         #endregion
+
+
         #region REWARDED VIDEO
         public override void InitializeRewardedVideoAds()
         {
@@ -260,7 +261,6 @@ namespace VMC.Ads
             if (this.rewardedAd.IsLoaded())
             {
                 this.rewardedAd.Show();
-                isLeavingByRewarded = true;
             }
             else
             {
@@ -275,43 +275,27 @@ namespace VMC.Ads
         private void RewardedAd_OnAdLoaded(object sender, EventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Loaded!");
-            this.OnRewardedLoadSuccessed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedLoadSuccessed);
         }
         private void RewardedAd_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to load RewardedVideo ads. " + e.LoadAdError.GetMessage());
-            this.OnRewardedLoadFailed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedLoadFailed);
         }
         private void RewardedAd_OnAdFailedToShow(object sender, AdErrorEventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to show RewardedVideo ads. " + args.AdError.GetMessage());
-            isLeavingByRewarded = false;
-            this.OnRewardedDisplayFailed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedDisplayFailed);
         }
         private void RewardedAd_OnAdClosed(object sender, EventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Close Ads");
-            this.OnRewardedDisplaySuccessed();
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedDisplaySuccessed);
         }
         private void RewardedAd_OnUserEarnedReward(object sender, Reward args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
-            this.OnRewardedGotReward();
-#if UNITY_EDITOR
-            isLeavingByRewarded = false;
-            this.OnRewardedDisplaySuccessed();
-#endif
-        }
-        private void OnApplicationFocus(bool focus)
-        {
-            if (focus)
-            {
-                if (isLeavingByRewarded)
-                {
-                    isLeavingByRewarded = false;
-                    this.OnRewardedDisplaySuccessed();
-                }
-            }
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedGotReward);
         }
 #endif
         #endregion
