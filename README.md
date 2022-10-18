@@ -1,7 +1,18 @@
 # VMC
-- Tool phục vụ
-090993
-030397
+- Tool Ads-Analytics-Ultilities
+----------------------------------------------------------------------------------------------------------------
+						CHANGE LOGS
+[2022 / 10 / 18] -------1.0.2.4--------- 
+- Thêm Fake Loading. Để thực hiện init các thư viện độc lập =>> Từ bây giờ muốn sử dụng thì phải init các thư viện lên trước
+- Tham khảo VMCFirstLoading.cs
+- Các hàm Initialize() sẽ phải init bằng code:
+	+ VMC.Ads.AdsManager.Instance.Initialize(); // init ads
+        + VMC.Ads.AdsManager.Instance.InitializeAOA();// init admob-open-ads
+
+	+ VMC.Analystic.AnalysticManager.Instance.InitializeAppflyer();// init appsflyer
+	+ VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();// init firebase
+- Đưa các callback của admob vào trong UnityMainThreadDispatcher.cs	
+
 
 
 ----------------------------------------------------------------------------------------------------------------
@@ -24,8 +35,14 @@ Applovin: AppLovin-MAX-Unity-Plugin-5.4.7-Android-11.4.6-iOS-11.4.4.unitypackage
 
 	- Gọi quảng cáo: AdsManager
 
+		VMC.Ads.AdsManager.Instance.Initialize(); // init ads
+
+            	VMC.Ads.AdsManager.Instance.InitializeAOA();// init admob-open-ads
+
 		AdsManager.Instance.ShowBanner();
+
  		AdsManager.Instance.HideBanner();
+
 		AdsManager.Instance.ShowInterstitial("Test", () =>
                     {
                         Debug.Log("Close inters");
@@ -38,5 +55,9 @@ Applovin: AppLovin-MAX-Unity-Plugin-5.4.7-Android-11.4.6-iOS-11.4.4.unitypackage
 
 
 	- Log event: Gọi thông qua class AnalysticManager
+
+            	VMC.Analystic.AnalysticManager.Instance.InitializeAppflyer();// init appsflyer
+
+            	VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();// init firebase
 
 		AnalysticManager.Instance.Logevent();
