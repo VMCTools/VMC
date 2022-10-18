@@ -9,9 +9,12 @@ namespace VMC.Ads
     {
         [SerializeField, ReadOnly] private bool enableAds;
         [SerializeField, ReadOnly] private AdsMediation ads;
+        [SerializeField, ReadOnly] private AdsAdmobOpenAds admobOpenAds;
 
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
+            if (Instance != this) return;
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
             this.enableAds = config.enableAds;
             if (config.enableAds)
@@ -31,11 +34,23 @@ namespace VMC.Ads
 
                 if (config.adType.HasFlag(AdsType.OpenAds))
                 {
-                    var admobOpenAds = (new GameObject("Admob OpenAds")).AddComponent<AdsAdmobOpenAds>();
+                    admobOpenAds = (new GameObject("Admob OpenAds")).AddComponent<AdsAdmobOpenAds>();
                     admobOpenAds.transform.SetParent(this.transform);
                 }
             }
         }
+
+        public void Initialize()
+        {
+            if (ads != null)
+                ads.Initialize();
+        }
+        public void InitializeAOA()
+        {
+            if (admobOpenAds != null)
+                admobOpenAds.Initialize();
+        }
+
         private bool CheckValidate()
         {
             if (!enableAds)

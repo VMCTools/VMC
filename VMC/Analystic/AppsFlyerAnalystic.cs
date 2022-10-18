@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
+using Debug = VMC.Debugger.Debug;
 
 namespace VMC.Analystic
 {
@@ -22,6 +23,7 @@ namespace VMC.Analystic
 
         public void Initialize()
         {
+            Debug.Log("[Analystic]", "Init AppsFlyer!");
 #if VMC_ANALYZE_APPFLYER
             VMC.Settings.VMCSettingConfig config = VMC.Settings.VMCSettingConfig.LoadData();
             AF_Dev_Key = config.AF_Dev_Key;

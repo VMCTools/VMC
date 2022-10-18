@@ -12,8 +12,8 @@ namespace VMC.Analystic
 
         public void Initialize()
         {
+            Debug.Log("[Analystic]", "Init firebase!");
 #if VMC_ANALYZE_FIREBASE
-            Debug.Log("Firebase", "Init!");
             Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
             {
                 var dependencyStatus = task.Result;

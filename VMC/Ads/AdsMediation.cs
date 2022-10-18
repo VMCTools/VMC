@@ -77,10 +77,10 @@ namespace VMC.Ads
 
         public static bool ResumeFromAds;
 
-        private void Start()
-        {
-            Initialize();
-        }
+        //private void Start()
+        //{
+        //    Initialize();
+        //}
         public virtual void Initialize()
         {
             SetConsentAds(IsConsentAds);
