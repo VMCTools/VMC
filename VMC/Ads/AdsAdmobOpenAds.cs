@@ -12,24 +12,21 @@ namespace VMC.Ads
 {
     public class AdsAdmobOpenAds : VMC.Ultilities.Singleton<AdsAdmobOpenAds>
     {
+#if VMC_ADS_ADMOB
         private string ID_TIER_1 = "TIER_1_HERE";
         private string ID_TIER_2 = "TIER_2_HERE";
         private string ID_TIER_3 = "TIER_3_HERE";
-
-#if VMC_ADS_ADMOB
         private AppOpenAd ad;
         private bool IsAdAvailable => ad != null && (System.DateTime.UtcNow - loadTime).TotalHours < 4;
-#endif
         private bool isShowingAd = false;
-
         private bool showFirstOpen = false;
+        private DateTime loadTime;
+        private int tierIndex = 1;
+#endif
 
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
 
-        private DateTime loadTime;
-
-        private int tierIndex = 1;
 
         protected override void Awake()
         {

@@ -44,6 +44,13 @@ namespace VMC.Ingame.Move
             direction = Vector3.up * gravity;
         }
 
+
+        public override void Pause()
+        {
+            base.Pause();
+            isDragging = false;
+            direction = Vector3.zero;
+        }
         private void Update()
         {
             if (isDragging)

@@ -18,6 +18,7 @@ namespace VMC.Ingame.Move
             }
         }
         public Vector3 targetPos;
+        public override Vector3 TargetPos => targetPos;
 
         public override float Speed => navmeshAgent.velocity.magnitude;
         public override bool IsComplete()
@@ -42,7 +43,8 @@ namespace VMC.Ingame.Move
         }
         public override void Pause()
         {
-            navmeshAgent.isStopped = true;
+            if (navmeshAgent.enabled)
+                navmeshAgent.isStopped = true;
             base.Pause();
         }
         public override void Resume()

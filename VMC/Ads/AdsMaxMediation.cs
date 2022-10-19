@@ -12,7 +12,6 @@ namespace VMC.Ads
 #if UNITY_ANDROID
         [ReadOnly] public string maxAppID = "YOUR_OPENADS_ID_ADS_HERE";
         [ReadOnly] public string bannerId = "YOUR_BANNER_ID_ADS_HERE";
-        [ReadOnly] public BannerAdsPosition bannerPosition;
         [ReadOnly] public string interstitialId = "YOUR_INTERS_ID_ADS_HERE";
         [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #elif UNITY_IOS

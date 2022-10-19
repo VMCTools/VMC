@@ -3,6 +3,7 @@ namespace VMC.Ingame.Move
 {
     public abstract class Movement : MonoBehaviour, IMove
     {
+        public virtual Vector3 TargetPos => Vector3.zero;
         protected float stopRange;
         protected Vector3 direction;
         protected float speed;
@@ -41,7 +42,7 @@ namespace VMC.Ingame.Move
         public virtual void MoveTo(Vector3 destination)
         {
 
-        }    
+        }
 
         public virtual void Pause()
         {

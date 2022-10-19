@@ -295,7 +295,7 @@ namespace VMC.Ads
         private void RewardedAd_OnUserEarnedReward(object sender, Reward args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedGotReward);
+            this.OnRewardedGotReward();
         }
 #endif
         #endregion

@@ -8,8 +8,9 @@ namespace VMC.Analystic
 {
     public class FirebaseAnalystic : MonoBehaviour, IAnalystic
     {
+#if VMC_ANALYZE_FIREBASE
         private bool isInitedFirebase = false;
-
+#endif
         public void Initialize()
         {
 #if VMC_ANALYZE_FIREBASE
