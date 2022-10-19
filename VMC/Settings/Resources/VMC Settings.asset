@@ -28,7 +28,7 @@ MonoBehaviour:
   analyzeLibrary: -1
   AF_Dev_Key: 
   AF_App_Id: 
-  enableDebugLog: 1
+  enableDebugLog: 0
   debugLogLevel: -1
   isUsingDoTween: 1
   isUsingIAP: 0

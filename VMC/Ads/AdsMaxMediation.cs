@@ -23,7 +23,6 @@ namespace VMC.Ads
 #endif
         public override void Initialize()
         {
-            base.Initialize();
 #if VMC_ADS_MAX
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
 
@@ -58,6 +57,7 @@ namespace VMC.Ads
             MaxSdk.SetSdkKey(maxAppID);
             MaxSdk.InitializeSdk();
 #endif
+            base.Initialize();
         }
 
         #region BANNER

@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VMC.Ultilities;
+using Debug = VMC.Debugger.Debug;
 
 namespace VMC.Ads
 {
@@ -27,11 +27,9 @@ namespace VMC.Ads
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
 
-
         protected override void Awake()
         {
-            base.Awake();
-
+            Debug.Log("[Ads]", "Init AOA!");
 #if VMC_ADS_ADMOB
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
             ID_TIER_1 = config.openAdsId_Tier1;
