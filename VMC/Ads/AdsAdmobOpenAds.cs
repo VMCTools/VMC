@@ -27,7 +27,7 @@ namespace VMC.Ads
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
 
-        protected override void Awake()
+        public void Initialize()
         {
             Debug.Log("[Ads]", "Init AOA!");
 #if VMC_ADS_ADMOB
