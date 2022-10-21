@@ -31,7 +31,9 @@ namespace VMC.UI
         {
 #if VMC_DOTWEEN
             this.gameObject.SetActive(true);
-            imgBlack.color = new Color32(0, 0, 0, 0);
+            var color = imgBlack.color;
+            color.a = 0f;
+            imgBlack.color = color;
             imgBlack.DOFade(fadeColor, timeShow);
 
             boundPopup.transform.localScale = Vector3.zero;
