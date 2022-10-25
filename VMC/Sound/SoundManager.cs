@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 using VMC.Ultilities;
 
 namespace VMC.Sound
 {
-    public class SoundManager : VMC.Ultilities.Singleton<SoundManager>
+    public class SoundManager : VMC.Ultilities.SingletonAdvance<SoundManager>
     {
         [SerializeField] private List<SoundKey> keys;
         private Dictionary<string, AudioClip> listAudios = new Dictionary<string, AudioClip>();
@@ -72,13 +73,14 @@ namespace VMC.Sound
             if (Instance == null) return;
             Instance._PlayMusic(key, volume);
         }
-        private void _PlayMusic(string key, float volume = 0.4f)
+        public static void PlayMusic(AudioClip clip, float volume = 0.4f)
         {
-            if (!listAudios.ContainsKey(key))
-            {
-                Debug.LogError("Not found music audioclip: " + key);
-                return;
-            }
+            if (Instance == null) return;
+            Instance._PlayMusic(clip, volume);
+        }
+
+        private void _PlayMusic(AudioClip clip, float volume)
+        {
             if (myMusic == null)
             {
                 var musicObject = new GameObject("Music");
@@ -86,18 +88,33 @@ namespace VMC.Sound
                 myMusic = musicObject.AddComponent<AudioSource>();
 
                 myMusic.loop = true;
-                myMusic.volume = volume;
-                myMusic.mute = !isEnableMusic;
             }
-
-            myMusic.clip = listAudios[key];
+            myMusic.volume = volume;
+            myMusic.mute = !isEnableMusic;
+            myMusic.clip = clip;
             myMusic.Play();
+        }
+
+        private void _PlayMusic(string key, float volume = 0.4f)
+        {
+            if (!listAudios.ContainsKey(key))
+            {
+                Debug.LogError("Not found music audioclip: " + key);
+                return;
+            }
+            _PlayMusic(listAudios[key], volume);
         }
         public static void PlaySound(string key, float volume = 1f, bool isLoop = false)
         {
             if (Instance == null)
                 return;
             Instance._PlaySound(key, volume, isLoop);
+        }
+        public static void PlaySound(AudioClip clip, float volume = 1f, bool isLoop = false)
+        {
+            if (Instance == null)
+                return;
+            Instance._PlaySound(clip, volume, isLoop);
         }
         private void _PlaySound(string key, float volume, bool isLoop = false)
         {
@@ -109,6 +126,13 @@ namespace VMC.Sound
                 Debug.LogError("Not found sound audioclip: " + key);
                 return;
             }
+            _PlaySound(listAudios[key], volume, isLoop);
+        }
+        private void _PlaySound(AudioClip clip, float volume, bool isLoop = false)
+        {
+            if (!isEnableSound)
+                return;
+
             mySound = null;
             foreach (var sound in mySounds)
             {
@@ -131,7 +155,7 @@ namespace VMC.Sound
             }
             mySound.volume = Mathf.Clamp01(volume);
             mySound.loop = isLoop;
-            mySound.clip = listAudios[key];
+            mySound.clip = clip;
             mySound.Play();
         }
 
