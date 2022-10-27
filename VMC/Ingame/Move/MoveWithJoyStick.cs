@@ -35,8 +35,8 @@ namespace VMC.Ingame.Move
         }
         private void Joystick_OnDragAction(Vector2 delta)
         {
-            direction.x = delta.x;
-            direction.z = delta.y;
+            direction.x = -delta.x;
+            direction.z = -delta.y;
         }
         private void Joystick_OnEndedDragAction()
         {
