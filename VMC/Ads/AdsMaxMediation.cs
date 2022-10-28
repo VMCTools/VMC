@@ -8,13 +8,14 @@ namespace VMC.Ads
 {
     public class AdsMaxMediation : AdsMediation
     {
-        [Header("ID Real")]
 #if UNITY_ANDROID
+        [Header("ID Real")]
         [ReadOnly] public string maxAppID = "YOUR_OPENADS_ID_ADS_HERE";
         [ReadOnly] public string bannerId = "YOUR_BANNER_ID_ADS_HERE";
         [ReadOnly] public string interstitialId = "YOUR_INTERS_ID_ADS_HERE";
         [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #elif UNITY_IOS
+        [Header("ID Real")]
         [ReadOnly] public string maxAppID = "YOUR_OPENADS_ID_ADS_HERE";
         [ReadOnly] public string bannerId="YOUR_BANNER_ID_ADS_HERE";
         [ReadOnly] public BannerAdsPosition bannerPosition;

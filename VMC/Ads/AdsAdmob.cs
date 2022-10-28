@@ -13,26 +13,28 @@ namespace VMC.Ads
     public class AdsAdmob : AdsMediation
     {
 #if VMC_ADS_ADMOB
-        [Header("ID Real")]
 #if UNITY_ANDROID
+        [Header("ID Real")]
         [ReadOnly] public string openAdsId = "YOUR_OPENADS_ID_ADS_HERE";
         [ReadOnly] public string bannerId = "YOUR_BANNER_ID_ADS_HERE";
         [ReadOnly] public string interstitialId = "YOUR_INTERS_ID_ADS_HERE";
         [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #elif UNITY_IOS
+        [Header("ID Real")]
         [ReadOnly] public string openAdsId = "YOUR_OPENADS_ID_ADS_HERE";
         [ReadOnly] public string bannerId="YOUR_BANNER_ID_ADS_HERE";
         [ReadOnly] public string interstitialId="YOUR_INTERS_ID_ADS_HERE";
         [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #endif
 
-        [Header("ID TEST")]
 #if UNITY_ANDROID
+        [Header("ID TEST")]
         [ReadOnly] private string openAdsIdTest = "ca-app-pub-3940256099942544/3419835294";
         [ReadOnly] private string bannerIdTest = "ca-app-pub-3940256099942544/6300978111";
         [ReadOnly] private string interstitialIdTest = "ca-app-pub-3940256099942544/1033173712";
         [ReadOnly] private string rewardedVideoIdTest = "ca-app-pub-3940256099942544/5224354917";
 #elif UNITY_IOS
+        [Header("ID TEST")]
         [ReadOnly] private string openAdsIdTest = "ca-app-pub-3940256099942544/5662855259";
         [ReadOnly] private string bannerIdTest = "ca-app-pub-3940256099942544/2934735716";
         [ReadOnly] private string interstitialIdTest = "ca-app-pub-3940256099942544/4411468910";

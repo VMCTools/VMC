@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI.Extensions;
@@ -15,12 +16,15 @@ namespace VMC
         // Start is called before the first frame update
         public event Action<float> OnProgressLoading;
         private static bool isInited = false;
+
+        [SerializeField, ReadOnly] private bool isLoading;
+        AsyncOperation asyncLoad;
         void Start()
         {
             if (isInited)
             {
                 isCounting = false;
-                SceneManager.LoadScene(sceneName);
+                StartCoroutine(LoadYourAsyncScene());
                 return;
             }
             else
@@ -28,11 +32,28 @@ namespace VMC
                 Debug.Log("[Fake Loading]", "Init all libraries!");
                 isCounting = true;
                 countTimeFakeLoading = 0f;
+                StartCoroutine(LoadYourAsyncScene());
                 InitStep1();
                 Invoke(nameof(InitStep2), fakeLoadingTime / 7);
             }
-        }
 
+        }
+        IEnumerator LoadYourAsyncScene()
+        {
+            isLoading = true;
+            asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+            asyncLoad.allowSceneActivation = false;
+            // Wait until the asynchronous scene fully loads
+            while (!asyncLoad.isDone)
+            {
+                if (!isCounting && asyncLoad.progress >= 0.9f)
+                {
+                    asyncLoad.allowSceneActivation = true;
+                }
+                yield return null;
+            }
+            isLoading = asyncLoad.isDone;
+        }
         // Update is called once per frame
         void LateUpdate()
         {
@@ -44,7 +65,8 @@ namespace VMC
                     isCounting = false;
                     InitStep3();
                     isInited = true;
-                    SceneManager.LoadScene(sceneName);
+                    //SceneManager.LoadScene(sceneName);
+                    //asyncOperation.allowSceneActivation = true;
                     OnProgressLoading?.Invoke(1);
                 }
                 else
