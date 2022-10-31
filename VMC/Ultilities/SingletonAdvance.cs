@@ -16,7 +16,7 @@ namespace VMC.Ultilities
                 {
                     var obj = new GameObject("");
                     var component = obj.AddComponent<T>();
-                    obj.name = $"[Singleton] {component.GetType()}";
+                    obj.name = $"[Singleton] {typeof(T).ToString()}";
 
                     _instance = component;
                 }

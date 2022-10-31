@@ -184,6 +184,7 @@ namespace VMC.Ads
         public override void ShowInterstitialAds(string placement, Action callback)
         {
             base.ShowInterstitialAds(placement, callback);
+            if (!isCanShowInterstitial) return;
 #if VMC_ADS_ADMOB
             if (this.interstitial == null)
             {

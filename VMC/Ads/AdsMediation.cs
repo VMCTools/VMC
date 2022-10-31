@@ -57,9 +57,9 @@ namespace VMC.Ads
             }
         }
 
-        private float MIN_TIME_SHOWITERSTIRIAL = 90;
+        private float MIN_TIME_SHOWITERSTIRIAL = 5f;
         private float countDownTimeInter = 0;
-        private bool isCanShowInterstitial = true;
+        protected bool isCanShowInterstitial = true;
 
         protected bool isShowingBanner;
         protected BannerAdsPosition bannerPosition;
@@ -143,13 +143,31 @@ namespace VMC.Ads
         }
         public virtual void ShowInterstitialAds(string placement, Action callback = null)
         {
+            if (!isCanShowInterstitial)
+            {
+                callback?.Invoke();
+                return;
+            }
             if (IsLoadedInterstitial)
             {
                 this.interstitialPlacement = placement;
                 this.interstitialCallback = callback;
                 SetWatchingAds(true);
+                SetIntervalInterstitial();
             }
         }
+        private void SetIntervalInterstitial()
+        {
+            isCanShowInterstitial = false;
+            countDownTimeInter = MIN_TIME_SHOWITERSTIRIAL;
+#if VMC_DOTWEEN
+            DOVirtual.DelayedCall(MIN_TIME_SHOWITERSTIRIAL, () =>
+            {
+                isCanShowInterstitial = true;
+            });
+#endif
+        }
+
         protected void OnInterstititalLoadSuccessed()
         {
             IsLoadedInterstitial = true;

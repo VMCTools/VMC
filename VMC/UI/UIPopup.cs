@@ -13,6 +13,7 @@ namespace VMC.UI
         [SerializeField] private GameObject boundPopup;
 #if VMC_DOTWEEN
         [SerializeField] private float timeShow = 0.3f;
+        [SerializeField] private bool ignoreTimeScale = true;
 #endif
         [SerializeField] private float fadeColor = 0.8f;
         [SerializeField] protected Button btnClose;
@@ -37,7 +38,7 @@ namespace VMC.UI
             imgBlack.DOFade(fadeColor, timeShow);
 
             boundPopup.transform.localScale = Vector3.zero;
-            boundPopup.transform.DOScale(1, timeShow).SetEase(Ease.OutBack).OnComplete(() =>
+            boundPopup.transform.DOScale(1, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.OutBack).OnComplete(() =>
             {
                 callbackShow?.Invoke();
             });
@@ -54,7 +55,7 @@ namespace VMC.UI
 #if VMC_DOTWEEN
             imgBlack.DOFade(0, timeShow);
             boundPopup.transform.localScale = Vector3.one;
-            boundPopup.transform.DOScale(0, timeShow).SetEase(Ease.InBack).OnComplete(() =>
+            boundPopup.transform.DOScale(0, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.InBack).OnComplete(() =>
             {
                 this.gameObject.SetActive(false);
                 callbackHide?.Invoke();

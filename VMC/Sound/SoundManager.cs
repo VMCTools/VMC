@@ -28,10 +28,13 @@ namespace VMC.Sound
             {
                 Set_EnableSound(PlayerPrefsHelper.Get(KEY_SETTING_SOUND, true));
                 Set_EnableMusic(PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true));
-                foreach (var item in keys)
+                if (keys != null)
                 {
-                    if (!listAudios.ContainsKey(item.Key))
-                        listAudios.Add(item.Key, item.Clip);
+                    foreach (var item in keys)
+                    {
+                        if (!listAudios.ContainsKey(item.Key))
+                            listAudios.Add(item.Key, item.Clip);
+                    }
                 }
 #if !UNITY_EDITOR
             keys = null;

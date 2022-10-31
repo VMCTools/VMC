@@ -53,6 +53,7 @@ namespace VMC.Ingame.Move
         }
         private void Update()
         {
+            if (isPausing) return;
             if (isDragging)
             {
                 direction.y = character.isGrounded ? 0f : -0.5f;
