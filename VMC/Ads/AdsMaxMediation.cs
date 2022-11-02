@@ -81,7 +81,12 @@ namespace VMC.Ads
             base.InitializeBannerAds();
 #if VMC_ADS_MAX
             MaxSdk.CreateBanner(this.bannerId, ConvertPosition(this.bannerPosition));
+#if VMC_GROUP_2
+            MaxSdk.SetBannerExtraParameter(this.bannerId, "adaptive_banner", "false");
+#endif
+
             MaxSdkCallbacks.Banner.OnAdLoadedEvent += OnBannerAdLoadedEvent;
+            MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += OnAdRevenuePaidEvent;
 #endif
         }
         public override void LoadBannerAds()
@@ -122,7 +127,7 @@ namespace VMC.Ads
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += OnInterstitialLoadFailedEvent;
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += OnInterstitialHiddenEvent;
             MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += OnInterstitialAdFailedToDisplayEvent;
-
+            MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += OnAdRevenuePaidEvent;
             // Load the first interstitial
             LoadInterstitialAds();
 #endif
@@ -181,7 +186,7 @@ namespace VMC.Ads
             MaxSdkCallbacks.Rewarded.OnAdHiddenEvent += OnRewardedAdHiddenEvent;
             MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += OnRewardedAdFailedToDisplayEvent;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += OnRewardedAdReceivedRewardEvent;
-
+            MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += OnAdRevenuePaidEvent;
             // Load the first rewarded ad
             LoadRewardedVideo();
 #endif
@@ -241,5 +246,27 @@ namespace VMC.Ads
 #endif
 
         #endregion
+
+
+#if VMC_ADS_MAX
+        private void OnAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo impressionData)
+        {
+#if VMC_ANALYZE_FIREBASE
+            double revenue = impressionData.Revenue;
+            var impressionParameters = new[] {
+new Firebase.Analytics.Parameter("ad_platform", "AppLovin"),
+new Firebase.Analytics.Parameter("ad_source", impressionData.NetworkName),
+new Firebase.Analytics.Parameter("ad_unit_name", impressionData.AdUnitIdentifier),
+new Firebase.Analytics.Parameter("ad_format", impressionData.Placement), // Please check this - as we couldn't find format refereced in your unity docs https://dash.applovin.com/documentation/mediation/unity/getting-started/advanced-settings#impression-level-user-revenue - api
+new Firebase.Analytics.Parameter("value", revenue),
+new Firebase.Analytics.Parameter("currency", "USD"), // All Applovin revenue is sent in USD
+};
+            Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression", impressionParameters);
+#if VMC_GROUP_2
+            Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression_abi", impressionParameters);
+#endif
+#endif
+        }
+#endif
     }
 }

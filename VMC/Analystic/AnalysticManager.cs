@@ -51,6 +51,21 @@ namespace VMC.Analystic
             }
         }
 
+        public void ATTShow()
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.ATTShow();
+            }
+        }
+        public void ATTSuccess()
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.ATTSuccess();
+            }
+        }
+
         public void LogEvent(string nameEvent)
         {
             foreach (var analytic in analytics)

@@ -12,25 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f84f1c5675a45264f98cf58604a8dd62, type: 3}
   m_Name: VMC Settings
   m_EditorClassIdentifier: 
-  enableAds: 0
-  adType: 0
-  adsLibrary: 0
+  groupSDK: 2
+  enableAds: 1
+  adType: -1
+  adsLibrary: 3
   isTestMode: 1
   maxAppId: YOUR_APP_ID_HERE
   openAdsId_Tier1: YOUR_OPENADS_ID_ADS_HERE
   openAdsId_Tier2: YOUR_OPENADS_ID_ADS_HERE
   openAdsId_Tier3: YOUR_OPENADS_ID_ADS_HERE
+  intervalTimeAOA: 20
   bannerId: YOUR_BANNER_ID_ADS_HERE
   bannerPosition: 0
   interstitialId: YOUR_INTERS_ID_ADS_HERE
   rewardedVideoId: YOUR_REWARDED_ID_ADS_HERE
-  enableAnalyze: 0
+  enableAnalyze: 1
   analyzeLibrary: -1
   AF_Dev_Key: 
   AF_App_Id: 
+  enableRemoteConfig: 1
   enableDebugLog: 0
   debugLogLevel: -1
+  isUsingFacebook: 0
   isUsingDoTween: 1
   isUsingIAP: 0
-  isUsingLocalNotification: 0
   isUsingAddressable: 0
+  notificationType: -1
+  isUsingAppReview: 1

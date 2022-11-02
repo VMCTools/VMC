@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +9,9 @@ namespace VMC.Settings
     [CreateAssetMenu(fileName = "VMC Settings", menuName = "VMC/Setting")]
     public class VMCSettingConfig : ScriptableObject
     {
+        [Header("Group Config")]
+        public SKDGroup groupSDK;
+
         [Header("Ads Config")]
         public bool enableAds = false;
         public Ads.AdsType adType;
@@ -21,6 +24,8 @@ namespace VMC.Settings
         public string openAdsId_Tier1 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier2 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier3 = "YOUR_OPENADS_ID_ADS_HERE";
+        [Tooltip("Thời gian tối thiểu giữa 2 lần show Admob Open Ads")]
+        public float intervalTimeAOA = 20f;
 
         public string bannerId = "YOUR_BANNER_ID_ADS_HERE";
         public Ads.BannerAdsPosition bannerPosition = Ads.BannerAdsPosition.BOTTOM;
@@ -51,148 +56,42 @@ namespace VMC.Settings
         public string AF_App_Id = "AF_App_Id";
 #endif
 
+        [Header("Remote Config")]
+        public bool enableRemoteConfig = false;
 
         [Header("Debug Config")]
         public bool enableDebugLog = false;
         public DebugLogLevel debugLogLevel;
 
-        [Header("Another Settings")]
+        [Header("Facebook")]
+        public bool isUsingFacebook = false;
+
+        [Header("DOTween")]
         public bool isUsingDoTween = true;
+
+        [Header("IAP")]
         public bool isUsingIAP = false;
-        public bool isUsingLocalNotification = false;
+
+        [Header("Addressable")]
         public bool isUsingAddressable = false;
+
+        [Header("Notification")]
+        public NotificationType notificationType;
+
+        [Header("App Review Rating")]
+        public bool isUsingAppReview = false;
 
         public static VMCSettingConfig LoadData()
         {
-            //string path = Path.Combine(Application.persistentDataPath, pathFile);
-            //if (File.Exists(path))
-            //{
-            //    string json = File.ReadAllText(path);
-            //    return JsonUtility.FromJson<VMCSettingConfig>(json);
-            //}
-            //return new VMCSettingConfig();
-          return Resources.Load<VMCSettingConfig>("VMC Settings");
+            return Resources.Load<VMCSettingConfig>("VMC Settings");
         }
-        public void Save()
-        {
-            //string json = JsonUtility.ToJson(this);
-            //File.WriteAllText(Path.Combine(Application.persistentDataPath, pathFile), json); 
-        }
-        public void Changes(ref HashSet<string> defines)
-        {
-            #region Ads check
-            if (enableAds && isTestMode)
-            {
-                defines.Add(Define.VMC_ADS_TESTMODE.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_ADS_TESTMODE.ToString());
-            }
+    }
 
-            if (enableAds && adsLibrary.HasFlag(AdsLibrary.Admob))
-            {
-                defines.Add(Define.VMC_ADS_ADMOB.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_ADS_ADMOB.ToString());
-            }
-            if (enableAds && adsLibrary.HasFlag(AdsLibrary.MaxMediation))
-            {
-                defines.Add(Define.VMC_ADS_MAX.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_ADS_MAX.ToString());
-            }
-            #endregion
-            #region Analytics check
-            if (enableAnalyze && analyzeLibrary.HasFlag(AnalyzeLibrary.Firebase))
-            {
-                defines.Add(Define.VMC_ANALYZE_FIREBASE.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_ANALYZE_FIREBASE.ToString());
-            }
-            if (enableAnalyze && analyzeLibrary.HasFlag(AnalyzeLibrary.AppsFlyer))
-            {
-                defines.Add(Define.VMC_ANALYZE_APPFLYER.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_ANALYZE_APPFLYER.ToString());
-            }
-            #endregion
-            #region Debug log check
-            if (enableDebugLog && debugLogLevel.HasFlag(DebugLogLevel.Debug))
-            {
-                defines.Add(Define.VMC_DEBUG_NORMAL.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_DEBUG_NORMAL.ToString());
-            }
-            if (enableDebugLog && debugLogLevel.HasFlag(DebugLogLevel.Warning))
-            {
-                defines.Add(Define.VMC_DEBUG_WARNING.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_DEBUG_WARNING.ToString());
-            }
-            if (enableDebugLog && debugLogLevel.HasFlag(DebugLogLevel.Error))
-            {
-                defines.Add(Define.VMC_DEBUG_ERROR.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_DEBUG_ERROR.ToString());
-            }
-            if (enableDebugLog && debugLogLevel.HasFlag(DebugLogLevel.Assert))
-            {
-                defines.Add(Define.VMC_DEBUG_ASSERT.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_DEBUG_ASSERT.ToString());
-            }
-
-            #endregion
-
-            if (isUsingDoTween)
-            {
-                defines.Add(Define.VMC_DOTWEEN.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_DOTWEEN.ToString());
-            }
-            if (isUsingIAP)
-            {
-                defines.Add(Define.VMC_IAP.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_IAP.ToString());
-            }
-            if (isUsingLocalNotification)
-            {
-                defines.Add(Define.VMC_NOTIFICATION.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_NOTIFICATION.ToString());
-            }
-
-
-
-
-
-            Save();
-        }
-       
+    [Serializable]
+    public enum SKDGroup
+    {
+        Group1 = 1,
+        Group2 = 2
     }
 
     [Flags]
@@ -201,7 +100,8 @@ namespace VMC.Settings
     {
         None = 0,
         Admob = 1,
-        MaxMediation = 2
+        MaxMediation = 2,
+        IronsourceMediation = 4
     }
 
     [Flags]
@@ -222,5 +122,13 @@ namespace VMC.Settings
         Warning = 2,
         Error = 4,
         Assert = 8
+    }
+    [Flags]
+    [Serializable]
+    public enum NotificationType
+    {
+        None = 0,
+        LocalNotification = 1,
+        FirebaseMessaging = 2
     }
 }

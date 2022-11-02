@@ -10,6 +10,9 @@ namespace VMC.Settings
     [CustomEditor(typeof(VMCSettingConfig))]
     public class VMCSettingConfigEditor : Editor
     {
+        [Header("Group Config")]
+        public SerializedProperty groupSDK;
+
         [Header("Ads Config")]
         SerializedProperty enableAds;
         SerializedProperty adType;
@@ -20,6 +23,7 @@ namespace VMC.Settings
         SerializedProperty openAdsId_Tier1;
         SerializedProperty openAdsId_Tier2;
         SerializedProperty openAdsId_Tier3;
+        SerializedProperty intervalTimeAOA;
         SerializedProperty bannerId;
         SerializedProperty bannerPosition;
         SerializedProperty interstitialId;
@@ -37,15 +41,31 @@ namespace VMC.Settings
         SerializedProperty enableDebugLog;
         SerializedProperty debugLogLevel;
 
-        [Header("Another Settings")]
+        [Header("Remote config")]
+        SerializedProperty enableRemoteConfig;
+
+        [Header("Facebook")]
+        SerializedProperty isUsingFacebook;
+
+        [Header("DoTween")]
         SerializedProperty isUsingDoTween;
+        [Header("IAP")]
         SerializedProperty isUsingIAP;
-        SerializedProperty isUsingLocalNotification;
+
+        [Header("Notification")]
+        SerializedProperty notificationType;
+        [Header("Addressable")]
         SerializedProperty isUsingAddressable;
+        [Header("InappReview")]
+        SerializedProperty isUsingAppReview;
 
         void OnEnable()
         {
             // Setup the SerializedProperties.
+
+
+            groupSDK = serializedObject.FindProperty("groupSDK");
+
             enableAds = serializedObject.FindProperty("enableAds");
             adType = serializedObject.FindProperty("adType");
             adsLibrary = serializedObject.FindProperty("adsLibrary");
@@ -55,6 +75,9 @@ namespace VMC.Settings
             openAdsId_Tier1 = serializedObject.FindProperty("openAdsId_Tier1");
             openAdsId_Tier2 = serializedObject.FindProperty("openAdsId_Tier2");
             openAdsId_Tier3 = serializedObject.FindProperty("openAdsId_Tier3");
+            intervalTimeAOA = serializedObject.FindProperty("intervalTimeAOA");
+
+
             bannerId = serializedObject.FindProperty("bannerId");
             bannerPosition = serializedObject.FindProperty("bannerPosition");
             interstitialId = serializedObject.FindProperty("interstitialId");
@@ -69,14 +92,22 @@ namespace VMC.Settings
             enableDebugLog = serializedObject.FindProperty("enableDebugLog");
             debugLogLevel = serializedObject.FindProperty("debugLogLevel");
 
+
+            enableRemoteConfig = serializedObject.FindProperty("enableRemoteConfig");
+
+            isUsingFacebook = serializedObject.FindProperty("isUsingFacebook");
             isUsingDoTween = serializedObject.FindProperty("isUsingDoTween");
             isUsingIAP = serializedObject.FindProperty("isUsingIAP");
-            isUsingLocalNotification = serializedObject.FindProperty("isUsingLocalNotification");
+            notificationType = serializedObject.FindProperty("notificationType");
             isUsingAddressable = serializedObject.FindProperty("isUsingAddressable");
-
+            isUsingAppReview = serializedObject.FindProperty("isUsingAppReview");
         }
         public override void OnInspectorGUI()
         {
+
+            EditorGUILayout.PropertyField(groupSDK);
+            GUILayout.Space(10);
+
             EditorGUILayout.PropertyField(enableAds);
             if (enableAds.boolValue)
             {
@@ -95,15 +126,19 @@ namespace VMC.Settings
                         EditorGUILayout.PropertyField(openAdsId_Tier1);
                         EditorGUILayout.PropertyField(openAdsId_Tier2);
                         EditorGUILayout.PropertyField(openAdsId_Tier3);
+                        EditorGUILayout.PropertyField(intervalTimeAOA);
+                        GUILayout.Space(10);
                     }
                     if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Banner))
                     {
                         EditorGUILayout.PropertyField(bannerId);
                         EditorGUILayout.PropertyField(bannerPosition);
+                        GUILayout.Space(10);
                     }
                     if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Interstitial))
                     {
                         EditorGUILayout.PropertyField(interstitialId);
+                        GUILayout.Space(10);
                     }
                     if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.RewardedVideo))
                     {
@@ -134,12 +169,21 @@ namespace VMC.Settings
             {
                 EditorGUILayout.PropertyField(debugLogLevel);
             }
+
+            GUILayout.Space(20);
+            EditorGUILayout.PropertyField(enableRemoteConfig);
+
+            GUILayout.Space(20);
+            EditorGUILayout.PropertyField(isUsingFacebook);
+
             GUILayout.Space(20);
             EditorGUILayout.PropertyField(isUsingDoTween);
             EditorGUILayout.PropertyField(isUsingIAP);
-            EditorGUILayout.PropertyField(isUsingLocalNotification);
+            EditorGUILayout.PropertyField(notificationType);
             EditorGUILayout.PropertyField(isUsingAddressable);
+
             GUILayout.Space(20);
+            EditorGUILayout.PropertyField(isUsingAppReview);
 
 
             if (serializedObject.ApplyModifiedProperties())
@@ -182,6 +226,26 @@ namespace VMC.Settings
 
         public void Changes(ref HashSet<string> defines)
         {
+            #region Group SDK
+            if ((SKDGroup)(groupSDK.enumValueFlag) == SKDGroup.Group1)
+            {
+                defines.Add(Define.VMC_GROUP_1.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_GROUP_1.ToString());
+            }
+            if ((SKDGroup)(groupSDK.enumValueFlag) == SKDGroup.Group2)
+            {
+                defines.Add(Define.VMC_GROUP_2.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_GROUP_2.ToString());
+            }
+
+            #endregion
+
             #region Ads check
             if (enableAds.boolValue && isTestMode.boolValue)
             {
@@ -262,7 +326,7 @@ namespace VMC.Settings
             }
 
             #endregion
-
+            #region DOTween
             if (isUsingDoTween.boolValue)
             {
                 defines.Add(Define.VMC_DOTWEEN.ToString());
@@ -271,6 +335,8 @@ namespace VMC.Settings
             {
                 defines.Remove(Define.VMC_DOTWEEN.ToString());
             }
+            #endregion
+            #region IAP
             if (isUsingIAP.boolValue)
             {
                 defines.Add(Define.VMC_IAP.ToString());
@@ -279,7 +345,31 @@ namespace VMC.Settings
             {
                 defines.Remove(Define.VMC_IAP.ToString());
             }
-            if (isUsingLocalNotification.boolValue)
+            #endregion
+
+            #region Remote Config
+            if (enableRemoteConfig.boolValue)
+            {
+                defines.Add(Define.VMC_REMOTE_FIREBASE.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_REMOTE_FIREBASE.ToString());
+            }
+            #endregion
+            #region Facebook
+            if (isUsingFacebook.boolValue)
+            {
+                defines.Add(Define.VMC_FACEBOOK.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_FACEBOOK.ToString());
+            }
+            #endregion
+
+            #region notification
+            if (((NotificationType)notificationType.enumValueFlag).HasFlag(NotificationType.LocalNotification))
             {
                 defines.Add(Define.VMC_NOTIFICATION.ToString());
             }
@@ -287,6 +377,16 @@ namespace VMC.Settings
             {
                 defines.Remove(Define.VMC_NOTIFICATION.ToString());
             }
+            if (((NotificationType)notificationType.enumValueFlag).HasFlag(NotificationType.FirebaseMessaging))
+            {
+                defines.Add(Define.VMC_FIREBASE_MESSAGING.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_FIREBASE_MESSAGING.ToString());
+            }
+            #endregion
+            #region Addressable
             if (isUsingAddressable.boolValue)
             {
                 defines.Add(Define.VMC_ADDRESSABLE.ToString());
@@ -295,6 +395,17 @@ namespace VMC.Settings
             {
                 defines.Remove(Define.VMC_ADDRESSABLE.ToString());
             }
+            #endregion
+            #region Inapp Review
+            if (isUsingAppReview.boolValue)
+            {
+                defines.Add(Define.VMC_APP_REVIEW.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_APP_REVIEW.ToString());
+            }
+            #endregion
         }
 
 

@@ -22,8 +22,10 @@ namespace VMC.Ads
         private bool showFirstOpen = false;
         private DateTime loadTime;
         private int tierIndex = 1;
-#endif
 
+        private float intervalTimeShowAds;
+        private DateTime nextTimeToShow;
+#endif
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
 
@@ -35,6 +37,18 @@ namespace VMC.Ads
             ID_TIER_1 = config.openAdsId_Tier1;
             ID_TIER_2 = config.openAdsId_Tier2;
             ID_TIER_3 = config.openAdsId_Tier3;
+            intervalTimeShowAds = config.intervalTimeAOA;
+            if (config.isTestMode)
+            {
+#if UNITY_ANDROID
+                ID_TIER_1 = "ca-app-pub-3940256099942544/3419835294"; // ID test
+#elif UNITY_IOS
+                ID_TIER_1 = "ca-app-pub-3940256099942544/5662855259"; // ID test
+#endif
+                ID_TIER_2 = ID_TIER_1;
+                ID_TIER_3 = ID_TIER_2;
+            }
+
 
             var deviceTest = new List<string> { "377807EAA67F63DF0FFE8F146CF568C7" };
             RequestConfiguration requestConfiguration = new RequestConfiguration.Builder().SetTestDeviceIds(deviceTest).build();
@@ -51,7 +65,8 @@ namespace VMC.Ads
         {
             if (!pause && ConfigResumeApp && !AdsMediation.ResumeFromAds)
             {
-                ShowAdIfAvailable();
+                if (DateTime.Now.CompareTo(nextTimeToShow) > 0)
+                    ShowAdIfAvailable();
             }
         }
 
@@ -113,6 +128,7 @@ namespace VMC.Ads
             ad.OnAdDidRecordImpression += HandleAdDidRecordImpression;
             ad.OnPaidEvent += HandlePaidEvent;
 
+            nextTimeToShow = DateTime.Now.AddSeconds(intervalTimeShowAds);
             ad.Show();
 #endif
         }

@@ -9,10 +9,11 @@ using Unity.Notifications.iOS;
 #endif
 using UnityEngine;
 using VMC.Ultilities;
+using Debug = VMC.Debugger.Debug;
 
 namespace VMC.Notifications
 {
-    public class LocalNotification : VMC.Ultilities.Singleton<LocalNotification>
+    public class LocalNotification : VMC.Ultilities.SingletonAdvance<LocalNotification>
     {
         public void RegisterNotificationChannel()
         {
@@ -26,9 +27,10 @@ namespace VMC.Notifications
                 Description = "Generic notifications",
             };
             AndroidNotificationCenter.RegisterNotificationChannel(c);
-            Logger.Logger.Log("[LocalNotification] RegisterNotificationChannel");
+            Debug.Log("[LocalNotification]", "Android RegisterNotificationChannel");
 #elif UNITY_IOS
             StartCoroutine(RequestAuthorization());
+            Debug.Log("[LocalNotification]", "IOS RequestAuthorization");
 #endif
 #endif
         }
@@ -60,13 +62,14 @@ namespace VMC.Notifications
 
 #if VMC_NOTIFICATION
 #if UNITY_ANDROID
-            var notification = new AndroidNotification();
-            notification.Title = title;
-            notification.Text = message;
-            notification.Color = bgColor;
-            notification.SmallIcon = "app_icon";
-            notification.FireTime = System.DateTime.Now.AddMilliseconds(delayMs);
-            Logger.Logger.Log("[LocalNotification] Set notify: " + message + " !!!delay: " + delayMs);
+            AndroidNotification notification = new AndroidNotification()
+            {
+                Title = title,
+                Text = message,
+                Color = bgColor,
+                SmallIcon = "app_icon",
+                FireTime = System.DateTime.Now.AddMilliseconds(delayMs)
+            };
             AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "channel_id", id);
 #elif UNITY_IOS
             var timeTrigger = new iOSNotificationTimeIntervalTrigger()
@@ -92,6 +95,7 @@ namespace VMC.Notifications
 
             iOSNotificationCenter.ScheduleNotification(notification);
 #endif
+            Debug.Log("[LocalNotification]", "Set notify: " + message + " !!!delay: " + delayMs);
 #endif
             return id;
         }
@@ -100,14 +104,15 @@ namespace VMC.Notifications
 
 #if VMC_NOTIFICATION
 #if UNITY_ANDROID
-            var notification = new AndroidNotification();
-            notification.Title = title;
-            notification.Text = message;
-            notification.Color = bgColor;
-            notification.SmallIcon = "app_icon";
-            notification.FireTime = System.DateTime.Now.AddMilliseconds(delayMs);
-            notification.RepeatInterval = repeatTime;
-            Logger.Logger.Log("[LocalNotification] Set notify: " + message + " !!!delay: " + delayMs);
+            AndroidNotification notification = new AndroidNotification()
+            {
+                Title = title,
+                Text = message,
+                Color = bgColor,
+                SmallIcon = "app_icon",
+                FireTime = System.DateTime.Now.AddMilliseconds(delayMs),
+                RepeatInterval = repeatTime
+            };
             AndroidNotificationCenter.SendNotificationWithExplicitID(notification, "channel_id", id);
 #elif UNITY_IOS
             var timeTrigger = new iOSNotificationTimeIntervalTrigger()
@@ -134,6 +139,7 @@ namespace VMC.Notifications
 
             iOSNotificationCenter.ScheduleNotification(notification);
 #endif
+            Debug.Log("[LocalNotification]", " Set notify: " + message + " !!!delay: " + delayMs);
 #endif
             return id;
         }
@@ -143,10 +149,10 @@ namespace VMC.Notifications
 #if VMC_NOTIFICATION
 #if UNITY_ANDROID
             AndroidNotificationCenter.CancelNotification(id);
-            Logger.Logger.Log("[LocalNotification] Cancel notification id: " + id);
 #elif UNITY_IOS
             iOSNotificationCenter.RemoveScheduledNotification(id.ToString());
 #endif
+            Debug.Log("[LocalNotification]", " Cancel notification id: " + id);
 #endif
         }
 
@@ -156,10 +162,10 @@ namespace VMC.Notifications
 #if VMC_NOTIFICATION
 #if UNITY_ANDROID
             AndroidNotificationCenter.CancelAllNotifications();
-            Logger.Logger.Log("[LocalNotification] Cancel all notification!");
 #elif UNITY_IOS
             iOSNotificationCenter.RemoveAllScheduledNotifications();
 #endif
+            Debug.Log("[LocalNotification]", " Cancel all notification!");
 #endif
         }
 
@@ -168,6 +174,7 @@ namespace VMC.Notifications
         public void ClearDeliveredNotifications()
         {
             iOSNotificationCenter.RemoveAllDeliveredNotifications();
+            Debug.Log("[LocalNotification]", " Cancel all Delivered notification!");
         }
 #endif
 #endif

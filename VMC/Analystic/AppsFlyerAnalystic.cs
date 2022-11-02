@@ -34,6 +34,15 @@ namespace VMC.Analystic
 #endif
         }
 
+        public void ATTShow()
+        {
+
+        }
+        public void ATTSuccess()
+        {
+
+        }
+
         public void LogEvent(string nameEvent)
         {
         }

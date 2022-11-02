@@ -25,6 +25,12 @@ namespace VMC.Ads
                     max.transform.SetParent(this.transform);
                     ads = max;
                 }
+                else if (config.adsLibrary.HasFlag(Settings.AdsLibrary.IronsourceMediation))
+                {
+                    var ironsource = (new GameObject("Ironsource Mediation")).AddComponent<AdsIronsourceMediation>();
+                    ironsource.transform.SetParent(this.transform);
+                    ads = ironsource;
+                }
                 else if (config.adsLibrary.HasFlag(Settings.AdsLibrary.Admob))
                 {
                     var admob = (new GameObject("Admob Mediation")).AddComponent<AdsAdmob>();

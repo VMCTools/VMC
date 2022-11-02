@@ -2,6 +2,13 @@
 - Tool Ads-Analytics-Ultilities
 ----------------------------------------------------------------------------------------------------------------
 						CHANGE LOGS
+[2022 / 11 / 01] -------1.0.2.5---------
+Upgrade Firebase Analytics 9.5.0 -> 10.0.1
+Add Firebase Remote Config 10.0.1
+Upgrade MaxSDK lastest
+Upgrade ExternalDependencyManager 1.2.173 -> 1.2.174
+
+
 [2022 / 10 / 18] -------1.0.2.4--------- 
 - Thêm Fake Loading. Để thực hiện init các thư viện độc lập =>> Từ bây giờ muốn sử dụng thì phải init các thư viện lên trước
 - Tham khảo VMCFirstLoading.cs
@@ -17,10 +24,12 @@
 
 ----------------------------------------------------------------------------------------------------------------
 Admob Unity SDK: GoogleMobileAds-v7.2.0.unitypackage
-ExternalDependencyManager: 1.2.172
-Firebase Analystic: 9.5.0 - {FirebaseAnalytics}
-AppsFlyer: appsflyer-unity-plugin-6.8.3.unitypackage
+ExternalDependencyManager: 1.2.174    -> https://developers.google.com/unity/packages
+Firebase Analystic: 10.0.1
+Firebase Remote Config: 10.0.1
+AppsFlyer: 6.8.3  -> https://github.com/AppsFlyerSDK/appsflyer-unity-plugin/releases/tag/6.8.4
 Applovin: AppLovin-MAX-Unity-Plugin-5.4.7-Android-11.4.6-iOS-11.4.4.unitypackage
+AppReview: 1.8.1  -> https://developers.google.com/unity/packages#play_in-app_review
 
 ----------------------------------------------------------------------------------------------------------------
 1. Import package vào projects

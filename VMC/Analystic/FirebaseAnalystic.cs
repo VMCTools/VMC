@@ -1,6 +1,7 @@
 
 #if VMC_ANALYZE_FIREBASE
 using Firebase.Analytics;
+using System;
 #endif
 using UnityEngine;
 using Debug = VMC.Debugger.Debug;
@@ -11,6 +12,7 @@ namespace VMC.Analystic
 #if VMC_ANALYZE_FIREBASE
         private bool isInitedFirebase = false;
 #endif
+        public static event Action OnFirebaseReady;
         public void Initialize()
         {
             Debug.Log("[Analystic]", "Init firebase!");
@@ -25,6 +27,7 @@ namespace VMC.Analystic
                     //app = Firebase.FirebaseApp.DefaultInstance;
                     isInitedFirebase = true;
                     // Set a flag here to indicate whether Firebase is ready to use by your app.
+                    OnFirebaseReady?.Invoke();
                 }
                 else
                 {
@@ -38,6 +41,15 @@ namespace VMC.Analystic
 #endif
         }
 
+
+        public void ATTShow()
+        {
+
+        }
+        public void ATTSuccess()
+        {
+
+        }
         public void LogEvent(string eventName)
         {
 #if VMC_ANALYZE_FIREBASE

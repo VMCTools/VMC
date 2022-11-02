@@ -2,10 +2,18 @@
 {
     public enum Define
     {
+        // DOTween
         VMC_DOTWEEN,
+
+        //Notification
         VMC_NOTIFICATION,
+        VMC_FIREBASE_MESSAGING,
+
+        //IAP
         VMC_IAP,
 
+        //Facebook
+        VMC_FACEBOOK,
 
         ///ADS
         VMC_ADS_TESTMODE,
@@ -22,9 +30,13 @@
         VMC_DEBUG_ERROR,
         VMC_DEBUG_ASSERT,
 
-
-
+        //Remote
+        VMC_REMOTE_FIREBASE,
 
         VMC_ADDRESSABLE,
+        VMC_APP_REVIEW,
+
+        VMC_GROUP_1,
+        VMC_GROUP_2
     }
 }

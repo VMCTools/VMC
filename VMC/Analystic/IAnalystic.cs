@@ -3,6 +3,10 @@ namespace VMC.Analystic
     public interface IAnalystic
     {
         public void Initialize();
+
+
+        public void ATTShow();
+        public void ATTSuccess();
         public void LogEvent(string nameEvent);
 
 
