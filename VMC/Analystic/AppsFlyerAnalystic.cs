@@ -63,6 +63,7 @@ namespace VMC.Analystic
         {
         }
 
+#if VMC_GROUP_1 
         public void Log_LevelStart(int level)
         {
         }
@@ -128,5 +129,109 @@ namespace VMC.Analystic
         public void SetUserProperties_DayDisplaying(int days)
         {
         }
+#elif VMC_GROUP_2
+        public void Log_CheckPoint(int id) { }
+        public void Log_LevelStart(int level, int current_gold) { }
+        public void Log_LevelComplete(int level, float timeplayed) { }
+        public void Log_LevelFail(int level, int failcount) { }
+        public void Log_EarnVirtualCurrency(string virtual_currency_name, long value, string source) { }
+        public void Log_SpendVirtualCurrency(string virtual_currency_name, long value, string item_name) { }
+        public void Log_AdsRewardOffer(string placment)
+        {
+#if VMC_ANALYZE_APPFLYER
+            AppsFlyer.sendEvent("af_rewarded_ad_eligible", null);
+#endif 
+        }
+        public void Log_AdsRewardClick(string placment) { }
+        public void Log_AdsRewardShow(string placment)
+        {
+#if VMC_ANALYZE_APPFLYER
+            AppsFlyer.sendEvent("af_rewarded_displayed", null);
+#endif 
+        }
+        public void Log_AdsRewardFail(string placment, string errormsg) { }
+        public void Log_AdsRewardComplete(string placment)
+        {
+#if VMC_ANALYZE_APPFLYER
+            AppsFlyer.sendEvent("af_rewarded_ad_completed", null);
+#endif 
+        }
+
+        public void Log_AdsInterOffer()
+        {
+#if VMC_ANALYZE_APPFLYER
+            AppsFlyer.sendEvent("af_inters_ad_eligible", null);
+#endif 
+        }
+        public void Log_AdsInterFail(string errormsg) { }
+        public void Log_AdsInterLoad()
+        {
+#if VMC_ANALYZE_APPFLYER
+            AppsFlyer.sendEvent("af_inters_api_called", null);
+#endif 
+        }
+        public void Log_AdsInterShow()
+        {
+#if VMC_ANALYZE_APPFLYER
+            AppsFlyer.sendEvent("af_inters_displayed", null);
+#endif 
+        }
+        public void Log_AdsInterClick() { }
+
+
+        public void UserProperty_RetentType(int retent_type) { }
+        public void UserProperty_DayPlayed(int days_played) { }
+        public void UserProperty_PayingType(int paying_type) { }
+        public void UserProperty_Level(int level) { }
+
+
+        public void Log_TutorialCompletion(bool isSuccess, string tutorialId)
+        {
+#if VMC_ANALYZE_APPFLYER
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"af_success", isSuccess.ToString() },
+                {"af_tutorial_id",tutorialId},
+            };
+            AppsFlyer.sendEvent("af_tutorial_completion", parameters);
+#endif
+        }
+        public void Log_LevelAchieved(int level, int score)
+        {
+#if VMC_ANALYZE_APPFLYER
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"af_level", level.ToString() },
+                {"af_score",score.ToString() },
+            };
+            AppsFlyer.sendEvent("af_level_achieved", parameters);
+#endif
+        }
+        public void Log_AchievementUnlocked(int contentId, int level)
+        {
+#if VMC_ANALYZE_APPFLYER
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"af_content_id", contentId.ToString() },
+                {"af_level",level.ToString() },
+            };
+            AppsFlyer.sendEvent("af_achievement_unlocked", parameters);
+#endif 
+        }
+        public void Log_Purchase(float revenue, string currency, int quantity, int contentId)
+        {
+#if VMC_ANALYZE_APPFLYER
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                {"af_revenue", revenue.ToString() },
+                {"af_currency",currency.ToString() },
+                {"af_quantity",quantity.ToString() },
+                {"af_content_id",contentId.ToString() },
+            };
+            AppsFlyer.sendEvent("af_purchase", parameters);
+#endif 
+        }
+#endif
+
     }
 }

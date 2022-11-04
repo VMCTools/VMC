@@ -41,7 +41,7 @@ namespace VMC.AppReview
         }
 
 
-        public IEnumerator RequestReview()
+        private IEnumerator RequestReview()
         {
 #if VMC_APP_REVIEW && UNITY_ANDROID
             if (_reviewManager == null)

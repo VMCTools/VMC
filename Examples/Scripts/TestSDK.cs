@@ -52,7 +52,7 @@ namespace VMC.Examples
                     txtMess.text = "Show Rewarded";
                     AdsManager.Instance.ShowRewardedVideo("Test", (result) =>
                     {
-                        txtMess.text += "\nShow Rewarded callback: "+ result;
+                        txtMess.text += "\nShow Rewarded callback: " + result;
                         Debug.Log("Close rewarded and got reward? " + result);
                     });
                 });
@@ -71,7 +71,12 @@ namespace VMC.Examples
                 btns[5].GetComponentInChildren<Text>().text = "Logevent Level Start";
                 btns[5].onClick.AddListener(() =>
                 {
+
+#if VMC_GROUP_1
                     AnalysticManager.Instance.Log_LevelStart(1);
+#elif VMC_GROUP_2
+                    AnalysticManager.Instance.Log_LevelStart(1, 0);
+#endif
                     Debug.Log("Log event level start!");
                 });
             }

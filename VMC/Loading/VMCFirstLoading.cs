@@ -34,7 +34,8 @@ namespace VMC
                 countTimeFakeLoading = 0f;
                 StartCoroutine(LoadYourAsyncScene());
                 InitStep1();
-                Invoke(nameof(InitStep2), fakeLoadingTime / 7);
+                Invoke(nameof(InitStep2), fakeLoadingTime * .2f);
+                Invoke(nameof(InitStep3), fakeLoadingTime * .8f);
             }
 
         }
@@ -63,10 +64,7 @@ namespace VMC
                 if (countTimeFakeLoading >= fakeLoadingTime)
                 {
                     isCounting = false;
-                    InitStep3();
                     isInited = true;
-                    //SceneManager.LoadScene(sceneName);
-                    //asyncOperation.allowSceneActivation = true;
                     OnProgressLoading?.Invoke(1);
                 }
                 else
@@ -85,13 +83,13 @@ namespace VMC
         }
         private void InitStep2()
         {
-            // init AOA
-            VMC.Ads.AdsManager.Instance.InitializeAOA();
+            // init Firebase
+            VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();
         }
         private void InitStep3()
         {
-            // init Firebase
-            VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();
+            // init AOA
+            VMC.Ads.AdsManager.Instance.InitializeAOA();
         }
     }
 }

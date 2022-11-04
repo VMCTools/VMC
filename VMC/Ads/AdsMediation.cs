@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VMC.Ads;
 using VMC.Ultilities;
+using VMC.Analystic;
 #if VMC_DOTWEEN
 using DG.Tweening;
 #endif
@@ -136,6 +137,9 @@ namespace VMC.Ads
         public virtual void LoadInterstitialAds()
         {
             IsLoadedInterstitial = false;
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsInterLoad();
+#endif
         }
         public bool IsInterstitialAvailable()
         {
@@ -154,6 +158,9 @@ namespace VMC.Ads
                 this.interstitialCallback = callback;
                 SetWatchingAds(true);
                 SetIntervalInterstitial();
+#if VMC_GROUP_2
+                AnalysticManager.Instance.Log_AdsInterShow();
+#endif
             }
         }
         private void SetIntervalInterstitial()
@@ -173,17 +180,24 @@ namespace VMC.Ads
             IsLoadedInterstitial = true;
             retryInterAttempt = 0;
         }
-        protected void OnInterstitialLoadFailed()
+        protected void OnInterstitialLoadFailed(string errorMsg)
         {
             retryInterAttempt++;
             double retryDelay = Math.Pow(2, Math.Min(6, retryInterAttempt));
             Invoke(nameof(LoadInterstitialAds), (float)retryDelay);
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsInterFail(errorMsg);
+#endif
         }
-        protected void OnInterstitialDisplayFailed()
+        protected void OnInterstitialDisplayFailed(string errorMsg)
         {
             LoadInterstitialAds();
             SetWatchingAds(false);
             interstitialCallback?.Invoke();
+
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsInterFail(errorMsg);
+#endif
         }
         protected void OnInterstitialDisplaySuccessed()
         {
@@ -191,7 +205,12 @@ namespace VMC.Ads
             SetWatchingAds(false);
             interstitialCallback?.Invoke();
         }
-
+        protected void OnInterstitialClicked()
+        {
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsInterClick();
+#endif
+        }
         #endregion
 
         #region REWARDED VIDEO
@@ -212,6 +231,10 @@ namespace VMC.Ads
                 this.rewardedCallback = callback;
                 this.gotReward = false;
                 SetWatchingAds(true);
+
+#if VMC_GROUP_2
+                AnalysticManager.Instance.Log_AdsRewardShow(this.rewardedPlacement);
+#endif
             }
         }
         protected void OnRewardedLoadSuccessed()
@@ -219,23 +242,39 @@ namespace VMC.Ads
             IsLoadedRewardedVideo = true;
             retryRewardedAttempt = 0;
         }
-        protected void OnRewardedLoadFailed()
+        protected void OnRewardedLoadFailed(string errorMsg)
         {
             retryRewardedAttempt++;
             double retryDelay = Math.Pow(2, Math.Min(6, retryRewardedAttempt));
             Invoke(nameof(LoadRewardedVideo), (float)retryDelay);
+//#if VMC_GROUP_2
+//            AnalysticManager.Instance.Log_AdsRewardFail(this.rewardedPlacement, errorMsg);
+//#endif
         }
-        protected void OnRewardedDisplayFailed()
+        protected void OnRewardedDisplayFailed(string errorMsg)
         {
             LoadRewardedVideo();
             SetWatchingAds(false);
             rewardedCallback?.Invoke(gotReward);
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsRewardFail(this.rewardedPlacement, errorMsg);
+#endif
         }
+        protected void OnRewardedClicked()
+        {
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsRewardClick(this.rewardedPlacement);
+#endif
+        }
+
         protected void OnRewardedDisplaySuccessed()
         {
             LoadRewardedVideo();
             SetWatchingAds(false);
             rewardedCallback?.Invoke(gotReward);
+#if VMC_GROUP_2
+            AnalysticManager.Instance.Log_AdsRewardComplete(this.rewardedPlacement);
+#endif
         }
         protected void OnRewardedGotReward()
         {

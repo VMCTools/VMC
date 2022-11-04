@@ -8,11 +8,16 @@ using VMC.Ultilities;
 using Debug = VMC.Debugger.Debug;
 using System;
 
+#if VMC_FACEBOOK
+using Facebook.Unity;
+#endif
+
 namespace VMC.Settings
 {
     public class VMCManager : Singleton<VMCManager>
     {
         public bool EnableRemote = false;
+        public bool EnableAOA = false;
         private void Start()
         {
             Application.targetFrameRate = 60;
@@ -27,6 +32,24 @@ namespace VMC.Settings
                 PlayerPrefs.SetInt("ATTShowed", 1);
             }
             FirebaseAnalystic.OnFirebaseReady += FirebaseAnalystic_OnFirebaseReady;
+
+
+            VMC.Notifications.LocalNotification.Instance.RegisterNotificationChannel();
+            VMC.Notifications.LocalNotification.Instance.ClearNotifications();
+            VMC.Notifications.LocalNotification.Instance.SendNotification(1, 3 * 24 * 60 * 60 * 1000, "Monsters came back!", "Let's kill them all!", new Color32());
+
+#if VMC_FACEBOOK
+            if (!FB.IsInitialized)
+            {
+                // Initialize the Facebook SDK
+                FB.Init(InitCallback, OnHideUnity);
+            }
+            else
+            {
+                // Already initialized, signal an app activation App Event
+                FB.ActivateApp();
+            }
+#endif
         }
 
         private void FirebaseAnalystic_OnFirebaseReady()
@@ -63,7 +86,10 @@ namespace VMC.Settings
 
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
             // yet, or if we ask for values that the server doesn't have:
-            defaults.Add("config_aoa_id", config.openAdsId_Tier1);
+            defaults.Add("enable_aoa", false);
+            EnableAOA = false;
+            //defaults.Add("config_aoa_id", config.openAdsId_Tier1);
+
 
             Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.SetDefaultsAsync(defaults)
               .ContinueWithOnMainThread(task =>
@@ -72,6 +98,7 @@ namespace VMC.Settings
                   Debug.Log("RemoteConfig configured and ready!");
                   FetchDataAsync();
                   //isFirebaseInitialized = true;
+                  EnableRemote = true;
               });
         }
         public Task FetchDataAsync()
@@ -93,6 +120,43 @@ namespace VMC.Settings
             else if (fetchTask.IsCompleted)
             {
                 Debug.Log("Fetch completed successfully!");
+            }
+
+            if (Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetValue("enable_aoa").BooleanValue)
+            {
+                EnableAOA = true;
+            }
+        }
+#endif
+
+
+#if VMC_FACEBOOK
+        private void InitCallback()
+        {
+            if (FB.IsInitialized)
+            {
+                // Signal an app activation App Event
+                FB.ActivateApp();
+                // Continue with Facebook SDK
+                // ...
+            }
+            else
+            {
+                Debug.Log("Failed to Initialize the Facebook SDK");
+            }
+        }
+
+        private void OnHideUnity(bool isGameShown)
+        {
+            if (!isGameShown)
+            {
+                // Pause the game - we will need to hide
+                Time.timeScale = 0;
+            }
+            else
+            {
+                // Resume the game - we're getting focus again
+                Time.timeScale = 1;
             }
         }
 #endif

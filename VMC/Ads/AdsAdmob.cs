@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
+using VMC.Analystic;
 using Debug = VMC.Debugger.Debug;
 
 namespace VMC.Ads
@@ -172,6 +173,8 @@ namespace VMC.Ads
             this.interstitial.OnAdFailedToLoad += interstitial_OnAdFailedToLoad;
             // Called when the ad is closed.
             this.interstitial.OnAdClosed += interstitial_OnAdClosed;
+
+            this.interstitial.OnAdDidRecordImpression += Interstitial_OnAdDidRecordImpression;
             // Called when the ad is failed to show.
             this.interstitial.OnAdFailedToShow += Interstitial_OnAdFailedToShow;
 
@@ -181,6 +184,7 @@ namespace VMC.Ads
             this.interstitial.LoadAd(request);
 #endif
         }
+
         public override void ShowInterstitialAds(string placement, Action callback)
         {
             base.ShowInterstitialAds(placement, callback);
@@ -211,7 +215,10 @@ namespace VMC.Ads
         private void interstitial_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
         {
             Debug.Log("[ADMOB-Intersitial]", "Failed to load intersitital ads. " + args.LoadAdError.GetMessage());
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstitialLoadFailed);
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                this.OnInterstitialLoadFailed(args.LoadAdError.GetMessage());
+            });
         }
         private void interstitial_OnAdClosed(object sender, EventArgs args)
         {
@@ -221,7 +228,20 @@ namespace VMC.Ads
         private void Interstitial_OnAdFailedToShow(object sender, AdErrorEventArgs e)
         {
             Debug.Log("[ADMOB-Intersitial]", "Failed to show Ads!");
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstitialDisplayFailed);
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                this.OnInterstitialDisplayFailed(e.AdError.GetMessage());
+            });
+        }
+
+        private void Interstitial_OnAdDidRecordImpression(object sender, EventArgs e)
+        {
+#if VMC_GROUP_2
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                this.OnInterstitialClicked();
+            });
+#endif
         }
 #endif
         #endregion
@@ -250,6 +270,8 @@ namespace VMC.Ads
             // Called when the ad is closed.
             this.rewardedAd.OnAdClosed += RewardedAd_OnAdClosed;
 
+            this.rewardedAd.OnAdDidRecordImpression += RewardedAd_OnAdDidRecordImpression;
+
 
             // Create an empty ad request.
             AdRequest request = new AdRequest.Builder().Build();
@@ -257,6 +279,8 @@ namespace VMC.Ads
             this.rewardedAd.LoadAd(request);
 #endif
         }
+
+
         public override void ShowRewardedVideo(string placement, Action<bool> callback)
         {
             base.ShowRewardedVideo(placement, callback);
@@ -283,12 +307,18 @@ namespace VMC.Ads
         private void RewardedAd_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to load RewardedVideo ads. " + e.LoadAdError.GetMessage());
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedLoadFailed);
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                this.OnRewardedLoadFailed(e.LoadAdError.GetMessage());
+            });
         }
         private void RewardedAd_OnAdFailedToShow(object sender, AdErrorEventArgs args)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Failed to show RewardedVideo ads. " + args.AdError.GetMessage());
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedDisplayFailed);
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                this.OnRewardedDisplayFailed(args.AdError.GetMessage());
+            });
         }
         private void RewardedAd_OnAdClosed(object sender, EventArgs args)
         {
@@ -299,6 +329,10 @@ namespace VMC.Ads
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
             this.OnRewardedGotReward();
+        }
+        private void RewardedAd_OnAdDidRecordImpression(object sender, EventArgs e)
+        {
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedClicked);
         }
 #endif
         #endregion

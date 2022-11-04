@@ -74,6 +74,7 @@ namespace VMC.Analystic
             }
         }
 
+#if VMC_GROUP_1
         public void Log_LevelStart(int level)
         {
             foreach (var analytic in analytics)
@@ -193,5 +194,181 @@ namespace VMC.Analystic
                 analytic.SetUserProperties_DayDisplaying(days);
             }
         }
+#elif VMC_GROUP_2
+        public void Log_CheckPoint(int id)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_CheckPoint(id);
+            }
+        }
+        public void Log_LevelStart(int level, int current_gold)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_LevelStart(level, current_gold);
+            }
+        }
+        public void Log_LevelComplete(int level, float timeplayed)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_LevelComplete(level, timeplayed);
+            }
+        }
+        public void Log_LevelFail(int level, int failcount)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_LevelFail(level, failcount);
+            }
+        }
+        public void Log_EarnVirtualCurrency(string virtual_currency_name, long value, string source)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_EarnVirtualCurrency(virtual_currency_name, value, source);
+            }
+        }
+        public void Log_SpendVirtualCurrency(string virtual_currency_name, long value, string item_name)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_SpendVirtualCurrency(virtual_currency_name, value, item_name);
+            }
+        }
+        public void Log_AdsRewardOffer(string placment)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsRewardOffer(placment);
+            }
+        }
+        public void Log_AdsRewardClick(string placment)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsRewardClick(placment);
+            }
+        }
+        public void Log_AdsRewardShow(string placment)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsRewardShow(placment);
+            }
+        }
+        public void Log_AdsRewardFail(string placment, string errormsg)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsRewardFail(placment, errormsg);
+            }
+        }
+        public void Log_AdsRewardComplete(string placment)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsRewardComplete(placment);
+            }
+        }
+
+        public void Log_AdsInterOffer()
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsInterOffer();
+            }
+        }
+        public void Log_AdsInterFail(string errormsg)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsInterFail(errormsg);
+            }
+        }
+
+        public void Log_AdsInterLoad()
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsInterLoad();
+            }
+        }
+
+        public void Log_AdsInterShow()
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsInterShow();
+            }
+        }
+        public void Log_AdsInterClick()
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AdsInterClick();
+            }
+        }
+
+        public void UserProperty_RetentType(int retent_type)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.UserProperty_RetentType(retent_type);
+            }
+        }
+        public void UserProperty_DayPlayed(int days_played)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.UserProperty_DayPlayed(days_played);
+            }
+        }
+        public void UserProperty_PayingType(int paying_type)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.UserProperty_PayingType(paying_type);
+            }
+        }
+        public void UserProperty_Level(int level)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.UserProperty_Level(level);
+            }
+        }
+
+
+        public void Log_TutorialCompletion(bool isSuccess, string tutorialId)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_TutorialCompletion(isSuccess, tutorialId);
+            }
+        }
+        public void Log_LevelAchieved(int level, int score)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_LevelAchieved(level, score);
+            }
+        }
+        public void Log_AchievementUnlocked(int contentId, int level)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_AchievementUnlocked(contentId, level);
+            }
+        }
+        public void Log_Purchase(float revenue, string currency, int quantity, int contentId)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.Log_Purchase(revenue, currency, quantity, contentId);
+            }
+        }
+#endif
     }
 }

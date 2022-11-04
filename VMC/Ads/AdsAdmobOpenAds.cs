@@ -56,7 +56,7 @@ namespace VMC.Ads
 
             MobileAds.Initialize(status =>
             {
-                LoadAd();
+                LoadAd(); // load ad in init
             });
 #endif
         }
@@ -72,6 +72,8 @@ namespace VMC.Ads
 
         private void LoadAd()
         {
+            if (!VMC.Settings.VMCManager.Instance.EnableAOA)
+                return;
 #if VMC_ADS_ADMOB
             string id = ID_TIER_1;
             if (tierIndex == 2)
@@ -81,6 +83,12 @@ namespace VMC.Ads
 
             Debug.Log("Start request Open App Ads Tier " + tierIndex);
 
+            //#if VMC_REMOTE_FIREBASE
+            //            if (Settings.VMCManager.Instance.EnableRemote)
+            //            {
+            //                id = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetValue("config_aoa_id").StringValue;
+            //            }
+            //#endif
 
 
             //var config = RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("377807EAA67F63DF0FFE8F146CF568C7"));
@@ -94,7 +102,7 @@ namespace VMC.Ads
                     Debug.LogFormat("Failed to load the ad. (reason: {0}), tier {1}", error.LoadAdError.GetMessage(), tierIndex);
                     tierIndex++;
                     if (tierIndex <= 3)
-                        LoadAd();
+                        LoadAd(); // load add
                     else
                         tierIndex = 1;
                     return;
@@ -116,7 +124,16 @@ namespace VMC.Ads
 
         public void ShowAdIfAvailable()
         {
+            if (!VMC.Settings.VMCManager.Instance.EnableAOA)
+                return;
+
 #if VMC_ADS_ADMOB
+            if(ad==null)
+            {
+                LoadAd(); // when ads is null -> reload ads
+                return;
+            }
+
             if (!IsAdAvailable || isShowingAd)
             {
                 return;
@@ -132,6 +149,8 @@ namespace VMC.Ads
             ad.Show();
 #endif
         }
+
+
 #if VMC_ADS_ADMOB
         private void HandleAdDidDismissFullScreenContent(object sender, EventArgs args)
         {
@@ -139,7 +158,7 @@ namespace VMC.Ads
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             ad = null;
             isShowingAd = false;
-            LoadAd();
+            LoadAd(); //load ads when close prev ads
         }
 
         private void HandleAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs args)
@@ -147,7 +166,7 @@ namespace VMC.Ads
             Debug.LogFormat("Failed to present the ad (reason: {0})", args.AdError.GetMessage());
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             ad = null;
-            LoadAd();
+            LoadAd(); // load ads when failed show prev ads
         }
 
         private void HandleAdDidPresentFullScreenContent(object sender, EventArgs args)

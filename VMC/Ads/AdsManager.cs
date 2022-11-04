@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
+using VMC.Analystic;
 using VMC.Ultilities;
 
 namespace VMC.Ads

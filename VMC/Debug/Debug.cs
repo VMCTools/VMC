@@ -17,7 +17,11 @@ namespace VMC.Debugger
         [Conditional(nameof(VMC.Settings.Define.VMC_DEBUG_NORMAL))]
         public static void Log(string key, string mess)
         {
+#if UNITY_EDITOR
             UnityEngine.Debug.Log($"<color=green>{key}</color> {mess}");
+#else
+            UnityEngine.Debug.Log($"{key} {mess}");
+#endif
         }
         [Conditional(nameof(VMC.Settings.Define.VMC_DEBUG_NORMAL))]
         public static void Log(object message)
@@ -74,7 +78,11 @@ namespace VMC.Debugger
         [Conditional(nameof(VMC.Settings.Define.VMC_DEBUG_ERROR))]
         public static void LogError(string key, string mess)
         {
+#if UNITY_EDITOR
             UnityEngine.Debug.LogError($"<color=green>{key}</color> {mess}");
+#else
+            UnityEngine.Debug.LogError($"{key} {mess}");
+#endif
         }
 
         [Conditional(nameof(VMC.Settings.Define.VMC_DEBUG_ERROR))]
@@ -115,7 +123,11 @@ namespace VMC.Debugger
         [Conditional(nameof(VMC.Settings.Define.VMC_DEBUG_WARNING))]
         public static void LogWarning(string key, string mess)
         {
-            UnityEngine.Debug.LogError($"<color=red>{key}</color> {mess}");
+#if UNITY_EDITOR
+            UnityEngine.Debug.LogWarning($"<color=red>{key}</color> {mess}");
+#else
+            UnityEngine.Debug.LogWarning($"{key} {mess}");
+#endif
         }
 
 

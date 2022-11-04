@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
+using VMC.Analystic;
 
 namespace VMC.Ads
 {
@@ -127,11 +128,14 @@ namespace VMC.Ads
             MaxSdkCallbacks.Interstitial.OnAdLoadFailedEvent += OnInterstitialLoadFailedEvent;
             MaxSdkCallbacks.Interstitial.OnAdHiddenEvent += OnInterstitialHiddenEvent;
             MaxSdkCallbacks.Interstitial.OnAdDisplayFailedEvent += OnInterstitialAdFailedToDisplayEvent;
+            MaxSdkCallbacks.Interstitial.OnAdClickedEvent += Interstitial_OnAdClickedEvent;
             MaxSdkCallbacks.Interstitial.OnAdRevenuePaidEvent += OnAdRevenuePaidEvent;
             // Load the first interstitial
             LoadInterstitialAds();
 #endif
         }
+
+
         public override void LoadInterstitialAds()
         {
             base.LoadInterstitialAds();
@@ -162,15 +166,19 @@ namespace VMC.Ads
         }
         private void OnInterstitialLoadFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
         {
-            this.OnInterstitialLoadFailed();
+            this.OnInterstitialLoadFailed(errorInfo.Message);
         }
         private void OnInterstitialAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
         {
-            this.OnInterstitialDisplayFailed();
+            this.OnInterstitialDisplayFailed(errorInfo.Message);
         }
         private void OnInterstitialHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
             this.OnInterstitialDisplaySuccessed();
+        }
+        private void Interstitial_OnAdClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+           this.OnInterstitialClicked();
         }
 #endif
         #endregion
@@ -187,10 +195,12 @@ namespace VMC.Ads
             MaxSdkCallbacks.Rewarded.OnAdDisplayFailedEvent += OnRewardedAdFailedToDisplayEvent;
             MaxSdkCallbacks.Rewarded.OnAdReceivedRewardEvent += OnRewardedAdReceivedRewardEvent;
             MaxSdkCallbacks.Rewarded.OnAdRevenuePaidEvent += OnAdRevenuePaidEvent;
+            MaxSdkCallbacks.Rewarded.OnAdClickedEvent += Rewarded_OnAdClickedEvent;
             // Load the first rewarded ad
             LoadRewardedVideo();
 #endif
         }
+
         public override void LoadRewardedVideo()
         {
             base.LoadRewardedVideo();
@@ -225,12 +235,17 @@ namespace VMC.Ads
         {
             // Rewarded ad failed to load 
             // AppLovin recommends that you retry with exponentially higher delays, up to a maximum delay (in this case 64 seconds).
-            this.OnRewardedLoadFailed();
+            this.OnRewardedLoadFailed(errorInfo.Message);
         }
         private void OnRewardedAdFailedToDisplayEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo, MaxSdkBase.AdInfo adInfo)
         {
             // Rewarded ad failed to display. AppLovin recommends that you load the next ad.
-            this.OnRewardedDisplayFailed();
+            this.OnRewardedDisplayFailed(errorInfo.Message);
+        }
+
+        private void Rewarded_OnAdClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            this.OnRewardedClicked();
         }
         private void OnRewardedAdHiddenEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
