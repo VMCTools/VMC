@@ -24,8 +24,9 @@ namespace VMC.Ads
         private int tierIndex = 1;
 
         private float intervalTimeShowAds;
-        private DateTime nextTimeToShow;
 #endif
+        private DateTime nextTimeToShow;
+
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
 

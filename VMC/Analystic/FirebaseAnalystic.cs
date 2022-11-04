@@ -1,8 +1,8 @@
 
 #if VMC_ANALYZE_FIREBASE
 using Firebase.Analytics;
-using System;
 #endif
+using System;
 using UnityEngine;
 using Debug = VMC.Debugger.Debug;
 namespace VMC.Analystic
