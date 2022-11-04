@@ -31,7 +31,7 @@ MonoBehaviour:
   AF_Dev_Key: G3MBmMRHTuEpXbqyqSWGeK
   AF_App_Id: 
   enableRemoteConfig: 1
-  enableDebugLog: 0
+  enableDebugLog: 1
   debugLogLevel: -1
   isUsingFacebook: 1
   isUsingDoTween: 1

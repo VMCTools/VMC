@@ -146,14 +146,20 @@ namespace VMC.Ads
         public override void ShowInterstitialAds(string placement, Action callback = null)
         {
             base.ShowInterstitialAds(placement, callback);
-            if (!isCanShowInterstitial) return;
+            if (!isCanShowInterstitial)
+            {
+                VMC.Debugger.Debug.Log("[ADS] Max", "Cant show because isCanShowInterstitial=false");
+                return;
+            }
 #if VMC_ADS_MAX
             if (IsLoadedInterstitial)
             {
+                VMC.Debugger.Debug.Log("[ADS] Max", "Call show");
                 MaxSdk.ShowInterstitial(interstitialId, placement);
             }
             else
             {
+                VMC.Debugger.Debug.Log("[ADS] Max", "Cant show because not loaded");
                 callback?.Invoke();
             }
 #endif

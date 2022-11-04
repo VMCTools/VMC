@@ -149,6 +149,7 @@ namespace VMC.Ads
         {
             if (!isCanShowInterstitial)
             {
+                VMC.Debugger.Debug.Log("[ADS]", "Cant Show interstitial because interval time");
                 callback?.Invoke();
                 return;
             }
@@ -157,10 +158,14 @@ namespace VMC.Ads
                 this.interstitialPlacement = placement;
                 this.interstitialCallback = callback;
                 SetWatchingAds(true);
-                SetIntervalInterstitial();
 #if VMC_GROUP_2
                 AnalysticManager.Instance.Log_AdsInterShow();
 #endif
+                VMC.Debugger.Debug.Log("[ADS]", "Real show");
+            }
+            else
+            {
+                VMC.Debugger.Debug.Log("[ADS]", "Cant Show interstitial because not loaded");
             }
         }
         private void SetIntervalInterstitial()
@@ -171,7 +176,7 @@ namespace VMC.Ads
             DOVirtual.DelayedCall(MIN_TIME_SHOWITERSTIRIAL, () =>
             {
                 isCanShowInterstitial = true;
-            });
+            }).SetUpdate(true);
 #endif
         }
 
@@ -204,6 +209,7 @@ namespace VMC.Ads
             LoadInterstitialAds();
             SetWatchingAds(false);
             interstitialCallback?.Invoke();
+            SetIntervalInterstitial();
         }
         protected void OnInterstitialClicked()
         {

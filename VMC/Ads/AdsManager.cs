@@ -89,13 +89,13 @@ namespace VMC.Ads
         {
             if (!CheckValidate())
             {
-#if UNITY_EDITOR
-                VMC.Debugger.Debug.Log("[ADS]", "UnityEditor Fake Show interstitial");
-                closeCallback?.Invoke();
+//#if UNITY_EDITOR
+//                VMC.Debugger.Debug.Log("[ADS]", "UnityEditor Fake Show interstitial");
+//                closeCallback?.Invoke();
+//                return;
+//#else
                 return;
-#else
-                return;
-#endif
+//#endif
             }
             VMC.Debugger.Debug.Log("[ADS]", "Show interstitial");
             ads.ShowInterstitialAds(placement, closeCallback);
