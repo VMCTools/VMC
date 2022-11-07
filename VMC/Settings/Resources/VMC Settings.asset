@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: VMC Settings
   m_EditorClassIdentifier: 
   groupSDK: 2
-  enableAds: 1
+  enableAds: 0
   adType: -1
   adsLibrary: 3
   isTestMode: 0
@@ -26,16 +26,16 @@ MonoBehaviour:
   bannerPosition: 0
   interstitialId: b68346897472dea8
   rewardedVideoId: fb5cb354266b2663
-  enableAnalyze: 1
+  enableAnalyze: 0
   analyzeLibrary: -1
   AF_Dev_Key: G3MBmMRHTuEpXbqyqSWGeK
   AF_App_Id: 
-  enableRemoteConfig: 1
+  enableRemoteConfig: 0
   enableDebugLog: 1
   debugLogLevel: -1
-  isUsingFacebook: 1
+  isUsingFacebook: 0
   isUsingDoTween: 1
   isUsingIAP: 0
   isUsingAddressable: 0
-  notificationType: -1
-  isUsingAppReview: 1
+  notificationType: 0
+  isUsingAppReview: 0

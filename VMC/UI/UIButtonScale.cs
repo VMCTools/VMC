@@ -8,15 +8,24 @@ namespace VMC.UI
 {
     public class UIButtonScale : MonoBehaviour, IPointerDownHandler, IPointerExitHandler, IPointerUpHandler
     {
+        private bool getOriginalScale = false;
         private Vector3 normalScale;
+#if VMC_DOTWEEN
+        private Tween tweenScale;
+#endif
         private void OnEnable()
         {
-            normalScale = transform.localScale;
+            if (!getOriginalScale)
+            {
+                getOriginalScale = true;
+                normalScale = transform.localScale;
+            }
         }
         public void OnPointerDown(PointerEventData eventData)
         {
 #if VMC_DOTWEEN
-            transform.DOScale(normalScale * 0.9f, 0.2f);
+            if (tweenScale != null) tweenScale.Kill();
+            tweenScale = transform.DOScale(normalScale * 0.9f, 0.2f);
 #else
             transform.localScale = normalScale * 0.9f;
 #endif
@@ -25,7 +34,8 @@ namespace VMC.UI
         public void OnPointerUp(PointerEventData eventData)
         {
 #if VMC_DOTWEEN
-            transform.DOScale(normalScale, 0.2f);
+            if (tweenScale != null) tweenScale.Kill();
+            tweenScale = transform.DOScale(normalScale, 0.2f);
 #else
             transform.localScale = normalScale;
 #endif
@@ -33,7 +43,8 @@ namespace VMC.UI
         public void OnPointerExit(PointerEventData eventData)
         {
 #if VMC_DOTWEEN
-            transform.DOScale(normalScale, 0.2f);
+            if (tweenScale != null) tweenScale.Kill();
+            tweenScale = transform.DOScale(normalScale, 0.2f);
 #else
             transform.localScale = normalScale;
 #endif
