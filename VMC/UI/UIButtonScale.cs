@@ -25,7 +25,7 @@ namespace VMC.UI
         {
 #if VMC_DOTWEEN
             if (tweenScale != null) tweenScale.Kill();
-            tweenScale = transform.DOScale(normalScale * 0.9f, 0.2f);
+            tweenScale = transform.DOScale(normalScale * 0.9f, 0.2f).SetUpdate(true);
 #else
             transform.localScale = normalScale * 0.9f;
 #endif
@@ -35,7 +35,7 @@ namespace VMC.UI
         {
 #if VMC_DOTWEEN
             if (tweenScale != null) tweenScale.Kill();
-            tweenScale = transform.DOScale(normalScale, 0.2f);
+            tweenScale = transform.DOScale(normalScale, 0.2f).SetUpdate(true);
 #else
             transform.localScale = normalScale;
 #endif
@@ -44,7 +44,7 @@ namespace VMC.UI
         {
 #if VMC_DOTWEEN
             if (tweenScale != null) tweenScale.Kill();
-            tweenScale = transform.DOScale(normalScale, 0.2f);
+            tweenScale = transform.DOScale(normalScale, 0.2f).SetUpdate(true);
 #else
             transform.localScale = normalScale;
 #endif
