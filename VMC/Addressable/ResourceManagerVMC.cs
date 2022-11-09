@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace VMC.Assets
 {
-    public class ResourceManager : VMC.Ultilities.SingletonAdvance<ResourceManager>
+    public class ResourceManagerVMC : VMC.Ultilities.SingletonAdvance<ResourceManagerVMC>
     {
         public Dictionary<string, UnityEngine.Object> dictAssets = new Dictionary<string, UnityEngine.Object>();
         public T Load<T>(string path) where T : UnityEngine.Object
