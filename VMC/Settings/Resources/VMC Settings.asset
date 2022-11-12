@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f84f1c5675a45264f98cf58604a8dd62, type: 3}
   m_Name: VMC Settings
   m_EditorClassIdentifier: 
-  groupSDK: 2
+  groupSDK: 1
   enableAds: 0
   adType: -1
   adsLibrary: 3

@@ -11,6 +11,19 @@ namespace VMC.Ads
         [SerializeField, ReadOnly] private bool enableAds;
         [SerializeField, ReadOnly] private AdsMediation ads;
         [SerializeField, ReadOnly] private AdsAdmobOpenAds admobOpenAds;
+        public bool EnableTestForDebugBuild = false;
+
+        public bool IsLoadedRewarded
+        {
+            get
+            {
+                if (EnableTestForDebugBuild && Debug.isDebugBuild)
+                    return true;
+                if (CheckValidate())
+                    return ads.IsRewardVideoAvailable();
+                else return false;
+            }
+        }
 
         protected override void Awake()
         {
@@ -89,13 +102,8 @@ namespace VMC.Ads
         {
             if (!CheckValidate())
             {
-//#if UNITY_EDITOR
-//                VMC.Debugger.Debug.Log("[ADS]", "UnityEditor Fake Show interstitial");
-//                closeCallback?.Invoke();
-//                return;
-//#else
+                closeCallback?.Invoke();
                 return;
-//#endif
             }
             VMC.Debugger.Debug.Log("[ADS]", "Show interstitial");
             ads.ShowInterstitialAds(placement, closeCallback);
@@ -105,19 +113,14 @@ namespace VMC.Ads
         {
             if (!CheckValidate())
             {
-#if UNITY_EDITOR
-                VMC.Debugger.Debug.Log("[ADS]", "UnityEditor Fake Show rewardedVideo");
-                rewardedCallback?.Invoke(true);
-                return;
-#else
-                if(Debug.isDebugBuild)
+                if (EnableTestForDebugBuild && Debug.isDebugBuild)
                 {
                     VMC.Debugger.Debug.Log("[ADS]", "UnityDebugBuild Fake Show rewardedVideo");
                     rewardedCallback?.Invoke(true);
                     return;
                 }
+                rewardedCallback?.Invoke(false);
                 return;
-#endif
             }
             VMC.Debugger.Debug.Log("[ADS]", "Show rewarded video");
             ads.ShowRewardedVideo(placement, rewardedCallback);
