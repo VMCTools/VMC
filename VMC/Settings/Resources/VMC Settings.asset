@@ -13,22 +13,22 @@ MonoBehaviour:
   m_Name: VMC Settings
   m_EditorClassIdentifier: 
   groupSDK: 1
-  enableAds: 0
+  enableAds: 1
   adType: -1
-  adsLibrary: 3
+  adsLibrary: 2
   isTestMode: 0
-  maxAppId: ZoNyqu_piUmpl33-qkoIfRp6MTZGW9M5xk1mb1ZIWK6FN9EBu0TXSHeprC3LMPQI7S3kTc1-x7DJGSV8S-gvFJ
-  openAdsId_Tier1: ca-app-pub-9819920607806935/5860445814
-  openAdsId_Tier2: ca-app-pub-9819920607806935/5860445814
-  openAdsId_Tier3: ca-app-pub-9819920607806935/5860445814
-  intervalTimeAOA: 20
-  bannerId: 63139bd0b57e43bf
+  maxAppId: 7PspscCcbGd6ohttmPcZTwGmZCihCW-Jwr7nSJN2a_9Mg0ERPs0tmGdKTK1gs__nr6XHQvK0vTNaTb1uR1mCIN
+  openAdsId_Tier1: 252b72840b2ff2da
+  openAdsId_Tier2: 
+  openAdsId_Tier3: 
+  intervalTimeAOA: 1
+  bannerId: c9f51b11bf287790
   bannerPosition: 0
-  interstitialId: b68346897472dea8
-  rewardedVideoId: fb5cb354266b2663
-  enableAnalyze: 0
+  interstitialId: 8523731a70c300bb
+  rewardedVideoId: ee787305af8bb94a
+  enableAnalyze: 1
   analyzeLibrary: -1
-  AF_Dev_Key: G3MBmMRHTuEpXbqyqSWGeK
+  AF_Dev_Key: Mza5CYwx7pzKhdhcFcTHdm
   AF_App_Id: 
   enableRemoteConfig: 0
   enableDebugLog: 1

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 using VMC.Analystic;
+using Debug = VMC.Debugger.Debug;
 
 namespace VMC.Ads
 {
@@ -23,8 +24,21 @@ namespace VMC.Ads
         [ReadOnly] public string interstitialId="YOUR_INTERS_ID_ADS_HERE";
         [ReadOnly] public string rewardedVideoId = "YOUR_REWARDED_ID_ADS_HERE";
 #endif
+        #region OpenAds
+
+        private string AppOpenAdUnitId = "YOUR_AD_UNIT_ID";
+        private DateTime nextTimeToShow;
+        private float intervalTimeShowAds;
+        private bool showFirstOpen = false;
+
+        public static bool ConfigOpenApp = true;
+        public static bool ConfigResumeApp = true;
+        #endregion
+
+
         public override void Initialize()
         {
+            Debug.Log("[Ads]", "Init Max SDK!");
 #if VMC_ADS_MAX
             Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
 
@@ -44,6 +58,10 @@ namespace VMC.Ads
                 this.bannerPosition = config.bannerPosition;
                 this.interstitialId = config.interstitialId;
                 this.rewardedVideoId = config.rewardedVideoId;
+
+                this.AppOpenAdUnitId = config.openAdsId_Tier1;
+                intervalTimeShowAds = config.intervalTimeAOA;
+
             }
             MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
             {
@@ -54,6 +72,13 @@ namespace VMC.Ads
                     InitializeInterstitialAds();
                 if (adsType.HasFlag(AdsType.RewardedVideo))
                     InitializeRewardedVideoAds();
+
+                MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += OnAppOpenDismissedEvent;
+                if (adsType.HasFlag(AdsType.OpenAds) && !showFirstOpen && ConfigOpenApp)
+                {
+                    ShowAdIfReady();
+                    showFirstOpen = true;
+                }
             };
 
             MaxSdk.SetSdkKey(maxAppID);
@@ -61,6 +86,41 @@ namespace VMC.Ads
 #endif
             base.Initialize();
         }
+
+
+        #region OPEN ADS
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (adsType.HasFlag(AdsType.OpenAds) && !pauseStatus && ConfigResumeApp && !AdsMediation.ResumeFromAds)
+            {
+                if (DateTime.Now.CompareTo(nextTimeToShow) > 0)
+                    ShowAdIfReady();
+            }
+        }
+        public void ShowAdIfReady()
+        {
+            Debug.Log("[Ads MAX]", $"Show OpenAds if ready {AppOpenAdUnitId}!");
+#if VMC_ADS_MAX
+            if (MaxSdk.IsAppOpenAdReady(AppOpenAdUnitId))
+            {
+                Debug.Log("[Ads MAX]", $"OpenAds Show {AppOpenAdUnitId}!");
+                MaxSdk.ShowAppOpenAd(AppOpenAdUnitId);
+                nextTimeToShow = DateTime.Now.AddSeconds(intervalTimeShowAds);
+            }
+            else
+            {
+                Debug.Log("[Ads MAX]", $"OpenAds not ready {AppOpenAdUnitId}!");
+                MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+            }
+#endif
+        }
+#if VMC_ADS_MAX
+        public void OnAppOpenDismissedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
+        {
+            MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+        }
+#endif
+        #endregion
 
         #region BANNER
 #if VMC_ADS_MAX
@@ -184,7 +244,7 @@ namespace VMC.Ads
         }
         private void Interstitial_OnAdClickedEvent(string arg1, MaxSdkBase.AdInfo arg2)
         {
-           this.OnInterstitialClicked();
+            this.OnInterstitialClicked();
         }
 #endif
         #endregion
@@ -267,7 +327,6 @@ namespace VMC.Ads
 #endif
 
         #endregion
-
 
 #if VMC_ADS_MAX
         private void OnAdRevenuePaidEvent(string adUnitId, MaxSdkBase.AdInfo impressionData)

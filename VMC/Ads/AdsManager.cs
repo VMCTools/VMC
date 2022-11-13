@@ -38,6 +38,7 @@ namespace VMC.Ads
                     var max = (new GameObject("Max Mediation")).AddComponent<AdsMaxMediation>();
                     max.transform.SetParent(this.transform);
                     ads = max;
+
                 }
                 else if (config.adsLibrary.HasFlag(Settings.AdsLibrary.IronsourceMediation))
                 {
@@ -47,15 +48,19 @@ namespace VMC.Ads
                 }
                 else if (config.adsLibrary.HasFlag(Settings.AdsLibrary.Admob))
                 {
+
+
                     var admob = (new GameObject("Admob Mediation")).AddComponent<AdsAdmob>();
                     admob.transform.SetParent(this.transform);
                     ads = admob;
                 }
-
                 if (config.adType.HasFlag(AdsType.OpenAds))
                 {
-                    admobOpenAds = (new GameObject("Admob OpenAds")).AddComponent<AdsAdmobOpenAds>();
-                    admobOpenAds.transform.SetParent(this.transform);
+                    if (config.openAdsId_Tier1.StartsWith("ca-app"))
+                    {
+                        admobOpenAds = (new GameObject("Admob OpenAds")).AddComponent<AdsAdmobOpenAds>();
+                        admobOpenAds.transform.SetParent(this.transform);
+                    }
                 }
             }
         }
