@@ -47,8 +47,8 @@ namespace VMC.Ads
 #endif
         public override void Initialize()
         {
+            base.Initialize();
 #if VMC_ADS_ADMOB
-            Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
 #if VMC_ADS_TESTMODE
             this.openAdsId = this.openAdsIdTest;
             this.bannerId = this.bannerIdTest;
@@ -75,7 +75,6 @@ namespace VMC.Ads
                     InitializeRewardedVideoAds();
             });
 #endif
-            base.Initialize();
         }
 
         public override void SetVolume(float value)
@@ -188,7 +187,7 @@ namespace VMC.Ads
         public override void ShowInterstitialAds(string placement, Action callback)
         {
             base.ShowInterstitialAds(placement, callback);
-            if (!isCanShowInterstitial) return;
+            if (!IsCanShowInterstitial) return;
 #if VMC_ADS_ADMOB
             if (this.interstitial == null)
             {

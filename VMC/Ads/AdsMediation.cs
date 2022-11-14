@@ -5,6 +5,8 @@ using UnityEngine;
 using VMC.Ads;
 using VMC.Ultilities;
 using VMC.Analystic;
+using VMC.Settings;
+using UnityEngine.UI.Extensions;
 #if VMC_DOTWEEN
 using DG.Tweening;
 #endif
@@ -58,9 +60,9 @@ namespace VMC.Ads
             }
         }
 
-        private float MIN_TIME_SHOWITERSTIRIAL = 5f;
-        private float countDownTimeInter = 0;
-        protected bool isCanShowInterstitial = true;
+        [SerializeField, ReadOnly] private float intervalTimeInterstitial = 10f;
+        private DateTime nextTimeReadyInter;
+        protected bool IsCanShowInterstitial => DateTime.Now >= nextTimeReadyInter;
 
         protected bool isShowingBanner;
         protected BannerAdsPosition bannerPosition;
@@ -78,12 +80,13 @@ namespace VMC.Ads
 
         public static bool ResumeFromAds;
 
-        //private void Start()
-        //{
-        //    Initialize();
-        //}
+        protected VMCSettingConfig config;
         public virtual void Initialize()
         {
+            this.config = Settings.VMCSettingConfig.LoadData();
+            this.intervalTimeInterstitial = config.intervalTimeInterstitial;
+
+            nextTimeReadyInter = DateTime.Now;
             SetConsentAds(IsConsentAds);
         }
         public virtual void SetConsentAds(bool value)
@@ -92,22 +95,6 @@ namespace VMC.Ads
         public virtual void SetVolume(float value)
         {
         }
-
-
-#if !VMC_DOTWEEN
-        private void LateUpdate()
-        {
-            if (!isCanShowInterstitial)
-            {
-                countDownTimeInter -= Time.deltaTime;
-                if (countDownTimeInter < 0)
-                {
-                    isCanShowInterstitial = true;
-                    countDownTimeInter = MIN_TIME_SHOWITERSTIRIAL;
-                }
-            }
-        }
-#endif
         protected void SetWatchingAds(bool isWatching)
         {
             ResumeFromAds = isWatching;
@@ -147,7 +134,7 @@ namespace VMC.Ads
         }
         public virtual void ShowInterstitialAds(string placement, Action callback = null)
         {
-            if (!isCanShowInterstitial)
+            if (!IsCanShowInterstitial)
             {
                 VMC.Debugger.Debug.Log("[ADS]", "Cant Show interstitial because interval time");
                 callback?.Invoke();
@@ -168,16 +155,9 @@ namespace VMC.Ads
                 VMC.Debugger.Debug.Log("[ADS]", "Cant Show interstitial because not loaded");
             }
         }
-        private void SetIntervalInterstitial()
+        protected void SetIntervalInterstitial()
         {
-            isCanShowInterstitial = false;
-            countDownTimeInter = MIN_TIME_SHOWITERSTIRIAL;
-#if VMC_DOTWEEN
-            DOVirtual.DelayedCall(MIN_TIME_SHOWITERSTIRIAL, () =>
-            {
-                isCanShowInterstitial = true;
-            }).SetUpdate(true);
-#endif
+            nextTimeReadyInter = DateTime.Now.AddSeconds(intervalTimeInterstitial);
         }
 
         protected void OnInterstititalLoadSuccessed()
@@ -209,7 +189,7 @@ namespace VMC.Ads
             LoadInterstitialAds();
             SetWatchingAds(false);
             interstitialCallback?.Invoke();
-            SetIntervalInterstitial();
+            SetIntervalInterstitial(); // reset interval Inter after view Inter
         }
         protected void OnInterstitialClicked()
         {
@@ -253,9 +233,9 @@ namespace VMC.Ads
             retryRewardedAttempt++;
             double retryDelay = Math.Pow(2, Math.Min(6, retryRewardedAttempt));
             Invoke(nameof(LoadRewardedVideo), (float)retryDelay);
-//#if VMC_GROUP_2
-//            AnalysticManager.Instance.Log_AdsRewardFail(this.rewardedPlacement, errorMsg);
-//#endif
+            //#if VMC_GROUP_2
+            //            AnalysticManager.Instance.Log_AdsRewardFail(this.rewardedPlacement, errorMsg);
+            //#endif
         }
         protected void OnRewardedDisplayFailed(string errorMsg)
         {
@@ -278,6 +258,7 @@ namespace VMC.Ads
             LoadRewardedVideo();
             SetWatchingAds(false);
             rewardedCallback?.Invoke(gotReward);
+            SetIntervalInterstitial(); // reset interval Inter after view Rewarded
 #if VMC_GROUP_2
             AnalysticManager.Instance.Log_AdsRewardComplete(this.rewardedPlacement);
 #endif

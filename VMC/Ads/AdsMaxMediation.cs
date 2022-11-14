@@ -38,10 +38,9 @@ namespace VMC.Ads
 
         public override void Initialize()
         {
+            base.Initialize();
             Debug.Log("[Ads]", "Init Max SDK!");
 #if VMC_ADS_MAX
-            Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
-
             this.TestMode = config.isTestMode;
             this.adsType = config.adType;
             if (config.isTestMode)
@@ -84,7 +83,6 @@ namespace VMC.Ads
             MaxSdk.SetSdkKey(maxAppID);
             MaxSdk.InitializeSdk();
 #endif
-            base.Initialize();
         }
 
 
@@ -106,6 +104,8 @@ namespace VMC.Ads
                 Debug.Log("[Ads MAX]", $"OpenAds Show {AppOpenAdUnitId}!");
                 MaxSdk.ShowAppOpenAd(AppOpenAdUnitId);
                 nextTimeToShow = DateTime.Now.AddSeconds(intervalTimeShowAds);
+
+                SetIntervalInterstitial(); // reset interval Inter after view OpenAds
             }
             else
             {
@@ -206,7 +206,7 @@ namespace VMC.Ads
         public override void ShowInterstitialAds(string placement, Action callback = null)
         {
             base.ShowInterstitialAds(placement, callback);
-            if (!isCanShowInterstitial)
+            if (!IsCanShowInterstitial)
             {
                 VMC.Debugger.Debug.Log("[ADS] Max", "Cant show because isCanShowInterstitial=false");
                 return;

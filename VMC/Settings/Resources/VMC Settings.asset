@@ -25,6 +25,7 @@ MonoBehaviour:
   bannerId: c9f51b11bf287790
   bannerPosition: 0
   interstitialId: 8523731a70c300bb
+  intervalTimeInterstitial: 10
   rewardedVideoId: ee787305af8bb94a
   enableAnalyze: 1
   analyzeLibrary: -1

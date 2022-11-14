@@ -27,6 +27,7 @@ namespace VMC.Settings
         SerializedProperty bannerId;
         SerializedProperty bannerPosition;
         SerializedProperty interstitialId;
+        SerializedProperty intervalTimeInterstitial;
         SerializedProperty rewardedVideoId;
 
 
@@ -81,6 +82,7 @@ namespace VMC.Settings
             bannerId = serializedObject.FindProperty("bannerId");
             bannerPosition = serializedObject.FindProperty("bannerPosition");
             interstitialId = serializedObject.FindProperty("interstitialId");
+            intervalTimeInterstitial = serializedObject.FindProperty("intervalTimeInterstitial");
             rewardedVideoId = serializedObject.FindProperty("rewardedVideoId");
 
 
@@ -138,6 +140,7 @@ namespace VMC.Settings
                     if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Interstitial))
                     {
                         EditorGUILayout.PropertyField(interstitialId);
+                        EditorGUILayout.PropertyField(intervalTimeInterstitial);
                         GUILayout.Space(10);
                     }
                     if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.RewardedVideo))
