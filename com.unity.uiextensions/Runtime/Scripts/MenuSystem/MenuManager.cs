@@ -1,4 +1,5 @@
-﻿/// Credit Adam Kapos (Nezz) - http://www.songarc.net
+﻿
+/// Credit Adam Kapos (Nezz) - http://www.songarc.net
 /// Sourced from - https://github.com/YousicianGit/UnityMenuSystem
 /// Updated by SimonDarksideJ - Refactored to be a more generic component
 /// Updated by SionDarksideJ - Fixed implementation as it assumed GO's we automatically assigned to instances
@@ -10,7 +11,7 @@ namespace UnityEngine.UI.Extensions
 {
     [AddComponentMenu("UI/Extensions/Menu Manager")]
     [DisallowMultipleComponent]
-    public class MenuManager : MonoBehaviour
+    public class MenuManager : MonoBehaviourSingletonPersistent<GameManager>
     {
         [SerializeField]
         private Menu[] menuScreens;
@@ -32,11 +33,12 @@ namespace UnityEngine.UI.Extensions
 
         private Stack<Menu> menuStack = new Stack<Menu>();
 
-        public static MenuManager Instance { get; set; }
+        //public static MenuManager Instance { get; set; }
 
-        private void Start()
+        public override void Awake()
         {
-            Instance = this;
+            base.Awake();
+            //Instance = this;
             if (MenuScreens.Length > 0 + StartScreen)
             {
                 var startMenu = CreateInstance(MenuScreens[StartScreen].name);
@@ -48,10 +50,10 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
-        private void OnDestroy()
-        {
-            Instance = null;
-        }
+        //private void OnDestroy()
+        //{
+        //    Instance = null;
+        //}
 
         public GameObject CreateInstance(string MenuName)
         {
@@ -77,7 +79,7 @@ namespace UnityEngine.UI.Extensions
                     foreach (var menu in menuStack)
                     {
                         menu.gameObject.SetActive(false);
-
+                        menu.OnMenuHide();
                         if (menu.DisableMenusUnderneath)
                             break;
                     }
@@ -88,14 +90,14 @@ namespace UnityEngine.UI.Extensions
                 {
                     Canvas previousCanvas = menuStack.Peek().GetComponent<Canvas>();
 
-                    if(previousCanvas != null)
+                    if (previousCanvas != null)
                     {
                         topCanvas.sortingOrder = previousCanvas.sortingOrder + 1;
                     }
                 }
 
             }
-
+            menuInstance.OnMenuShowed();
             menuStack.Push(menuInstance);
         }
 
@@ -131,6 +133,7 @@ namespace UnityEngine.UI.Extensions
         public void CloseTopMenu()
         {
             var menuInstance = menuStack.Pop();
+            menuInstance.OnMenuHide();
 
             if (menuInstance.DestroyWhenClosed)
                 Destroy(menuInstance.gameObject);
@@ -142,20 +145,20 @@ namespace UnityEngine.UI.Extensions
             foreach (var menu in menuStack)
             {
                 menu.gameObject.SetActive(true);
-
+                menu.OnMenuShowed();
                 if (menu.DisableMenusUnderneath)
                     break;
             }
         }
 
-        private void Update()
-        {
-            // On Android the back button is sent as Esc
-            if (UIExtensionsInputManager.GetKeyDown(KeyCode.Escape) && menuStack.Count > 0)
-            {
-                menuStack.Peek().OnBackPressed();
-            }
-        }
+        //private void Update()
+        //{
+        //    // On Android the back button is sent as Esc
+        //    if (UIExtensionsInputManager.GetKeyDown(KeyCode.Escape) && menuStack.Count > 0)
+        //    {
+        //        menuStack.Peek().OnBackPressed();
+        //    }
+        //}
     }
 
     public static class MenuExtensions

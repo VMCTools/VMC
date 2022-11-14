@@ -50,6 +50,15 @@ namespace UnityEngine.UI.Extensions
         {
             Close();
         }
+        public override void OnMenuHide()
+        {
+            //Debug.Log("Hide menu: " + name);
+        }
+
+        public override void OnMenuShowed()
+        {
+            //Debug.Log("Show menu: " + name);
+        }
     }
 
     public abstract class Menu : MonoBehaviour
@@ -61,5 +70,8 @@ namespace UnityEngine.UI.Extensions
         public bool DisableMenusUnderneath = true;
 
         public abstract void OnBackPressed();
+
+        public abstract void OnMenuShowed();
+        public abstract void OnMenuHide();
     }
 }
