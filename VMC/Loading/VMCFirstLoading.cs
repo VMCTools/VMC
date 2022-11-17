@@ -32,13 +32,18 @@ namespace VMC
                 Debug.Log("[Fake Loading]", "Init all libraries!");
                 isCounting = true;
                 countTimeFakeLoading = 0f;
-                StartCoroutine(LoadYourAsyncScene());
+                Invoke(nameof(LoadScene), 1);
                 InitStep1();
                 Invoke(nameof(InitStep2), fakeLoadingTime * .2f);
                 Invoke(nameof(InitStep3), fakeLoadingTime * .8f);
             }
 
         }
+        private void LoadScene()
+        {
+            StartCoroutine(LoadYourAsyncScene());
+        }
+
         IEnumerator LoadYourAsyncScene()
         {
             isLoading = true;
