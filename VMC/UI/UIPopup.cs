@@ -18,6 +18,7 @@ namespace VMC.UI
         [SerializeField] private float fadeColor = 0.8f;
         [SerializeField] protected Button btnClose;
 
+        public event Action OnShowComplete;
         private void Start()
         {
             if (btnClose != null)
@@ -32,40 +33,62 @@ namespace VMC.UI
         {
 #if VMC_DOTWEEN
             this.gameObject.SetActive(true);
-            var color = imgBlack.color;
-            color.a = 0f;
-            imgBlack.color = color;
-            imgBlack.DOFade(fadeColor, timeShow);
-
-            boundPopup.transform.localScale = Vector3.zero;
-            boundPopup.transform.DOScale(1, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.OutBack).OnComplete(() =>
+            if (imgBlack)
+            {
+                var color = imgBlack.color;
+                color.a = 0f;
+                imgBlack.color = color;
+                imgBlack.DOFade(fadeColor, timeShow);
+            }
+            if (boundPopup)
+            {
+                boundPopup.transform.localScale = Vector3.zero;
+                boundPopup.transform.DOScale(1, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.OutBack).OnComplete(() =>
+                {
+                    callbackShow?.Invoke();
+                });
+            }
+            else
             {
                 callbackShow?.Invoke();
-            });
+            }
 #else
             this.gameObject.SetActive(true);
-            imgBlack.color = new Color(0, 0, 0, fadeColor);
-            boundPopup.transform.localScale = Vector3.one;
             callbackShow?.Invoke();
 #endif
         }
-
         public void HideDialog(Action callbackHide = null)
         {
 #if VMC_DOTWEEN
-            imgBlack.DOFade(0, timeShow);
-            boundPopup.transform.localScale = Vector3.one;
-            boundPopup.transform.DOScale(0, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.InBack).OnComplete(() =>
+            if (imgBlack)
+                imgBlack.DOFade(0, timeShow);
+            if (boundPopup)
+            {
+                boundPopup.transform.localScale = Vector3.one;
+                boundPopup.transform.DOScale(0, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.InBack).OnComplete(() =>
+                {
+                    this.gameObject.SetActive(false);
+                    callbackHide?.Invoke();
+                });
+            }
+            else
             {
                 this.gameObject.SetActive(false);
                 callbackHide?.Invoke();
-            });
+            }
 #else
-            imgBlack.color = new Color(0, 0, 0, 0);
-            boundPopup.transform.localScale = Vector3.zero;
             this.gameObject.SetActive(false);
             callbackHide?.Invoke();
 #endif
+        }
+
+        protected virtual void OnEnable()
+        {
+            this.ShowDialog();
+        }
+        protected virtual void OnDisable()
+        {
+            OnShowComplete?.Invoke();
         }
     }
 }

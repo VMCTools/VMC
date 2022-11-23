@@ -13,6 +13,9 @@ namespace VMC.Ingame.Move
         public override float Speed => direction.SetY(0).magnitude * speed;
         public float gravity = -1.5f;
         [ReadOnly] public bool isDragging;
+        [SerializeField] protected bool isLookAtForward = true;
+        public bool getInputFromKeyboard = true;
+        protected bool isGetingInputFromKeyboard;
 
         public override bool IsComplete()
         {
@@ -33,10 +36,10 @@ namespace VMC.Ingame.Move
             isMoving = true;
             isDragging = true;
         }
-        private void Joystick_OnDragAction(Vector2 delta)
+        protected virtual void Joystick_OnDragAction(Vector2 delta)
         {
-            direction.x = -delta.x;
-            direction.z = -delta.y;
+            direction.x = delta.x;
+            direction.z = delta.y;
         }
         private void Joystick_OnEndedDragAction()
         {
@@ -54,11 +57,14 @@ namespace VMC.Ingame.Move
         private void Update()
         {
             if (isPausing) return;
-            if (isDragging)
+
+            GetInputKeyboard();
+
+            if (isDragging || isGetingInputFromKeyboard)
             {
                 direction.y = character.isGrounded ? 0f : -0.5f;
                 character.Move(speed * Time.deltaTime * direction);
-                transform.LookAt(transform.position + direction.SetY(0));
+                if (isLookAtForward) transform.LookAt(transform.position + direction.SetY(0));
             }
             else
             {
@@ -75,6 +81,16 @@ namespace VMC.Ingame.Move
                 }
             }
         }
+
+        protected virtual void GetInputKeyboard()
+        {
+            if (isDragging) return;
+            if (!getInputFromKeyboard) return;
+            direction.x = Input.GetAxis("Horizontal");
+            direction.z = Input.GetAxis("Vertical");
+            isGetingInputFromKeyboard = direction.x != 0 || direction.z != 0;
+        }
+
         public override void Move()
         {
             //base.Move();

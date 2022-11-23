@@ -34,6 +34,7 @@ namespace VMC.Ads
 
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
+        private bool isValidOpenAdsID;
         #endregion
 
 
@@ -62,7 +63,7 @@ namespace VMC.Ads
                 this.AppOpenAdUnitId = config.openAdsId_Tier1;
                 this.isValidOpenAppId = !this.AppOpenAdUnitId.StartsWith("ca-app");
                 intervalTimeShowAds = config.intervalTimeAOA;
-
+                isValidOpenAdsID = !AppOpenAdUnitId.StartsWith("ca-app");
             }
             MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
             {
@@ -108,7 +109,7 @@ namespace VMC.Ads
         }
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (adsType.HasFlag(AdsType.OpenAds) && !pauseStatus && ConfigResumeApp && !AdsMediation.ResumeFromAds)
+            if (adsType.HasFlag(AdsType.OpenAds)&& isValidOpenAdsID && !pauseStatus && ConfigResumeApp && !AdsMediation.ResumeFromAds)
             {
                 if (DateTime.Now.CompareTo(nextTimeToShow) > 0)
                     ShowAdIfReady();
@@ -117,6 +118,7 @@ namespace VMC.Ads
         public void ShowAdIfReady()
         {
             Debug.Log("[Ads MAX]", $"Show OpenAds if ready {AppOpenAdUnitId}!");
+            if (!isValidOpenAdsID) return;
 #if VMC_ADS_MAX
             if (!isValidOpenAppId) return;
             if (MaxSdk.IsAppOpenAdReady(AppOpenAdUnitId))
@@ -137,7 +139,8 @@ namespace VMC.Ads
 #if VMC_ADS_MAX
         public void OnAppOpenDismissedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+            if(isValidOpenAdsID)
+                MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
         }
 #endif
         #endregion

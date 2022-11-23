@@ -48,8 +48,6 @@ namespace VMC.Ads
                 }
                 else if (config.adsLibrary.HasFlag(Settings.AdsLibrary.Admob))
                 {
-
-
                     var admob = (new GameObject("Admob Mediation")).AddComponent<AdsAdmob>();
                     admob.transform.SetParent(this.transform);
                     ads = admob;
@@ -72,6 +70,7 @@ namespace VMC.Ads
         }
         public void InitializeAOA()
         {
+            VMC.Debugger.Debug.Log("[ADS]", "Init AOA");
             if (admobOpenAds != null)
                 admobOpenAds.Initialize();
         }
