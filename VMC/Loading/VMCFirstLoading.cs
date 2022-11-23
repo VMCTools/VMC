@@ -84,12 +84,13 @@ namespace VMC
         private void InitStep2()
         {
             // init Firebase
-            VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();
+            VMC.Ads.AdsManager.Instance.InitializeAOA();
         }
         private void InitStep3()
         {
             // init AOA
-            VMC.Ads.AdsManager.Instance.InitializeAOA();
+            VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();
+            VMC.Ads.AdsManager.Instance.ShowAppOpenAds();
         }
     }
 }

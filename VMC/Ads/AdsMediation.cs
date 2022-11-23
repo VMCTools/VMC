@@ -100,6 +100,13 @@ namespace VMC.Ads
             ResumeFromAds = isWatching;
         }
 
+        #region Open Ads
+        public virtual void ShowAppOpenAds()
+        {
+            Debug.Log("Show App Open Ads");
+        }    
+        #endregion
+
         #region BANNER
         public virtual void InitializeBannerAds() { }
         public virtual void LoadBannerAds() { }

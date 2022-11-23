@@ -75,6 +75,11 @@ namespace VMC.Ads
             if (admobOpenAds != null)
                 admobOpenAds.Initialize();
         }
+        public void ShowAppOpenAds()
+        {
+            if (ads != null)
+                ads.ShowAppOpenAds();
+        }
 
         private bool CheckValidate()
         {

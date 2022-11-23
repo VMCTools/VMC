@@ -30,6 +30,7 @@ namespace VMC.Ads
         private DateTime nextTimeToShow;
         private float intervalTimeShowAds;
         private bool showFirstOpen = false;
+        private bool isValidOpenAppId = true;
 
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
@@ -59,6 +60,7 @@ namespace VMC.Ads
                 this.rewardedVideoId = config.rewardedVideoId;
 
                 this.AppOpenAdUnitId = config.openAdsId_Tier1;
+                this.isValidOpenAppId = !this.AppOpenAdUnitId.StartsWith("ca-app");
                 intervalTimeShowAds = config.intervalTimeAOA;
 
             }
@@ -71,13 +73,10 @@ namespace VMC.Ads
                     InitializeInterstitialAds();
                 if (adsType.HasFlag(AdsType.RewardedVideo))
                     InitializeRewardedVideoAds();
+                if (adsType.HasFlag(AdsType.OpenAds))
+                    InitializeOpenAds();
 
                 MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += OnAppOpenDismissedEvent;
-                if (adsType.HasFlag(AdsType.OpenAds) && !showFirstOpen && ConfigOpenApp)
-                {
-                    ShowAdIfReady();
-                    showFirstOpen = true;
-                }
             };
 
             MaxSdk.SetSdkKey(maxAppID);
@@ -87,6 +86,26 @@ namespace VMC.Ads
 
 
         #region OPEN ADS
+        private void InitializeOpenAds()
+        {
+#if VMC_ADS_MAX
+            if (!isValidOpenAppId) return;
+            MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+#endif
+        }
+
+        public override void ShowAppOpenAds()
+        {
+            base.ShowAppOpenAds();
+#if VMC_ADS_MAX
+            if (!isValidOpenAppId) return;
+            if (adsType.HasFlag(AdsType.OpenAds) && !showFirstOpen && ConfigOpenApp)
+            {
+                ShowAdIfReady();
+                showFirstOpen = true;
+            }
+#endif
+        }
         private void OnApplicationPause(bool pauseStatus)
         {
             if (adsType.HasFlag(AdsType.OpenAds) && !pauseStatus && ConfigResumeApp && !AdsMediation.ResumeFromAds)
@@ -99,6 +118,7 @@ namespace VMC.Ads
         {
             Debug.Log("[Ads MAX]", $"Show OpenAds if ready {AppOpenAdUnitId}!");
 #if VMC_ADS_MAX
+            if (!isValidOpenAppId) return;
             if (MaxSdk.IsAppOpenAdReady(AppOpenAdUnitId))
             {
                 Debug.Log("[Ads MAX]", $"OpenAds Show {AppOpenAdUnitId}!");
