@@ -135,6 +135,10 @@ namespace VMC.Sound
         {
             if (!isEnableSound)
                 return;
+            if (!listAudios.ContainsKey(clip.name))
+            {
+                listAudios.Add(clip.name, clip);
+            }
 
             mySound = null;
             foreach (var sound in mySounds)
@@ -168,6 +172,13 @@ namespace VMC.Sound
                 return;
             Instance._StopSound(key);
         }
+        public static void StopSound(AudioClip clip)
+        {
+            if (Instance == null)
+                return;
+            if (clip == null) return;
+            Instance._StopSound(clip.name);
+        }
         private void _StopSound(string key)
         {
             if (!listAudios.ContainsKey(key))
@@ -175,9 +186,10 @@ namespace VMC.Sound
                 Debug.LogError("Not found sound audioclip: " + key);
                 return;
             }
+            string clipName = listAudios[key].name;
             foreach (var sound in mySounds)
             {
-                if (sound.isPlaying && sound.clip.name.Equals(key))
+                if (sound.isPlaying && sound.clip.name.Equals(clipName))
                 {
                     sound.loop = false;
                     sound.Stop();
