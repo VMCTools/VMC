@@ -119,6 +119,27 @@ namespace VMC.Sound
                 return;
             Instance._PlaySound(clip, volume, isLoop);
         }
+
+        public static void PlaySoundAtPoint(string key, Vector3 position, float volume = 1f)
+        {
+            if (!Instance.isEnableSound)
+                return;
+
+            if (!Instance.listAudios.ContainsKey(key))
+            {
+                Debug.LogError("Not found sound audioclip: " + key);
+                return;
+            }
+            AudioSource.PlayClipAtPoint(Instance.listAudios[key], position, volume);
+        }
+        public static void PlaySoundAtPoint(AudioClip clip, Vector3 position, float volume = 1f)
+        {
+            if (!Instance.isEnableSound)
+                return;
+            AudioSource.PlayClipAtPoint(clip, position, volume);
+        }
+
+
         private void _PlaySound(string key, float volume, bool isLoop = false)
         {
             if (!isEnableSound)
@@ -166,6 +187,7 @@ namespace VMC.Sound
             mySound.Play();
         }
 
+
         public static void StopSound(string key)
         {
             if (Instance == null)
@@ -197,5 +219,6 @@ namespace VMC.Sound
                 }
             }
         }
+
     }
 }
