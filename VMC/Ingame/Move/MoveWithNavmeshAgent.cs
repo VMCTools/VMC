@@ -17,6 +17,7 @@ namespace VMC.Ingame.Move
                 return _agent;
             }
         }
+        private bool isSetTarget = false;
         public Vector3 targetPos;
         public override Vector3 TargetPos => targetPos;
 
@@ -37,6 +38,7 @@ namespace VMC.Ingame.Move
         public override void MoveTo(Vector3 targetPosition)
         {
             navmeshAgent.isStopped = false;
+            this.isSetTarget = true;
             this.targetPos = targetPosition;
             navmeshAgent.SetDestination(targetPosition);
             isMoving = true;
@@ -50,12 +52,14 @@ namespace VMC.Ingame.Move
         public override void Resume()
         {
             navmeshAgent.isStopped = false;
-            MoveTo(targetPos);
+            if (isSetTarget)
+                MoveTo(targetPos);
             base.Resume();
         }
         public override void Stop()
         {
             navmeshAgent.isStopped = true;
+            isSetTarget = false;
             base.Stop();
         }
 
