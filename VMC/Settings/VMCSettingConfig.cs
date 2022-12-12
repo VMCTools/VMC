@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using VMC.Ultilities;
 
 namespace VMC.Settings
 {
@@ -103,7 +104,13 @@ namespace VMC.Settings
 
         public static VMCSettingConfig LoadData()
         {
-            return Resources.Load<VMCSettingConfig>("VMC Settings");
+            var setting = Resources.Load<VMCSettingConfig>("VMC Settings");
+            if (setting != null) return setting;
+            else
+            {
+                ScriptableObjectUtility.CreateAsset<VMCSettingConfig>("Assets/Resources/VMC Settings.asset");
+                return Resources.Load<VMCSettingConfig>("VMC Settings");
+            }
         }
     }
 
