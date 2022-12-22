@@ -35,6 +35,9 @@ namespace VMC.Ads
         public static bool ConfigOpenApp = true;
         public static bool ConfigResumeApp = true;
         private bool isValidOpenAdsID;
+
+        private bool isLoadingAOA;
+        private bool isWaitingShowAOA;
         #endregion
 
 
@@ -78,6 +81,9 @@ namespace VMC.Ads
                     InitializeOpenAds();
 
                 MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += OnAppOpenDismissedEvent;
+
+                MaxSdkCallbacks.AppOpen.OnAdLoadFailedEvent += AppOpen_OnAdLoadFailedEvent; ;
+                MaxSdkCallbacks.AppOpen.OnAdLoadedEvent += AppOpen_OnAdLoadedEvent;
             };
 
             MaxSdk.SetSdkKey(maxAppID);
@@ -91,6 +97,7 @@ namespace VMC.Ads
         {
 #if VMC_ADS_MAX
             if (!isValidOpenAppId) return;
+            isLoadingAOA = true;
             MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
 #endif
         }
@@ -102,20 +109,20 @@ namespace VMC.Ads
             if (!isValidOpenAppId) return;
             if (adsType.HasFlag(AdsType.OpenAds) && !showFirstOpen && ConfigOpenApp)
             {
-                ShowAdIfReady();
+                ShowAdIfReady(true);
                 showFirstOpen = true;
             }
 #endif
         }
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (adsType.HasFlag(AdsType.OpenAds)&& isValidOpenAdsID && !pauseStatus && ConfigResumeApp && !AdsMediation.ResumeFromAds)
+            if (adsType.HasFlag(AdsType.OpenAds) && isValidOpenAdsID && !pauseStatus && ConfigResumeApp && !AdsMediation.ResumeFromAds)
             {
                 if (DateTime.Now.CompareTo(nextTimeToShow) > 0)
-                    ShowAdIfReady();
+                    ShowAdIfReady(false);
             }
         }
-        public void ShowAdIfReady()
+        public void ShowAdIfReady(bool iswaiting)
         {
             Debug.Log("[Ads MAX]", $"Show OpenAds if ready {AppOpenAdUnitId}!");
             if (!isValidOpenAdsID) return;
@@ -132,15 +139,39 @@ namespace VMC.Ads
             else
             {
                 Debug.Log("[Ads MAX]", $"OpenAds not ready {AppOpenAdUnitId}!");
-                MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+                if (iswaiting)
+                    isWaitingShowAOA = true;
+                if (!isLoadingAOA)
+                {
+                    isLoadingAOA = true;
+                    MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+                }
             }
 #endif
         }
 #if VMC_ADS_MAX
         public void OnAppOpenDismissedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-            if(isValidOpenAdsID)
+            if (isValidOpenAdsID)
+            {
+                isLoadingAOA = true;
                 MaxSdk.LoadAppOpenAd(AppOpenAdUnitId);
+            }
+        }
+
+
+        private void AppOpen_OnAdLoadFailedEvent(string arg1, MaxSdkBase.ErrorInfo arg2)
+        {
+            isLoadingAOA = false;
+        }
+        private void AppOpen_OnAdLoadedEvent(string arg1, MaxSdkBase.AdInfo arg2)
+        {
+            isLoadingAOA = false;
+            if (isWaitingShowAOA)
+            {
+                isWaitingShowAOA = false;
+                MaxSdk.ShowAppOpenAd(AppOpenAdUnitId);
+            }
         }
 #endif
         #endregion
