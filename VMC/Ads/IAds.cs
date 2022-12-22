@@ -14,6 +14,7 @@ namespace VMC.Ads
         void ShowBannerAds(BannerAdsPosition posi = BannerAdsPosition.BOTTOM);
         void HideBannerAds();
 
+        float GetBannerHeight();
 
 
         void InitializeInterstitialAds();

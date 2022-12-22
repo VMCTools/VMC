@@ -13,6 +13,9 @@ namespace VMC.Ads
         [SerializeField, ReadOnly] private AdsAdmobOpenAds admobOpenAds;
         public bool EnableTestForDebugBuild = false;
 
+        public bool IsShowBannerBottom;
+        public bool IsShowBannerTop;
+        public static event Action OnBannerChange;
         public bool IsLoadedRewarded
         {
             get
@@ -106,6 +109,13 @@ namespace VMC.Ads
             VMC.Debugger.Debug.Log("[ADS]", "Hide banner");
             ads.HideBannerAds();
         }
+        public float GetBannerHeight()
+        {
+            if (!CheckValidate()) return 0;
+            float height = ads.GetBannerHeight();
+            VMC.Debugger.Debug.Log("[ADS]", $"Get banner height: {height}");
+            return height;
+        }
 
         public void ShowInterstitial(string placement, Action closeCallback)
         {
@@ -132,6 +142,12 @@ namespace VMC.Ads
                 return;
             }
             VMC.Debugger.Debug.Log("[ADS]", "Show rewarded video");
+
+#if UNITY_EDITOR
+            rewardedCallback?.Invoke(true);
+            return;
+#endif
+
             ads.ShowRewardedVideo(placement, rewardedCallback);
         }
     }

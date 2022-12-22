@@ -104,7 +104,7 @@ namespace VMC.Ads
         public virtual void ShowAppOpenAds()
         {
             Debug.Log("Show App Open Ads");
-        }    
+        }
         #endregion
 
         #region BANNER
@@ -124,6 +124,13 @@ namespace VMC.Ads
             if (isShowingBanner) ShowBannerAds(this.bannerPosition);
             else HideBannerAds();
         }
+
+        public virtual float GetBannerHeight()
+        {
+            return 0;
+        }
+
+
         #endregion
 
         #region INTERSTITIAL
