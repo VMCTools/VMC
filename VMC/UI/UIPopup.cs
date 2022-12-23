@@ -18,6 +18,8 @@ namespace VMC.UI
         [SerializeField] private float fadeColor = 0.8f;
         [SerializeField] protected Button btnClose;
 
+        protected bool isAnimated=false;
+
         public event Action OnShowComplete;
         private void Start()
         {
@@ -32,6 +34,7 @@ namespace VMC.UI
         public void ShowDialog(Action callbackShow = null)
         {
 #if VMC_DOTWEEN
+            isAnimated = true;
             this.gameObject.SetActive(true);
             if (imgBlack)
             {
@@ -46,20 +49,24 @@ namespace VMC.UI
                 boundPopup.transform.DOScale(1, timeShow).SetUpdate(ignoreTimeScale).SetEase(Ease.OutBack).OnComplete(() =>
                 {
                     callbackShow?.Invoke();
+                    isAnimated = false;
                 });
             }
             else
             {
                 callbackShow?.Invoke();
+                isAnimated = false;
             }
 #else
             this.gameObject.SetActive(true);
             callbackShow?.Invoke();
+            isAnimated = false;
 #endif
         }
         public void HideDialog(Action callbackHide = null)
         {
 #if VMC_DOTWEEN
+            isAnimated = true;
             if (imgBlack)
                 imgBlack.DOFade(0, timeShow);
             if (boundPopup)
@@ -69,16 +76,19 @@ namespace VMC.UI
                 {
                     this.gameObject.SetActive(false);
                     callbackHide?.Invoke();
+                    isAnimated = false;
                 });
             }
             else
             {
                 this.gameObject.SetActive(false);
                 callbackHide?.Invoke();
+                isAnimated = false;
             }
 #else
             this.gameObject.SetActive(false);
             callbackHide?.Invoke();
+            isAnimated = false;
 #endif
         }
 
