@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿//using Newtonsoft.Json;
 using UnityEngine;
 
 using Debug = VMC.Debugger.Debug;
@@ -60,11 +60,13 @@ namespace VMC.Ultilities
         {
             string data = Get(key, string.Empty);
             Debug.Log($"Get: {key} - {data}");
-            return JsonConvert.DeserializeObject<T>(data);
+            //return JsonConvert.DeserializeObject<T>(data);
+            return JsonUtility.FromJson<T>(data);
         }
         public static void Set<T>(string key, T obj)
         {
-            string data = JsonConvert.SerializeObject(obj);
+            //string data = JsonConvert.SerializeObject(obj);
+            string data = JsonUtility.ToJson(obj);
             Debug.Log($"Save: {key} - {data}");
             Set(key, data);
         }

@@ -81,21 +81,18 @@ namespace VMC
 
         private void InitStep1()
         {
-            // init Ads
-            VMC.Ads.AdsManager.Instance.Initialize();
-            // init Appflyer
-            VMC.Analystic.AnalysticManager.Instance.InitializeAppflyer();
+            VMC.Ads.AdsManager.Instance.Initialize();//init ads
+         
+            VMC.Analystic.AnalysticManager.Instance.InitializeAppflyer();//init appflyer
         }
         private void InitStep2()
         {
-            // init Firebase
-            VMC.Ads.AdsManager.Instance.InitializeAOA();
+            VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();// init firebase
+            //VMC.Ads.AdsManager.Instance.InitializeAOA();//init aoa
         }
         private void InitStep3()
         {
-            // init AOA
-            VMC.Analystic.AnalysticManager.Instance.InitializeFirebase();
-            VMC.Ads.AdsManager.Instance.ShowAppOpenAds();
+            //VMC.Ads.AdsManager.Instance.ShowAppOpenAds();
         }
     }
 }
