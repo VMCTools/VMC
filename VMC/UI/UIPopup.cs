@@ -21,7 +21,7 @@ namespace VMC.UI
         protected bool isAnimated=false;
 
         public event Action OnShowComplete;
-        private void Start()
+        protected virtual void Start()
         {
             if (btnClose != null)
             {
