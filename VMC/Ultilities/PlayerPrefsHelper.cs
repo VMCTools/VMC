@@ -56,6 +56,22 @@ namespace VMC.Ultilities
         {
             PlayerPrefs.SetString(key, value);
         }
+        public static float Get(string key, float defaultValue)
+        {
+            if (PlayerPrefs.HasKey(key))
+            {
+                return PlayerPrefs.GetFloat(key);
+            }
+            else
+            {
+               return PlayerPrefs.GetFloat(key, defaultValue);
+            }
+        }
+        public static void Set(string key, float value)
+        {
+            PlayerPrefs.SetFloat(key, value);
+        }
+
         public static T Get<T>(string key)
         {
             string data = Get(key, string.Empty);

@@ -15,19 +15,88 @@ namespace VMC.Sound
         private AudioSource mySound;
         private List<AudioSource> mySounds = new List<AudioSource>();
 
-        public bool isEnableSound { private set; get; } = true;
-        public bool isEnableMusic { private set; get; } = true;
+        private bool isEnableSound;
+        private bool isEnableMusic;
+        private float valueSound;
+        private float valueMusic;
 
         private const string KEY_SETTING_MUSIC = "VMC_Setting_Music";
         private const string KEY_SETTING_SOUND = "VMC_Setting_Sound";
 
+        private const string KEY_VOLUME_MUSIC = "VMC_Volume_Music";
+        private const string KEY_VOLUME_SOUND = "VMC_Volume_Sound";
+
+        public bool IsEnableMusic
+        {
+            get
+            {
+                return isEnableMusic;
+            }
+            set
+            {
+                isEnableMusic = value;
+                PlayerPrefsHelper.Set(KEY_SETTING_MUSIC, isEnableMusic);
+                if (myMusic != null)
+                {
+                    myMusic.mute = !value;
+                }
+            }
+        }
+        public bool IsEnableSound
+        {
+            get
+            {
+                return isEnableSound;
+            }
+            set
+            {
+                isEnableSound = value;
+                PlayerPrefsHelper.Set(KEY_SETTING_SOUND, isEnableSound);
+                foreach (var sound in mySounds)
+                {
+                    sound.mute = !isEnableSound;
+                }
+            }
+        }
+
+        public float VolumeMusic
+        {
+            get
+            {
+                return valueMusic;
+            }
+            set
+            {
+                valueMusic = value;
+                PlayerPrefsHelper.Set(KEY_VOLUME_MUSIC, value);
+                if (myMusic != null)
+                {
+                    myMusic.volume = value;
+                }
+            }
+        }
+        public float VolumeSound
+        {
+            get
+            {
+                return valueSound;
+            }
+            set
+            {
+                valueSound = value;
+                PlayerPrefsHelper.Set(KEY_VOLUME_SOUND, value);
+            }
+        }
         protected override void Awake()
         {
             base.Awake();
             if (Instance == this)
             {
-                Set_EnableSound(PlayerPrefsHelper.Get(KEY_SETTING_SOUND, true));
-                Set_EnableMusic(PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true));
+                isEnableSound = PlayerPrefsHelper.Get(KEY_SETTING_SOUND, true);
+                isEnableMusic = PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true);
+                valueSound = PlayerPrefsHelper.Get(KEY_VOLUME_SOUND, 1f);
+                valueMusic = PlayerPrefsHelper.Get(KEY_VOLUME_MUSIC, .8f);
+
                 if (keys != null)
                 {
                     foreach (var item in keys)
@@ -42,35 +111,6 @@ namespace VMC.Sound
             }
         }
 
-        public static void EnableSound(bool isEnable)
-        {
-            if (Instance == null) return;
-            Instance.Set_EnableSound(isEnable);
-        }
-        private void Set_EnableSound(bool isEnable)
-        {
-            isEnableSound = isEnable;
-            PlayerPrefsHelper.Set(KEY_SETTING_SOUND, isEnableSound);
-            foreach (var sound in mySounds)
-            {
-                sound.mute = !isEnableSound;
-            }
-        }
-        public static void EnableMusic(bool isEnable)
-        {
-            if (Instance == null) return;
-            Instance.Set_EnableMusic(isEnable);
-        }
-        private void Set_EnableMusic(bool isEnable)
-        {
-            isEnableMusic = isEnable;
-            PlayerPrefsHelper.Set(KEY_SETTING_MUSIC, isEnableMusic);
-            if (myMusic != null)
-            {
-                myMusic.mute = !isEnable;
-            }
-        }
-
         public static void PlayMusic(string key, float volume = 0.4f)
         {
             if (Instance == null) return;
@@ -81,7 +121,6 @@ namespace VMC.Sound
             if (Instance == null) return;
             Instance._PlayMusic(clip, volume);
         }
-
         private void _PlayMusic(AudioClip clip, float volume)
         {
             if (myMusic == null)
@@ -97,7 +136,6 @@ namespace VMC.Sound
             myMusic.clip = clip;
             myMusic.Play();
         }
-
         private void _PlayMusic(string key, float volume = 0.4f)
         {
             if (!listAudios.ContainsKey(key))
@@ -119,7 +157,6 @@ namespace VMC.Sound
                 return;
             Instance._PlaySound(clip, volume, isLoop);
         }
-
         public static void PlaySoundAtPoint(string key, Vector3 position, float volume = 1f)
         {
             if (!Instance.isEnableSound)
@@ -138,8 +175,6 @@ namespace VMC.Sound
                 return;
             AudioSource.PlayClipAtPoint(clip, position, volume);
         }
-
-
         private void _PlaySound(string key, float volume, bool isLoop = false)
         {
             if (!isEnableSound)
@@ -175,19 +210,13 @@ namespace VMC.Sound
                 var soundObject = new GameObject("Sound");
                 soundObject.transform.SetParent(this.transform);
                 mySound = soundObject.AddComponent<AudioSource>();
-
-                mySound.loop = false;
-                mySound.volume = 1f;
-
                 mySounds.Add(mySound);
             }
-            mySound.volume = Mathf.Clamp01(volume);
+            mySound.volume = Mathf.Clamp01(volume) * valueSound;
             mySound.loop = isLoop;
             mySound.clip = clip;
             mySound.Play();
         }
-
-
         public static void StopSound(string key)
         {
             if (Instance == null)
@@ -219,6 +248,5 @@ namespace VMC.Sound
                 }
             }
         }
-
     }
 }

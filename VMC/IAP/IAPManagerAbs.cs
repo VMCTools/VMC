@@ -1,5 +1,6 @@
 #if VMC_IAP
 using System;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
@@ -33,7 +34,7 @@ namespace VMC.IAP
         private IGooglePlayStoreExtensions m_GooglePlayStoreExtensions;
 
         public bool IsInitialized => m_StoreController != null && m_StoreExtensionProvider != null;
-
+        public bool CanRestore => true;
 
         [ReadOnly] public bool IsProcessing = false;
 
@@ -41,11 +42,26 @@ namespace VMC.IAP
         private float countTimePend = -1;
         private Product pendingProduct;
 
-        private void Start()
+        public static event Action<bool> OnChangeProcessingState;
+
+        public string environment = "production";
+
+        async void Start()
         {
-            if (!IsInitialized)
+            try
             {
-                this.InitializePurchasing();
+                var options = new InitializationOptions();
+
+                await UnityServices.InitializeAsync(options);
+                if (!IsInitialized)
+                {
+                    this.InitializePurchasing();
+                }
+            }
+            catch (Exception exception)
+            {
+                Debugger.Debug.LogError($"UnityServices", exception.Message);
+                // An error occurred during services initialization.
             }
         }
         public void InitializePurchasing()
@@ -78,6 +94,7 @@ namespace VMC.IAP
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
             IsProcessing = false;
+            OnChangeProcessingState?.Invoke(false);
             Debugger.Debug.Log("[IAP]", $"[BuyProductFailed] {product.definition.id}. {failureReason}");
         }
 
@@ -86,16 +103,17 @@ namespace VMC.IAP
             IsProcessing = false;
             if (BuySuccessedItem(purchaseEvent.purchasedProduct.definition.id))
             {
+                OnChangeProcessingState?.Invoke(true);
+                return PurchaseProcessingResult.Complete;
             }
             else
             {
                 countTimePend = TimeToDelayHandledPending;
                 pendingProduct = purchaseEvent.purchasedProduct;
                 Debug.Log("BuyProductID: SUCCESSED. but something wrong when pay the bonus to player!!!");
+                OnChangeProcessingState?.Invoke(false);
                 return PurchaseProcessingResult.Pending;
             }
-
-            return PurchaseProcessingResult.Complete;
         }
         private void Update()
         {
@@ -149,11 +167,11 @@ namespace VMC.IAP
         {
 #if UNITY_IPHONE
             m_AppleExtensions.RestoreTransactions(callback);
-#endif
-#if UNITY_ANDROID
+#elif UNITY_ANDROID
             m_GooglePlayStoreExtensions.RestoreTransactions(callback);
 #endif
         }
+
 
         public IAPProduct GetProductById(string id)
         {

@@ -148,6 +148,12 @@ namespace VMC.Ads
         }
         public virtual void ShowInterstitialAds(string placement, Action callback = null)
         {
+            if(!IsEnableAds)
+            {
+                VMC.Debugger.Debug.Log("[ADS]", "Cant Show interstitial because !IsEnableAds");
+                callback?.Invoke();
+                return;
+            }
             if (!IsCanShowInterstitial)
             {
                 VMC.Debugger.Debug.Log("[ADS]", "Cant Show interstitial because interval time");

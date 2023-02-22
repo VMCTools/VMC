@@ -28,6 +28,18 @@ namespace VMC.Ads
             }
         }
 
+        public bool IsEnableAds
+        {
+            get
+            {
+                return ads.IsEnableAds;
+            }
+            set
+            {
+                ads.IsEnableAds = value;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();
