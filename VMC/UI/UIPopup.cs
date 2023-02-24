@@ -27,7 +27,7 @@ namespace VMC.UI
             {
                 btnClose.onClick.AddListener(() =>
                 {
-                    HideDialog();
+                    OnBtnCloseClick();
                 });
             }
         }
@@ -100,5 +100,11 @@ namespace VMC.UI
         {
             OnShowComplete?.Invoke();
         }
+
+        protected virtual void OnBtnCloseClick()
+        {
+            HideDialog();
+        }
+
     }
 }

@@ -5,12 +5,14 @@ namespace VMC
 {
     public class Share : SingletonAdvance<Share>
     {
-        string subject = $"Hey I am playing this awesome new game called {Application.productName},do give it try and enjoy \n";
-        string body = "https://play.google.com/store/apps/details?id=" + Application.identifier;
+        private string subject;
+        private string body;
 
         public void OnAndroidTextSharingClick()
         {
-#if UNITY_ANDROID
+            string subject = $"Hey I am playing this awesome new game called {Application.productName},do give it try and enjoy \n";
+            string body = "https://play.google.com/store/apps/details?id=" + Application.identifier;
+#if UNITY_ANDROID && !UNITY_ANDROID
             StartCoroutine(ShareAndroidText());
 #else
             Debug.LogError("Not supported!");
