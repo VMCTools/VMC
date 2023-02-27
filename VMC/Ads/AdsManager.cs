@@ -27,7 +27,6 @@ namespace VMC.Ads
                 else return false;
             }
         }
-
         public bool IsEnableAds
         {
             get
@@ -128,7 +127,6 @@ namespace VMC.Ads
             VMC.Debugger.Debug.Log("[ADS]", $"Get banner height: {height}");
             return height;
         }
-
         public void ShowInterstitial(string placement, Action closeCallback)
         {
             if (!CheckValidate())
@@ -139,7 +137,6 @@ namespace VMC.Ads
             VMC.Debugger.Debug.Log("[ADS]", "Show interstitial");
             ads.ShowInterstitialAds(placement, closeCallback);
         }
-
         public void ShowRewardedVideo(string placement, Action<bool> rewardedCallback)
         {
             if (!CheckValidate())
@@ -159,7 +156,6 @@ namespace VMC.Ads
             rewardedCallback?.Invoke(true);
             return;
 #endif
-
             ads.ShowRewardedVideo(placement, rewardedCallback);
         }
     }

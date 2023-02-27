@@ -42,7 +42,7 @@ namespace VMC.Ads
         [ReadOnly] private string rewardedVideoIdTest = "ca-app-pub-3940256099942544/1712485313";
 #endif
         private BannerView bannerView;
-        private InterstitialAd interstitial;
+        private InterstitialAd interstitialAd;
         private RewardedAd rewardedAd;
 #endif
         public override void Initialize()
@@ -113,7 +113,8 @@ namespace VMC.Ads
             this.bannerView = new BannerView(bannerId, AdSize.SmartBanner, GetAdPosition(bannerPosition));
 
             // Called when an ad request has successfully loaded.
-            this.bannerView.OnAdLoaded += this.bannerView_OnAdLoaded;
+            this.bannerView.OnBannerAdLoaded += BannerView_OnBannerAdLoaded; ;
+            this.bannerView.OnBannerAdLoadFailed += BannerView_OnBannerAdLoadFailed;
 
             // Create an empty ad request.
             AdRequest request = new AdRequest.Builder().Build();
@@ -121,6 +122,18 @@ namespace VMC.Ads
             this.bannerView.LoadAd(request);
 #endif
         }
+
+        public override float GetBannerHeight()
+        {
+#if VMC_ADS_ADMOB
+            if (bannerView == null)
+                return 0;
+            return bannerView.GetHeightInPixels();
+#else
+            return 0;
+#endif
+        }
+
         public override void ShowBannerAds(BannerAdsPosition posi = BannerAdsPosition.BOTTOM)
         {
             base.ShowBannerAds(posi);
@@ -144,14 +157,16 @@ namespace VMC.Ads
 #endif
         }
 #if VMC_ADS_ADMOB
-        private void bannerView_OnAdLoaded(object sender, EventArgs args)
+        private void BannerView_OnBannerAdLoaded()
         {
             this.OnLoadBannerSuccessed();
         }
+        private void BannerView_OnBannerAdLoadFailed(LoadAdError obj)
+        {
+            this.OnLoadBannerFailed(obj.GetCode().ToString(), obj.GetMessage());
+        }
 #endif
         #endregion
-
-
 
         #region INTERSTITIAL
         public override void InitializeInterstitialAds()
@@ -163,24 +178,39 @@ namespace VMC.Ads
         {
             base.LoadInterstitialAds();
 #if VMC_ADS_ADMOB
-            // Initialize an InterstitialAd.
-            this.interstitial = new InterstitialAd(interstitialId);
+            // Clean up the old ad before loading a new one.
+            if (interstitialAd != null)
+            {
+                interstitialAd.Destroy();
+                interstitialAd = null;
+            }
+            // create our request used to load the ad.
+            var adRequest = new AdRequest.Builder().Build();
 
-            // Called when an ad request has successfully loaded.
-            this.interstitial.OnAdLoaded += intersitial_OnAdLoaded;
-            // Called when an ad request failed to load.
-            this.interstitial.OnAdFailedToLoad += interstitial_OnAdFailedToLoad;
-            // Called when the ad is closed.
-            this.interstitial.OnAdClosed += interstitial_OnAdClosed;
+            // send the request to load the ad.
+            InterstitialAd.Load(interstitialId, adRequest,
+                (InterstitialAd ad, LoadAdError error) =>
+                {
+                    // if error is not null, the load request failed.
+                    if (error != null || ad == null)
+                    {
+                        Debug.Log("[ADMOB-Intersitial]", "Failed to load intersitital ads. " + error.GetMessage());
+                        Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                        {
+                            this.OnInterstitialLoadFailed(error.GetMessage());
+                        });
+                        return;
+                    }
+                    else
+                    {
+                        Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstititalLoadSuccessed);
+                    }
+                    interstitialAd = ad;
 
-            this.interstitial.OnAdDidRecordImpression += Interstitial_OnAdDidRecordImpression;
-            // Called when the ad is failed to show.
-            this.interstitial.OnAdFailedToShow += Interstitial_OnAdFailedToShow;
-
-            // Create an empty ad request.
-            AdRequest request = new AdRequest.Builder().Build();
-            // Load the interstitial with the request.
-            this.interstitial.LoadAd(request);
+                    interstitialAd.OnAdFullScreenContentFailed += Ad_OnAdFullScreenContentFailed;
+                    interstitialAd.OnAdFullScreenContentClosed += Ad_OnAdFullScreenContentClosed;
+                    interstitialAd.OnAdImpressionRecorded += Ad_OnAdImpressionRecorded;
+                });
 #endif
         }
 
@@ -189,62 +219,48 @@ namespace VMC.Ads
             base.ShowInterstitialAds(placement, callback);
             if (!IsCanShowInterstitial) return;
 #if VMC_ADS_ADMOB
-            if (this.interstitial == null)
+            if (interstitialAd != null && interstitialAd.CanShowAd())
             {
-                LoadInterstitialAds();
-                callback?.Invoke();
-            }
-            else if (this.interstitial.IsLoaded())
-            {
-                this.interstitial.Show();
+                Debug.Log("Showing interstitial ad.");
+                interstitialAd.Show();
             }
             else
             {
+                Debug.LogError("Interstitial ad is not ready yet.");
+                LoadInterstitialAds();
                 callback?.Invoke();
             }
 #endif
         }
 
 #if VMC_ADS_ADMOB
-        private void intersitial_OnAdLoaded(object sender, EventArgs args)
-        {
-            Debug.Log("[ADMOB-Intersitial]", "Loaded!");
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstititalLoadSuccessed);
-        }
-        private void interstitial_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
-        {
-            Debug.Log("[ADMOB-Intersitial]", "Failed to load intersitital ads. " + args.LoadAdError.GetMessage());
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
-            {
-                this.OnInterstitialLoadFailed(args.LoadAdError.GetMessage());
-            });
-        }
-        private void interstitial_OnAdClosed(object sender, EventArgs args)
+        private void Ad_OnAdFullScreenContentClosed()
         {
             Debug.Log("[ADMOB-Intersitial]", "Closed Ads!");
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnInterstitialDisplaySuccessed);
+            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                this.OnInterstitialDisplaySuccessed();
+            });
         }
-        private void Interstitial_OnAdFailedToShow(object sender, AdErrorEventArgs e)
+        private void Ad_OnAdFullScreenContentFailed(AdError obj)
         {
             Debug.Log("[ADMOB-Intersitial]", "Failed to show Ads!");
             Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
-                this.OnInterstitialDisplayFailed(e.AdError.GetMessage());
+                this.OnInterstitialDisplayFailed(obj.GetMessage());
             });
         }
 
-        private void Interstitial_OnAdDidRecordImpression(object sender, EventArgs e)
+        private void Ad_OnAdImpressionRecorded()
         {
-#if VMC_GROUP_2
+            Debug.Log("[ADMOB-Intersitial]", "Cliked!");
             Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
                 this.OnInterstitialClicked();
             });
-#endif
         }
 #endif
         #endregion
-
 
         #region REWARDED VIDEO
         public override void InitializeRewardedVideoAds()
@@ -256,37 +272,57 @@ namespace VMC.Ads
         {
             base.LoadRewardedVideo();
 #if VMC_ADS_ADMOB
-            this.rewardedAd = new RewardedAd(rewardedVideoId);
+            // Clean up the old ad before loading a new one.
+            if (rewardedAd != null)
+            {
+                rewardedAd.Destroy();
+                rewardedAd = null;
+            }
 
-            // Called when an ad request has successfully loaded.
-            this.rewardedAd.OnAdLoaded += RewardedAd_OnAdLoaded;
-            // Called when an ad request failed to load.
-            this.rewardedAd.OnAdFailedToLoad += RewardedAd_OnAdFailedToLoad;
-            // Called when an ad request failed to show.
-            this.rewardedAd.OnAdFailedToShow += RewardedAd_OnAdFailedToShow;
-            // Called when the user should be rewarded for interacting with the ad.
-            this.rewardedAd.OnUserEarnedReward += RewardedAd_OnUserEarnedReward;
-            // Called when the ad is closed.
-            this.rewardedAd.OnAdClosed += RewardedAd_OnAdClosed;
+            Debug.Log("Loading the rewarded ad.");
 
-            this.rewardedAd.OnAdDidRecordImpression += RewardedAd_OnAdDidRecordImpression;
+            // create our request used to load the ad.
+            var adRequest = new AdRequest.Builder().Build();
 
+            // send the request to load the ad.
+            RewardedAd.Load(rewardedVideoId, adRequest, (RewardedAd ad, LoadAdError error) =>
+                 {
+                     // if error is not null, the load request failed.
+                     if (error != null || ad == null)
+                     {
+                         Debug.Log("[ADMOB-RewardedVideo]", "Failed to load RewardedVideo ads. " + error.GetMessage());
+                         Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                         {
+                             this.OnRewardedLoadFailed(error.GetMessage());
+                         });
+                         return;
+                     }
+                     else
+                     {
+                         Debug.Log("[ADMOB-RewardedVideo]", "Loaded!");
+                         Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedLoadSuccessed);
+                     }
 
-            // Create an empty ad request.
-            AdRequest request = new AdRequest.Builder().Build();
-            // Load the rewarded ad with the request.
-            this.rewardedAd.LoadAd(request);
+                     rewardedAd = ad;
+                     rewardedAd.OnAdFullScreenContentFailed += RewardedAd_OnAdFullScreenContentFailed;
+                     rewardedAd.OnAdFullScreenContentClosed += RewardedAd_OnAdFullScreenContentClosed;
+                     rewardedAd.OnAdPaid += RewardedAd_OnAdPaid;
+                     rewardedAd.OnAdImpressionRecorded += RewardedAd_OnAdImpressionRecorded;
+                 });
 #endif
         }
-
 
         public override void ShowRewardedVideo(string placement, Action<bool> callback)
         {
             base.ShowRewardedVideo(placement, callback);
 #if VMC_ADS_ADMOB
-            if (this.rewardedAd.IsLoaded())
+            if (rewardedAd != null && rewardedAd.CanShowAd())
             {
-                this.rewardedAd.Show();
+                rewardedAd.Show((Reward reward) =>
+                {
+                    // TODO: Reward the user.
+                    // nothing handle this, because it call in callback function
+                });
             }
             else
             {
@@ -298,39 +334,27 @@ namespace VMC.Ads
         }
 
 #if VMC_ADS_ADMOB
-        private void RewardedAd_OnAdLoaded(object sender, EventArgs args)
+        private void RewardedAd_OnAdFullScreenContentFailed(AdError obj)
         {
-            Debug.Log("[ADMOB-RewardedVideo]", "Loaded!");
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedLoadSuccessed);
-        }
-        private void RewardedAd_OnAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
-        {
-            Debug.Log("[ADMOB-RewardedVideo]", "Failed to load RewardedVideo ads. " + e.LoadAdError.GetMessage());
+            Debug.Log("[ADMOB-RewardedVideo]", "Failed to show RewardedVideo ads. " + obj.GetMessage());
             Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
-                this.OnRewardedLoadFailed(e.LoadAdError.GetMessage());
+                this.OnRewardedDisplayFailed(obj.GetMessage());
             });
         }
-        private void RewardedAd_OnAdFailedToShow(object sender, AdErrorEventArgs args)
-        {
-            Debug.Log("[ADMOB-RewardedVideo]", "Failed to show RewardedVideo ads. " + args.AdError.GetMessage());
-            Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(() =>
-            {
-                this.OnRewardedDisplayFailed(args.AdError.GetMessage());
-            });
-        }
-        private void RewardedAd_OnAdClosed(object sender, EventArgs args)
+        private void RewardedAd_OnAdFullScreenContentClosed()
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Close Ads");
             Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedDisplaySuccessed);
         }
-        private void RewardedAd_OnUserEarnedReward(object sender, Reward args)
+        private void RewardedAd_OnAdPaid(AdValue obj)
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
             this.OnRewardedGotReward();
         }
-        private void RewardedAd_OnAdDidRecordImpression(object sender, EventArgs e)
+        private void RewardedAd_OnAdImpressionRecorded()
         {
+            Debug.Log("[ADMOB-RewardedVideo]", "Impression Recorded!");
             Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedClicked);
         }
 #endif

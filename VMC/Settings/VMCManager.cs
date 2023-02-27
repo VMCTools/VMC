@@ -23,11 +23,13 @@ namespace VMC.Settings
             Application.targetFrameRate = 60;
             if (Application.platform == RuntimePlatform.IPhonePlayer && PlayerPrefs.GetInt("ATTShowed", 0) == 0 && UnityATTPlugin.Instance.IsIOS14AndAbove())
             {
-                AnalysticManager.Instance.ATTShow();
+                //AnalysticManager.Instance.ATTShow();
                 UnityATTPlugin.Instance.ShowATTRequest((action) =>
                 {
                     if (action == ATTStatus.Authorized)
-                        AnalysticManager.Instance.ATTSuccess();
+                    {
+                        //AnalysticManager.Instance.ATTSuccess();
+                    }
                 });
                 PlayerPrefs.SetInt("ATTShowed", 1);
             }

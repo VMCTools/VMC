@@ -10,9 +10,6 @@ namespace VMC.Settings
     [CreateAssetMenu(fileName = "VMC Settings", menuName = "VMC/Setting")]
     public class VMCSettingConfig : ScriptableObject
     {
-        [Header("Group Config")]
-        public SKDGroup groupSDK;
-
         [Header("Ads Config")]
         public bool enableAds = false;
         public Ads.AdsType adType;
@@ -112,13 +109,6 @@ namespace VMC.Settings
                 return Resources.Load<VMCSettingConfig>("VMC Settings");
             }
         }
-    }
-
-    [Serializable]
-    public enum SKDGroup
-    {
-        Group1 = 1,
-        Group2 = 2
     }
 
     [Flags]

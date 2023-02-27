@@ -10,9 +10,6 @@ namespace VMC.Settings
     [CustomEditor(typeof(VMCSettingConfig))]
     public class VMCSettingConfigEditor : Editor
     {
-        [Header("Group Config")]
-        public SerializedProperty groupSDK;
-
         [Header("Ads Config")]
         SerializedProperty enableAds;
         SerializedProperty adType;
@@ -63,10 +60,6 @@ namespace VMC.Settings
         void OnEnable()
         {
             // Setup the SerializedProperties.
-
-
-            groupSDK = serializedObject.FindProperty("groupSDK");
-
             enableAds = serializedObject.FindProperty("enableAds");
             adType = serializedObject.FindProperty("adType");
             adsLibrary = serializedObject.FindProperty("adsLibrary");
@@ -106,8 +99,6 @@ namespace VMC.Settings
         }
         public override void OnInspectorGUI()
         {
-
-            EditorGUILayout.PropertyField(groupSDK);
             GUILayout.Space(10);
 
             EditorGUILayout.PropertyField(enableAds);
@@ -229,26 +220,6 @@ namespace VMC.Settings
 
         public void Changes(ref HashSet<string> defines)
         {
-            #region Group SDK
-            if ((SKDGroup)(groupSDK.enumValueFlag) == SKDGroup.Group1)
-            {
-                defines.Add(Define.VMC_GROUP_1.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_GROUP_1.ToString());
-            }
-            if ((SKDGroup)(groupSDK.enumValueFlag) == SKDGroup.Group2)
-            {
-                defines.Add(Define.VMC_GROUP_2.ToString());
-            }
-            else
-            {
-                defines.Remove(Define.VMC_GROUP_2.ToString());
-            }
-
-            #endregion
-
             #region Ads check
             if (enableAds.boolValue && isTestMode.boolValue)
             {

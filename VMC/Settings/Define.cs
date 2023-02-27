@@ -35,8 +35,5 @@
 
         VMC_ADDRESSABLE,
         VMC_APP_REVIEW,
-
-        VMC_GROUP_1,
-        VMC_GROUP_2
     }
 }

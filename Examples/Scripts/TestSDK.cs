@@ -71,12 +71,9 @@ namespace VMC.Examples
                 btns[5].GetComponentInChildren<Text>().text = "Logevent Level Start";
                 btns[5].onClick.AddListener(() =>
                 {
-
-#if VMC_GROUP_1
-                    AnalysticManager.Instance.Log_LevelStart(1);
-#elif VMC_GROUP_2
-                    AnalysticManager.Instance.Log_LevelStart(1, 0);
-#endif
+                    Dictionary<string, string> param = new();
+                    param.Add("level", 1.ToString());
+                    AnalysticManager.Instance.LogEvent("level_start", param);
                     Debug.Log("Log event level start!");
                 });
             }

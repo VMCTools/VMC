@@ -196,10 +196,6 @@ namespace VMC.Ads
             base.InitializeBannerAds();
 #if VMC_ADS_MAX
             MaxSdk.CreateBanner(this.bannerId, ConvertPosition(this.bannerPosition));
-#if VMC_GROUP_2
-            MaxSdk.SetBannerExtraParameter(this.bannerId, "adaptive_banner", "false");
-#endif
-
             MaxSdkCallbacks.Banner.OnAdLoadedEvent += OnBannerAdLoadedEvent;
             MaxSdkCallbacks.Banner.OnAdRevenuePaidEvent += OnAdRevenuePaidEvent;
 #endif
@@ -396,9 +392,6 @@ new Firebase.Analytics.Parameter("value", revenue),
 new Firebase.Analytics.Parameter("currency", "USD"), // All Applovin revenue is sent in USD
 };
             Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression", impressionParameters);
-#if VMC_GROUP_2
-            Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression_abi", impressionParameters);
-#endif
 #endif
         }
 #endif
