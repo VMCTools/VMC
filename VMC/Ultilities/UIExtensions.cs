@@ -5,6 +5,11 @@ namespace VMC.Ultilities
 {
     public static class UIExtensions
     {
+        /// <summary>
+        /// Remove all previous listener then add new listener.
+        /// </summary>
+        /// <param name="onClick"></param>
+        /// <param name="call"></param>
         public static void SetListener(this UnityEvent onClick, UnityAction call)
         {
             onClick.RemoveAllListeners();

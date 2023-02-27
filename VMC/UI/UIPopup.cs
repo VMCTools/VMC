@@ -4,6 +4,7 @@ using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using VMC.Ultilities;
 
 namespace VMC.UI
 {
@@ -25,7 +26,7 @@ namespace VMC.UI
         {
             if (btnClose != null)
             {
-                btnClose.onClick.AddListener(() =>
+                btnClose.onClick.SetListener(() =>
                 {
                     OnBtnCloseClick();
                 });
