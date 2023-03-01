@@ -42,7 +42,15 @@ namespace VMC.IAP
         private float countTimePend = -1;
         private Product pendingProduct;
 
-        public static event Action<bool> OnChangeProcessingState;
+        public static event Action<string, State> OnChangeProcessingState;
+
+        public enum State
+        {
+            Started,
+            Successed,
+            Failed,
+            Cancelled
+        }
 
         public string environment = "production";
 
@@ -94,7 +102,14 @@ namespace VMC.IAP
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
             IsProcessing = false;
-            OnChangeProcessingState?.Invoke(false);
+            if (failureReason == PurchaseFailureReason.UserCancelled)
+            {
+                OnChangeProcessingState?.Invoke(product.definition.id, State.Cancelled);
+            }
+            else
+            {
+                OnChangeProcessingState?.Invoke(product.definition.id, State.Failed);
+            }
             Debugger.Debug.Log("[IAP]", $"[BuyProductFailed] {product.definition.id}. {failureReason}");
         }
 
@@ -103,7 +118,7 @@ namespace VMC.IAP
             IsProcessing = false;
             if (BuySuccessedItem(purchaseEvent.purchasedProduct.definition.id))
             {
-                OnChangeProcessingState?.Invoke(true);
+                OnChangeProcessingState?.Invoke(purchaseEvent.purchasedProduct.definition.id, State.Successed);
                 return PurchaseProcessingResult.Complete;
             }
             else
@@ -111,7 +126,7 @@ namespace VMC.IAP
                 countTimePend = TimeToDelayHandledPending;
                 pendingProduct = purchaseEvent.purchasedProduct;
                 Debug.Log("BuyProductID: SUCCESSED. but something wrong when pay the bonus to player!!!");
-                OnChangeProcessingState?.Invoke(false);
+                OnChangeProcessingState?.Invoke(purchaseEvent.purchasedProduct.definition.id, State.Failed);
                 return PurchaseProcessingResult.Pending;
             }
         }
@@ -149,6 +164,7 @@ namespace VMC.IAP
                 {
                     IsProcessing = true;
                     m_StoreController.InitiatePurchase(product);
+                    OnChangeProcessingState?.Invoke(productId, State.Started);
                 }
                 else
                 {
