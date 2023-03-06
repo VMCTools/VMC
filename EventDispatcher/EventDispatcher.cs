@@ -110,21 +110,24 @@ namespace VMC
 
         private readonly List<EventHandlerListData> _tempHandlerList = new List<EventHandlerListData>();
 
-        public void AddEventHandler(short type, EventHandler handler)
+        public static void AddEventHandler(short type, EventHandler handler)
         {
-            AddEventHandlerInternal(_eventHandlerDic, type, handler);
+            if (Instance != null)
+                Instance.AddEventHandlerInternal(Instance._eventHandlerDic, type, handler);
         }
 
-        public void RemoveEventHandler(short type, EventHandler handler)
+        public static void RemoveEventHandler(short type, EventHandler handler)
         {
-            RemoveEventHandlerInternal(_eventHandlerDic, type, handler);
+            if (Instance != null)
+                Instance.RemoveEventHandlerInternal(Instance._eventHandlerDic, type, handler);
         }
 
-        public void AddEventHandler<T>(short type, EventHandler<T> handler)
+        public static void AddEventHandler<T>(short type, EventHandler<T> handler)
         {
             try
             {
-                AddEventHandlerInternal(_eventHandlerDic, type, handler);
+                if (Instance != null)
+                    Instance.AddEventHandlerInternal(Instance._eventHandlerDic, type, handler);
             }
             catch
             {
@@ -132,20 +135,21 @@ namespace VMC
             }
         }
 
-        public void RemoveEventHandler<T>(short type, EventHandler<T> handler)
+        public static void RemoveEventHandler<T>(short type, EventHandler<T> handler)
         {
-            RemoveEventHandlerInternal(_eventHandlerDic, type, handler);
+            if (Instance != null)
+                Instance.RemoveEventHandlerInternal(Instance._eventHandlerDic, type, handler);
         }
 
-        public void SendEvent(short type)
+        public static void SendEvent(short type)
         {
-            var eventListeners = GetEventHandlerList(_eventHandlerDic, type, false);
+            var eventListeners = Instance.GetEventHandlerList(Instance._eventHandlerDic, type, false);
             eventListeners?.Send();
         }
 
-        public void SendEvent<T>(short type, T msg)
+        public static void SendEvent<T>(short type, T msg)
         {
-            var eventListeners = GetEventHandlerList(_eventHandlerDic, type, false);
+            var eventListeners = Instance.GetEventHandlerList(Instance._eventHandlerDic, type, false);
             eventListeners?.Send(msg);
         }
 

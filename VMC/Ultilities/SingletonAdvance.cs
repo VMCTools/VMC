@@ -7,18 +7,28 @@ namespace VMC.Ultilities
 {
     public class SingletonAdvance<T> : MonoBehaviour where T : Component
     {
-        private static T _instance;
+        private static object _lock = new object();
+        private static bool applicationIsQuitting = false;
+
+        protected static T _instance;
         public static T Instance
         {
             get
             {
-                if (_instance == null)
+                if (applicationIsQuitting)
                 {
-                    var obj = new GameObject("");
-                    var component = obj.AddComponent<T>();
-                    obj.name = $"[Singleton] {typeof(T).ToString()}";
+                    return null;
+                }
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        var obj = new GameObject("");
+                        var component = obj.AddComponent<T>();
+                        obj.name = $"[Singleton] {typeof(T).ToString()}";
 
-                    _instance = component;
+                        _instance = component;
+                    }
                 }
                 return _instance;
             }
@@ -39,10 +49,10 @@ namespace VMC.Ultilities
                 DestroyImmediate(this.gameObject);
             }
         }
-
         protected virtual void OnDestroy()
         {
             if (Instance == this) _instance = null;
+            applicationIsQuitting = true;
         }
     }
 }
