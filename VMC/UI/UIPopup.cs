@@ -10,6 +10,7 @@ namespace VMC.UI
 {
     public class UIPopup : MonoBehaviour
     {
+        [SerializeField] private UIPopupAnimType showUpType = UIPopupAnimType.None;
         [SerializeField] private Image imgBlack;
         [SerializeField] private GameObject boundPopup;
 #if VMC_DOTWEEN
