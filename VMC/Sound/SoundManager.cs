@@ -6,9 +6,8 @@ using VMC.Ultilities;
 
 namespace VMC.Sound
 {
-    public class SoundManager : VMC.Ultilities.Singleton<SoundManager>
+    public class SoundManager : VMC.Ultilities.SingletonAdvance<SoundManager>
     {
-        [SerializeField] private List<SoundKey> keys;
         private Dictionary<string, AudioClip> listAudios = new Dictionary<string, AudioClip>();
 
         private AudioSource myMusic;
@@ -96,18 +95,6 @@ namespace VMC.Sound
                 isEnableMusic = PlayerPrefsHelper.Get(KEY_SETTING_MUSIC, true);
                 valueSound = PlayerPrefsHelper.Get(KEY_VOLUME_SOUND, 1f);
                 valueMusic = PlayerPrefsHelper.Get(KEY_VOLUME_MUSIC, .8f);
-
-                if (keys != null)
-                {
-                    foreach (var item in keys)
-                    {
-                        if (!listAudios.ContainsKey(item.Key))
-                            listAudios.Add(item.Key, item.Clip);
-                    }
-                }
-#if !UNITY_EDITOR
-            keys = null;
-#endif
             }
         }
 
