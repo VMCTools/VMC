@@ -95,12 +95,12 @@ namespace VMC.Ads
             //var config = RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("377807EAA67F63DF0FFE8F146CF568C7"));
             AdRequest request = new AdRequest.Builder().Build();
 
-            AppOpenAd.LoadAd(id, ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
+            AppOpenAd.Load(id, ScreenOrientation.Portrait, request, ((appOpenAd, error) =>
             {
                 if (error != null)
                 {
                     // Handle the error.
-                    Debug.LogFormat("Failed to load the ad. (reason: {0}), tier {1}", error.LoadAdError.GetMessage(), tierIndex);
+                    Debug.LogFormat("Failed to load the ad. (reason: {0}), tier {1}", error.GetMessage(), tierIndex);
                     tierIndex++;
                     if (tierIndex <= 3)
                         LoadAd(); // load add
@@ -140,11 +140,11 @@ namespace VMC.Ads
                 return;
             }
 
-            ad.OnAdDidDismissFullScreenContent += HandleAdDidDismissFullScreenContent;
-            ad.OnAdFailedToPresentFullScreenContent += HandleAdFailedToPresentFullScreenContent;
-            ad.OnAdDidPresentFullScreenContent += HandleAdDidPresentFullScreenContent;
-            ad.OnAdDidRecordImpression += HandleAdDidRecordImpression;
-            ad.OnPaidEvent += HandlePaidEvent;
+            ad.OnAdPaid += Ad_OnAdPaid;
+            ad.OnAdImpressionRecorded += Ad_OnAdImpressionRecorded;
+            ad.OnAdFullScreenContentOpened += Ad_OnAdFullScreenContentOpened;
+            ad.OnAdFullScreenContentFailed += Ad_OnAdFullScreenContentFailed;
+            ad.OnAdFullScreenContentClosed += Ad_OnAdFullScreenContentClosed;
 
             nextTimeToShow = DateTime.Now.AddSeconds(intervalTimeShowAds);
             ad.Show();
@@ -152,8 +152,13 @@ namespace VMC.Ads
         }
 
 
+
+
+
+
+
 #if VMC_ADS_ADMOB
-        private void HandleAdDidDismissFullScreenContent(object sender, EventArgs args)
+        private void Ad_OnAdFullScreenContentClosed()
         {
             Debug.Log("Closed app open ad");
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
@@ -161,30 +166,26 @@ namespace VMC.Ads
             isShowingAd = false;
             LoadAd(); //load ads when close prev ads
         }
-
-        private void HandleAdFailedToPresentFullScreenContent(object sender, AdErrorEventArgs args)
+        private void Ad_OnAdFullScreenContentFailed(AdError adError)
         {
-            Debug.LogFormat("Failed to present the ad (reason: {0})", args.AdError.GetMessage());
+            Debug.LogFormat("Failed to present the ad (reason: {0})", adError.GetMessage());
             // Set the ad to null to indicate that AppOpenAdManager no longer has another ad to show.
             ad = null;
             LoadAd(); // load ads when failed show prev ads
         }
-
-        private void HandleAdDidPresentFullScreenContent(object sender, EventArgs args)
+        private void Ad_OnAdFullScreenContentOpened()
         {
             Debug.Log("Displayed app open ad");
             isShowingAd = true;
         }
-
-        private void HandleAdDidRecordImpression(object sender, EventArgs args)
+        private void Ad_OnAdImpressionRecorded()
         {
             Debug.Log("Recorded ad impression");
         }
-
-        private void HandlePaidEvent(object sender, AdValueEventArgs args)
+        private void Ad_OnAdPaid(AdValue adValue)
         {
             Debug.LogFormat("Received paid event. (currency: {0}, value: {1}",
-                args.AdValue.CurrencyCode, args.AdValue.Value);
+                  adValue.CurrencyCode, adValue.Value);
         }
 #endif
     }
