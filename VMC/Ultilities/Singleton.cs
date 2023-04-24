@@ -4,13 +4,17 @@ namespace VMC.Ultilities
 {
     public class Singleton<T> : MonoBehaviour where T : Component
     {
+        [SerializeField] private bool dontDestroyOnLoad = true;
         public static T Instance;
         protected virtual void Awake()
         {
             if (Instance == null)
             {
                 Instance = this as T;
-                DontDestroyOnLoad(this.gameObject);
+                if (dontDestroyOnLoad)
+                {
+                    DontDestroyOnLoad(this.gameObject);
+                }
             }
             else
             {
