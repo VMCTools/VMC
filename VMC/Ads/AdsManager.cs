@@ -152,10 +152,10 @@ namespace VMC.Ads
             }
             VMC.Debugger.Debug.Log("[ADS]", "Show rewarded video");
 
-#if UNITY_EDITOR
-            rewardedCallback?.Invoke(true);
-            return;
-#endif
+//#if UNITY_EDITOR
+//            rewardedCallback?.Invoke(true);
+//            return;
+//#endif
             ads.ShowRewardedVideo(placement, rewardedCallback);
         }
     }
