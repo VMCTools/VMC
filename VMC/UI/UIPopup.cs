@@ -27,7 +27,7 @@ namespace VMC.UI
         {
             if (btnClose != null)
             {
-                btnClose.onClick.SetListener(() =>
+                btnClose.onClick.AddListener(() =>
                 {
                     OnBtnCloseClick();
                 });
