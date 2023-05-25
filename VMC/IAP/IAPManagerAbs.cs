@@ -99,6 +99,11 @@ namespace VMC.IAP
             Debugger.Debug.Log("[IAP]", "Initialize Failed! " + error);
         }
 
+        public void OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            Debugger.Debug.Log("[IAP]", "Initialize Failed! " + error);
+        }
+
         public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
             IsProcessing = false;
@@ -216,6 +221,10 @@ namespace VMC.IAP
             if (product == null) return "Error: 2";
             return product.metadata.localizedPriceString;
 #endif
+        }
+        public float GetValue(string idPack)
+        {
+            return GetProductById(idPack).value;
         }
     }
 }
