@@ -19,6 +19,7 @@ namespace VMC.Settings
 #if UNITY_ANDROID
         public bool isTestMode = false;
         public string maxAppId = "YOUR_APP_ID_HERE";
+        public string ironsourceAppId = "YOUR_APP_ID_HERE";
         public string openAdsId_Tier1 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier2 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier3 = "YOUR_OPENADS_ID_ADS_HERE";
@@ -33,6 +34,7 @@ namespace VMC.Settings
 #elif UNITY_IOS
         public bool isTestMode = false;
         public string maxAppId = "YOUR_APP_ID_HERE";
+        public string ironsourceAppId = "YOUR_APP_ID_HERE";
         public string openAdsId_Tier1 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier2 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier3 = "YOUR_OPENADS_ID_ADS_HERE";
@@ -47,6 +49,7 @@ namespace VMC.Settings
 #else
         public bool isTestMode = false;
         public string maxAppId = "YOUR_APP_ID_HERE";
+        public string ironsourceAppId = "YOUR_APP_ID_HERE";
         public string openAdsId_Tier1 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier2 = "YOUR_OPENADS_ID_ADS_HERE";
         public string openAdsId_Tier3 = "YOUR_OPENADS_ID_ADS_HERE";

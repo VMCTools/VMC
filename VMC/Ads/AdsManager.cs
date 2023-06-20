@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 using VMC.Analystic;
@@ -12,7 +12,12 @@ namespace VMC.Ads
         [SerializeField, ReadOnly] private AdsMediation ads;
         [SerializeField, ReadOnly] private AdsAdmobOpenAds admobOpenAds;
         public bool EnableTestForDebugBuild = false;
+        public float IntervalTime = 25f;
 
+        public static bool LeaveGameByPurpose; // rời game vì rate/iap,... thì không show ads interstitial
+        public bool IsShowInterstitialComeBack = false;
+
+        private long showTime;
         public bool IsShowBannerBottom;
         public bool IsShowBannerTop;
         public static event Action OnBannerChange;
@@ -77,6 +82,27 @@ namespace VMC.Ads
             }
         }
 
+        private void OnApplicationPause(bool pause)
+        {
+            if (!pause)
+            {
+                if (LeaveGameByPurpose)
+                {
+                    LeaveGameByPurpose = false;
+                }
+                else
+                {
+                    if (IsShowInterstitialComeBack)
+                    {
+                        ShowInterstitial("resume_app", () => { });
+                    }
+                    else
+                    {
+                        // do nothing
+                    }
+                }
+            }
+        }
         public void Initialize()
         {
             if (ads != null)
@@ -134,7 +160,14 @@ namespace VMC.Ads
                 closeCallback?.Invoke();
                 return;
             }
+            if (DateTime.Now.Ticks - showTime < IntervalTime)
+            {
+                VMC.Debugger.Debug.Log("[ADS-Interstitial]", $"Not enough interval time {Time.realtimeSinceStartup - showTime}/{IntervalTime}!");
+                closeCallback?.Invoke();
+                return;
+            }
             VMC.Debugger.Debug.Log("[ADS]", "Show interstitial");
+            showTime = DateTime.Now.Ticks;
             ads.ShowInterstitialAds(placement, closeCallback);
         }
         public void ShowRewardedVideo(string placement, Action<bool> rewardedCallback)
@@ -151,11 +184,10 @@ namespace VMC.Ads
                 return;
             }
             VMC.Debugger.Debug.Log("[ADS]", "Show rewarded video");
-
-//#if UNITY_EDITOR
-//            rewardedCallback?.Invoke(true);
-//            return;
-//#endif
+            //#if UNITY_EDITOR
+            //            rewardedCallback?.Invoke(true);
+            //            return;
+            //#endif
             ads.ShowRewardedVideo(placement, rewardedCallback);
         }
     }

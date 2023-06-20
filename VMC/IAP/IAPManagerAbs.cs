@@ -52,7 +52,7 @@ namespace VMC.IAP
             Cancelled
         }
 
-        public string environment = "production";
+        //public string environment = "production";
 
         async void Start()
         {
@@ -168,6 +168,7 @@ namespace VMC.IAP
                 if (product != null && product.availableToPurchase)
                 {
                     IsProcessing = true;
+                    VMC.Ads.AdsManager.LeaveGameByPurpose = true; // IAP
                     m_StoreController.InitiatePurchase(product);
                     OnChangeProcessingState?.Invoke(productId, State.Started);
                 }
@@ -216,12 +217,21 @@ namespace VMC.IAP
 #if UNITY_EDITOR
             return GetProductById(idPack).price + "$";
 #else
-            if (m_StoreController == null) return "Error: 1";
+            if (m_StoreController == null)
+            {
+                Debug.Log("Error: 1");
+                return GetProductById(idPack).price + "$";
+            }
             Product product = m_StoreController.products.WithID(idPack);
-            if (product == null) return "Error: 2";
+            if (product == null)
+            {
+                Debug.Log("Error: 2");
+                return GetProductById(idPack).price + "$";
+            }
             return product.metadata.localizedPriceString;
 #endif
         }
+
         public float GetValue(string idPack)
         {
             return GetProductById(idPack).value;

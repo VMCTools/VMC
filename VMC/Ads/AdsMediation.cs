@@ -67,6 +67,9 @@ namespace VMC.Ads
         protected bool isShowingBanner;
         protected BannerAdsPosition bannerPosition;
 
+        private int retryBannerAttempt;
+        private bool IsLoadedBanner;
+
         private int retryInterAttempt;
         protected bool IsLoadedInterstitial;
         protected string interstitialPlacement;
@@ -144,6 +147,7 @@ namespace VMC.Ads
         public virtual void InitializeBannerAds() { }
         public virtual void LoadBannerAds()
         {
+            IsLoadedBanner = false;
             OnBannerStateChange?.Invoke(BannerState.Load, string.Empty, string.Empty);
         }
         public virtual void ShowBannerAds(BannerAdsPosition position = BannerAdsPosition.BOTTOM)
@@ -157,12 +161,18 @@ namespace VMC.Ads
         }
         protected void OnLoadBannerSuccessed()
         {
+            retryBannerAttempt = 0;
+            IsLoadedBanner = true;
             if (isShowingBanner) ShowBannerAds(this.bannerPosition);
             else HideBannerAds();
             OnBannerStateChange?.Invoke(BannerState.LoadSuccessed, string.Empty, string.Empty);
         }
         protected void OnLoadBannerFailed(string code, string message)
         {
+            IsLoadedBanner = false;
+            retryBannerAttempt++;
+            double retryDelay = Math.Pow(2, Math.Min(6, retryBannerAttempt));
+            Invoke(nameof(LoadBannerAds), (float)retryDelay);
             OnBannerStateChange?.Invoke(BannerState.LoadFailed, code, message);
         }
 

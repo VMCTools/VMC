@@ -306,7 +306,6 @@ namespace VMC.Ads
                      rewardedAd = ad;
                      rewardedAd.OnAdFullScreenContentFailed += RewardedAd_OnAdFullScreenContentFailed;
                      rewardedAd.OnAdFullScreenContentClosed += RewardedAd_OnAdFullScreenContentClosed;
-                     rewardedAd.OnAdPaid += RewardedAd_OnAdPaid;
                      rewardedAd.OnAdImpressionRecorded += RewardedAd_OnAdImpressionRecorded;
                  });
 #endif
@@ -322,6 +321,16 @@ namespace VMC.Ads
                 {
                     // TODO: Reward the user.
                     // nothing handle this, because it call in callback function
+                    if (reward != null)
+                    {
+                        Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
+                        this.OnRewardedGotReward();
+                        //callback?.Invoke(true);
+                    }
+                    else
+                    {
+                        //callback?.Invoke(false);
+                    }
                 });
             }
             else
@@ -346,11 +355,6 @@ namespace VMC.Ads
         {
             Debug.Log("[ADMOB-RewardedVideo]", "Close Ads");
             Ultilities.UnityMainThreadDispatcher.Instance().Enqueue(this.OnRewardedDisplaySuccessed);
-        }
-        private void RewardedAd_OnAdPaid(AdValue obj)
-        {
-            Debug.Log("[ADMOB-RewardedVideo]", "Earn reward!");
-            this.OnRewardedGotReward();
         }
         private void RewardedAd_OnAdImpressionRecorded()
         {

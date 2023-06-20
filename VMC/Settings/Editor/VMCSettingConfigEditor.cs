@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -17,6 +17,7 @@ namespace VMC.Settings
 
         SerializedProperty isTestMode;
         SerializedProperty maxAppId;
+        SerializedProperty ironsourceAppId;
         SerializedProperty openAdsId_Tier1;
         SerializedProperty openAdsId_Tier2;
         SerializedProperty openAdsId_Tier3;
@@ -66,6 +67,7 @@ namespace VMC.Settings
 
             isTestMode = serializedObject.FindProperty("isTestMode");
             maxAppId = serializedObject.FindProperty("maxAppId");
+            ironsourceAppId = serializedObject.FindProperty("ironsourceAppId");
             openAdsId_Tier1 = serializedObject.FindProperty("openAdsId_Tier1");
             openAdsId_Tier2 = serializedObject.FindProperty("openAdsId_Tier2");
             openAdsId_Tier3 = serializedObject.FindProperty("openAdsId_Tier3");
@@ -109,34 +111,41 @@ namespace VMC.Settings
                 if ((AdsLibrary)adsLibrary.enumValueFlag != AdsLibrary.None)
                 {
                     EditorGUILayout.PropertyField(isTestMode);
-                    if (((AdsLibrary)adsLibrary.enumValueFlag).HasFlag(AdsLibrary.MaxMediation))
-                    {
-                        EditorGUILayout.PropertyField(maxAppId);
-                    }
 
-                    if (((AdsType)adType.enumValueFlag).HasFlag(AdsType.OpenAds))
+                    if (((AdsLibrary)adsLibrary.enumValueFlag).HasFlag(AdsLibrary.IronsourceMediation))
                     {
-                        EditorGUILayout.PropertyField(openAdsId_Tier1);
-                        EditorGUILayout.PropertyField(openAdsId_Tier2);
-                        EditorGUILayout.PropertyField(openAdsId_Tier3);
-                        EditorGUILayout.PropertyField(intervalTimeAOA);
-                        GUILayout.Space(10);
+                        EditorGUILayout.PropertyField(ironsourceAppId); // Ironsource dùng appId cho toàn bộ game
                     }
-                    if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Banner))
+                    else
                     {
-                        EditorGUILayout.PropertyField(bannerId);
-                        EditorGUILayout.PropertyField(bannerPosition);
-                        GUILayout.Space(10);
-                    }
-                    if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Interstitial))
-                    {
-                        EditorGUILayout.PropertyField(interstitialId);
-                        EditorGUILayout.PropertyField(intervalTimeInterstitial);
-                        GUILayout.Space(10);
-                    }
-                    if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.RewardedVideo))
-                    {
-                        EditorGUILayout.PropertyField(rewardedVideoId);
+                        if (((AdsLibrary)adsLibrary.enumValueFlag).HasFlag(AdsLibrary.MaxMediation))
+                        {
+                            EditorGUILayout.PropertyField(maxAppId);
+                        }
+                        if (((AdsType)adType.enumValueFlag).HasFlag(AdsType.OpenAds))
+                        {
+                            EditorGUILayout.PropertyField(openAdsId_Tier1);
+                            EditorGUILayout.PropertyField(openAdsId_Tier2);
+                            EditorGUILayout.PropertyField(openAdsId_Tier3);
+                            EditorGUILayout.PropertyField(intervalTimeAOA);
+                            GUILayout.Space(10);
+                        }
+                        if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Banner))
+                        {
+                            EditorGUILayout.PropertyField(bannerId);
+                            EditorGUILayout.PropertyField(bannerPosition);
+                            GUILayout.Space(10);
+                        }
+                        if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.Interstitial))
+                        {
+                            EditorGUILayout.PropertyField(interstitialId);
+                            EditorGUILayout.PropertyField(intervalTimeInterstitial);
+                            GUILayout.Space(10);
+                        }
+                        if (((AdsType)adType.enumValueFlag).HasFlag(Ads.AdsType.RewardedVideo))
+                        {
+                            EditorGUILayout.PropertyField(rewardedVideoId);
+                        }
                     }
                 }
             }
@@ -228,6 +237,14 @@ namespace VMC.Settings
             else
             {
                 defines.Remove(Define.VMC_ADS_TESTMODE.ToString());
+            }
+            if (enableAds.boolValue && ((AdsLibrary)adsLibrary.enumValueFlag).HasFlag(AdsLibrary.IronsourceMediation))
+            {
+                defines.Add(Define.VMC_ADS_IRONSOURCE.ToString());
+            }
+            else
+            {
+                defines.Remove(Define.VMC_ADS_IRONSOURCE.ToString());
             }
 
             if (enableAds.boolValue && ((AdsLibrary)adsLibrary.enumValueFlag).HasFlag(AdsLibrary.Admob))

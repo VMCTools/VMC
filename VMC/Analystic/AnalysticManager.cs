@@ -58,6 +58,26 @@ namespace VMC.Analystic
             }
         }
 
+#if VMC_ANALYZE_FIREBASE
+        public void LogEvent(string nameEvent, Firebase.Analytics.Parameter[] param)
+        {
+            foreach (var analytic in analytics)
+            {
+                if (analytic is FirebaseAnalystic firebase)
+                {
+                    firebase.LogEvent(nameEvent, param);
+                }
+            }
+        }
+#endif
+        public void LogEvent(string nameEvent, Settings.AnalyzeLibrary specialPlatform)
+        {
+            foreach (var analytic in analytics)
+            {
+                analytic.LogEvent(nameEvent, specialPlatform);
+            }
+        }
+
         public void LogEvent(string nameEvent, Dictionary<string, string> param)
         {
             foreach (var analytic in analytics)

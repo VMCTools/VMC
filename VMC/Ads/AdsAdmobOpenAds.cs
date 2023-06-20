@@ -73,8 +73,6 @@ namespace VMC.Ads
 
         private void LoadAd()
         {
-            if (!VMC.Settings.VMCManager.Instance.EnableAOA)
-                return;
 #if VMC_ADS_ADMOB
             string id = ID_TIER_1;
             if (tierIndex == 2)
@@ -125,9 +123,6 @@ namespace VMC.Ads
 
         public void ShowAdIfAvailable()
         {
-            if (!VMC.Settings.VMCManager.Instance.EnableAOA)
-                return;
-
 #if VMC_ADS_ADMOB
             if(ad==null)
             {

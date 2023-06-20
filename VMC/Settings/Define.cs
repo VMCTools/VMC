@@ -19,6 +19,7 @@
         VMC_ADS_TESTMODE,
         VMC_ADS_ADMOB,
         VMC_ADS_MAX,
+        VMC_ADS_IRONSOURCE,
 
         /// ANALYTICS
         VMC_ANALYZE_FIREBASE,

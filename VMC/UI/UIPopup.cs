@@ -27,7 +27,7 @@ namespace VMC.UI
         {
             if (btnClose != null)
             {
-                btnClose.onClick.AddListener(() =>
+                btnClose.onClick.SetListener(() =>
                 {
                     OnBtnCloseClick();
                 });
@@ -63,7 +63,7 @@ namespace VMC.UI
             this.gameObject.SetActive(true);
             callbackShow?.Invoke();
             isAnimated = false;
-#endif
+#endif           
         }
         public void HideDialog(Action callbackHide = null)
         {
@@ -79,6 +79,7 @@ namespace VMC.UI
                     this.gameObject.SetActive(false);
                     callbackHide?.Invoke();
                     isAnimated = false;
+                    DataGame.IsShowPopUp = false;
                 });
             }
             else
@@ -86,6 +87,7 @@ namespace VMC.UI
                 this.gameObject.SetActive(false);
                 callbackHide?.Invoke();
                 isAnimated = false;
+                DataGame.IsShowPopUp = false;
             }
 #else
             this.gameObject.SetActive(false);

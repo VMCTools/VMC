@@ -16,8 +16,6 @@ namespace VMC.Settings
 {
     public class VMCManager : Singleton<VMCManager>
     {
-        public bool EnableRemote = false;
-        public bool EnableAOA = false;
         private void Start()
         {
             Application.targetFrameRate = 60;
@@ -30,8 +28,20 @@ namespace VMC.Settings
                     {
                         //AnalysticManager.Instance.ATTSuccess();
                     }
+
+#if VMC_ADS_IRONSOURCE && UNITY_IOS
+                    // Set the flag as true 
+                    AudienceNetwork.AudienceNetwork.AdSettings.SetAdvertiserTrackingEnabled(action == ATTStatus.Authorized);
+#endif
                 });
                 PlayerPrefs.SetInt("ATTShowed", 1);
+            }
+            else
+            {
+#if VMC_ADS_IRONSOURCE && UNITY_IOS
+                // Set the flag as true 
+                AudienceNetwork.AudienceNetwork.AdSettings.SetAdvertiserTrackingEnabled(UnityATTPlugin.Instance.GetATTStatus() == ATTStatus.Authorized);
+#endif
             }
             FirebaseAnalystic.OnFirebaseReady += FirebaseAnalystic_OnFirebaseReady;
 
@@ -60,9 +70,6 @@ namespace VMC.Settings
             Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
             Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
 #endif
-#if VMC_REMOTE_FIREBASE
-            InitRemoteconfig();
-#endif
         }
 #if VMC_FIREBASE_MESSAGING
         public void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token)
@@ -75,63 +82,6 @@ namespace VMC.Settings
             Debug.Log("[Firebase Message]", "Received a new message from: " + e.Message.From);
         }
 #endif
-
-
-#if VMC_REMOTE_FIREBASE
-        public void InitRemoteconfig()
-        {
-            // [START set_defaults]
-            System.Collections.Generic.Dictionary<string, object> defaults = new System.Collections.Generic.Dictionary<string, object>();
-
-            // These are the values that are used if we haven't fetched data from the
-            // server
-
-            Settings.VMCSettingConfig config = Settings.VMCSettingConfig.LoadData();
-            // yet, or if we ask for values that the server doesn't have:
-            defaults.Add("enable_aoa", false);
-            EnableAOA = false;
-            //defaults.Add("config_aoa_id", config.openAdsId_Tier1);
-
-
-            Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.SetDefaultsAsync(defaults)
-              .ContinueWithOnMainThread(task =>
-              {
-                  // [END set_defaults]
-                  Debug.Log("RemoteConfig configured and ready!");
-                  FetchDataAsync();
-                  //isFirebaseInitialized = true;
-                  EnableRemote = true;
-              });
-        }
-        public Task FetchDataAsync()
-        {
-            Debug.Log("Fetching data...");
-            Task fetchTask = Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.FetchAsync(TimeSpan.Zero);
-            return fetchTask.ContinueWithOnMainThread(FetchComplete);
-        }
-        void FetchComplete(Task fetchTask)
-        {
-            if (fetchTask.IsCanceled)
-            {
-                Debug.Log("Fetch canceled.");
-            }
-            else if (fetchTask.IsFaulted)
-            {
-                Debug.Log("Fetch encountered an error.");
-            }
-            else if (fetchTask.IsCompleted)
-            {
-                Debug.Log("Fetch completed successfully!");
-            }
-
-            if (Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.GetValue("enable_aoa").BooleanValue)
-            {
-                EnableAOA = true;
-            }
-        }
-#endif
-
-
 #if VMC_FACEBOOK
         private void InitCallback()
         {

@@ -28,7 +28,12 @@ namespace VMC.AppReview
 
 #if UNITY_ANDROID
 #if VMC_APP_REVIEW
+#if UNITY_EDITOR
+            Debug.Log("[App Review Rate] Not work on Editor");
+            Application.OpenURL("https://play.google.com/store/apps/details?id=" + Application.identifier);
+#else
             StartCoroutine(RequestReview());
+#endif
 #else
             Application.OpenURL("https://play.google.com/store/apps/details?id=" + Application.identifier);
 #endif

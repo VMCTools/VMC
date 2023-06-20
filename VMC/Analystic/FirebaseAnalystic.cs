@@ -1,10 +1,11 @@
-
+﻿
 #if VMC_ANALYZE_FIREBASE
 using Firebase.Analytics;
 #endif
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VMC.Settings;
 using Debug = VMC.Debugger.Debug;
 namespace VMC.Analystic
 {
@@ -48,6 +49,22 @@ namespace VMC.Analystic
             Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName);
             Debug.Log("Firebase", "Log message: " + eventName);
 #endif
+        }
+#if VMC_ANALYZE_FIREBASE
+        public void LogEvent(string eventName, Firebase.Analytics.Parameter[] param)
+        {
+            if (!isInitedFirebase) return;
+            Firebase.Analytics.FirebaseAnalytics.LogEvent(eventName, param);
+            Debug.Log("Firebase", "Log message: " + eventName);
+        }
+#endif
+        public void LogEvent(string eventName, AnalyzeLibrary specialPlatform)
+        {
+            if (!specialPlatform.HasFlag(AnalyzeLibrary.Firebase))
+            {
+                return; // không chỉ định firebase log event
+            }
+            LogEvent(eventName);
         }
         public void LogEvent(string eventName, Dictionary<string, string> param)
         {
