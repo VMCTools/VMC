@@ -79,7 +79,6 @@ namespace VMC.UI
                     this.gameObject.SetActive(false);
                     callbackHide?.Invoke();
                     isAnimated = false;
-                    DataGame.IsShowPopUp = false;
                 });
             }
             else
@@ -87,7 +86,6 @@ namespace VMC.UI
                 this.gameObject.SetActive(false);
                 callbackHide?.Invoke();
                 isAnimated = false;
-                DataGame.IsShowPopUp = false;
             }
 #else
             this.gameObject.SetActive(false);
