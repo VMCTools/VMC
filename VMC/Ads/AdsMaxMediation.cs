@@ -70,6 +70,7 @@ namespace VMC.Ads
             }
             MaxSdkCallbacks.OnSdkInitializedEvent += (MaxSdkBase.SdkConfiguration sdkConfiguration) =>
             {
+                //MaxSdk.ShowMediationDebugger();
                 // AppLovin SDK is initialized, start loading ads
                 if (adsType.HasFlag(AdsType.Banner))
                     InitializeBannerAds();
@@ -86,6 +87,10 @@ namespace VMC.Ads
                 MaxSdkCallbacks.AppOpen.OnAdLoadedEvent += AppOpen_OnAdLoadedEvent;
             };
 
+
+            MaxSdk.SetHasUserConsent(true);
+            MaxSdk.SetDoNotSell(false);
+            MaxSdk.SetIsAgeRestrictedUser(false);
             MaxSdk.SetSdkKey(maxAppID);
             MaxSdk.InitializeSdk();
 #endif
@@ -387,11 +392,19 @@ namespace VMC.Ads
 new Firebase.Analytics.Parameter("ad_platform", "AppLovin"),
 new Firebase.Analytics.Parameter("ad_source", impressionData.NetworkName),
 new Firebase.Analytics.Parameter("ad_unit_name", impressionData.AdUnitIdentifier),
-new Firebase.Analytics.Parameter("ad_format", impressionData.Placement), // Please check this - as we couldn't find format refereced in your unity docs https://dash.applovin.com/documentation/mediation/unity/getting-started/advanced-settings#impression-level-user-revenue - api
+new Firebase.Analytics.Parameter("ad_format", impressionData.AdFormat), // Please check this - as we couldn't find format refereced in your unity docs https://dash.applovin.com/documentation/mediation/unity/getting-started/advanced-settings#impression-level-user-revenue - api
 new Firebase.Analytics.Parameter("value", revenue),
 new Firebase.Analytics.Parameter("currency", "USD"), // All Applovin revenue is sent in USD
 };
-            Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression", impressionParameters);
+
+            //Debug.Log("ad_impression" + " | NetworkName: " + impressionData.NetworkName);
+            //Debug.Log("ad_impression" + " | DspName: " + impressionData.DspName);
+            //Debug.Log("ad_impression" + " | AdUnitIdentifier: " + impressionData.AdUnitIdentifier);
+            //Debug.Log("ad_impression" + " | AdFormat: " + impressionData.AdFormat);
+            //Debug.Log("ad_impression" + " | CreativeIdentifier: " + impressionData.CreativeIdentifier);
+            //Debug.Log("ad_impression" + " | NetworkPlacement: " + impressionData.NetworkPlacement);
+            //Debug.Log("ad_impression" + " | WaterfallInfo: " + impressionData.WaterfallInfo);
+            VMC.Analystic.AnalysticManager.Instance.LogEvent("ad_impression", impressionParameters);
 #endif
         }
 #endif

@@ -16,15 +16,18 @@ using Debug = VMC.Debugger.Debug;
 namespace VMC.Analystic
 {
     public class AppsFlyerAnalystic : MonoBehaviour, IAnalystic
+#if VMC_ANALYZE_APPFLYER
 #if VMC_IAP
         , IStoreListener, IAppsFlyerValidateReceipt
 #endif
-#if VMC_ANALYZE_APPFLYER
         , IAppsFlyerConversionData
 #endif
     {
         [SerializeField, ReadOnly] private string AF_Dev_Key;
         [SerializeField, ReadOnly] private string AF_App_Id;
+
+
+        private const string PublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0rv73WA6ePMXWpcxUlWrqvYycwOsdv90CVqBBCH8EMvlukFTnHB7FdhuGA1SPUU2b7aBRfbMahCvd7Z/81vd3lhcjHOyg194OgsBYhS+KsyWKem9w8Sd7tKfk4ubaCEmKgj2w0z+Us2eClJDUWh9AJZGq79HgpAwGSQclKZEGfAfSoZGrYSJc89perHH9OtlAbWeCRLsM9qMCVe3zTrRdDZ+1KAHezukxjKJTt6jAOvUrUYZ4+eBFP8oC4ssXSKroQTiGXwbzBJd6iQ9nPqHyo3g9Ro6VJ2g0OhYNMXrTryBJyLuYNnTVo+w4wZzeIZe/M+NHywwVY34u6lnKDxnhQIDAQAB"; // brickdoom
 
 
         public void Initialize()
@@ -51,11 +54,11 @@ namespace VMC.Analystic
 
         public void LogEvent(string eventName, AnalyzeLibrary specialPlatform)
         {
+#if VMC_ANALYZE_APPFLYER
             if (!specialPlatform.HasFlag(AnalyzeLibrary.AppsFlyer))
             {
                 return; // không chỉ định appflyer log event
             }
-#if VMC_ANALYZE_APPFLYER
             AppsFlyer.sendEvent(eventName, null);
             Debug.Log("AppsFlyer", "Log message: " + eventName);
 #endif
@@ -103,7 +106,7 @@ namespace VMC.Analystic
 #elif UNITY_ANDROID
                 var purchaseData = (string)receiptPayload["json"];
                 var signature = (string)receiptPayload["signature"];
-                new AppsFlyerAndroid().validateAndSendInAppPurchase("<google_public_key>", signature, purchaseData, price, currency, null, this);
+                new AppsFlyerAndroid().validateAndSendInAppPurchase(PublicKey, signature, purchaseData, price, currency, null, this);
 #endif
             }
 
